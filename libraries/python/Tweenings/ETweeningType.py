@@ -9,4 +9,4 @@ class ETweeningType:
     CIRCULAR, \
     ELASTIC, \
     BACK, \
-    BOUNCE = range(10)
+    BOUNCE = range(11)

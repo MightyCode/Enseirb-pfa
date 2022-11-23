@@ -1,2 +1,2 @@
 class ETweeningBehaviour:
-    IN, OUT, InOut = range(3)
+    IN, OUT, IN_OUT = range(3)

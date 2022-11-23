@@ -37,7 +37,7 @@ class Tweening {
         }
     }
 
-    constructor(){
+    /*constructor(){
         this._tweeningType = null;
         this._tweeningConst = null;
         this._tweeningOption = ETweeningOption.DIRECT;
@@ -193,5 +193,5 @@ class Tweening {
 
     get addArg2(){
         return this._addArg2;
-    }
+    }*/
 }
