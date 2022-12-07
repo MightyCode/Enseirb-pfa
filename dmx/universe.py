@@ -68,9 +68,7 @@ class DMXUniverse:
         frame = [0] * DMX_MAX_ADDRESS
         for light in self._lights:
             serialised_light = light.serialise()
-            print(light.start_address, light.end_address)
             for address in range(light.start_address, light.end_address + 1):
                 frame[address] |= serialised_light[address - light.start_address]
 
-        print(frame)
         return frame

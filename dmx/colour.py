@@ -156,5 +156,5 @@ class Colour:
 RED = Colour(255, 0, 0)
 GREEN = Colour(0, 255, 0)
 BLUE = Colour(0, 0, 255)
-WHITE = Colour(0, 0, 0, 255)
+WHITE = Colour(255, 255, 255, 255)
 BLACK = Colour(0, 0, 0)

@@ -38,6 +38,8 @@ from dmx.colour import BLACK, Colour
 DMX_MAX_ADDRESS = 512
 DMX_MIN_ADDRESS = 1
 
+ligh_map = [0, 1, 2, 27, 28, 29, 3, 4, 5, 30, 31, 32, 6, 7, 8, 33, 34, 35, 9, 10, 11, 36, 37, 38, 12, 13, 14, 39, 40, 41, 15, 16, 17, 42, 43, 44, 18, 19, 20, 45, 46, 47, 21, 22, 23, 48, 49, 50, 24, 25, 26, 51, 52, 53]
+
 
 class DMXLight(ABC):
     """Represents a DMX light."""
