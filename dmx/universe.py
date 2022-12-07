@@ -32,7 +32,7 @@
 
 from typing import List, Set
 
-from dmx.constants import DMX_MAX_ADDRESS
+from dmx.constants import DMX_MAX_ADDRESS, DMX_EMPTY_BYTE
 from dmx.light import DMXLight
 
 
@@ -60,12 +60,26 @@ class DMXUniverse:
         """Get all lights in this universe."""
         return self._lights
 
+    def has_light_at_address(self, address: int) -> bool:
+        """Check if a light is at a given address."""
+        for light in self._lights:
+            if light.start_address <= address*4 <= light.end_address:
+                return True
+
+        return False
+
+    def get_light_at_address(self, address: int) -> DMXLight:
+        for l in self._lights:
+            if l.start_address <= address*4 <= l.end_address:
+                return l
+        raise ValueError("No light at address {}".format(address))
+
     def serialise(self) -> List[int]:
         """Serialise all the content of the DMX universe.
 
         Creates a frame which will update all lights to their current state.
         """
-        frame = [0] * DMX_MAX_ADDRESS
+        frame = [DMX_EMPTY_BYTE] * DMX_MAX_ADDRESS
         for light in self._lights:
             serialised_light = light.serialise()
             for address in range(light.start_address, light.end_address + 1):

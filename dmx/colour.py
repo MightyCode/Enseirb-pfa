@@ -153,8 +153,8 @@ class Colour:
             self.white = int(self.white // other)
 
 
-RED = Colour(255, 0, 0)
-GREEN = Colour(0, 255, 0)
-BLUE = Colour(0, 0, 255)
+RED = Colour(255, 0, 0, 10)
+GREEN = Colour(0, 255, 0, 10)
+BLUE = Colour(0, 0, 255, 10)
 WHITE = Colour(255, 255, 255, 255)
-BLACK = Colour(0, 0, 0)
+BLACK = Colour(0, 0, 0, 10)
