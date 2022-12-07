@@ -90,6 +90,27 @@ class DMXLight3Slot(DMXLight):
         """Serialise the DMX light to a sequence of bytes."""
         return self._colour.serialise()
 
+class DMXLight4Slot(DMXLight):
+    """Represents a DMX light with RGBW."""
+
+    def __init__(self, address: int = 0):
+        """Initialise the light."""
+        super().__init__(address=address * 4)
+        self._colour = BLACK
+
+    @property
+    def slot_count(self) -> int:
+        """Get the number of slots used by this light."""
+        return 4
+
+    def set_colour(self, colour: Colour):
+        """Set the colour for the light."""
+        self._colour = colour
+
+    def serialise(self) -> List[int]:
+        """Serialise the DMX light to a sequence of bytes."""
+        return self._colour.serialise()
+
 
 class DMXLight7Slot(DMXLight3Slot):
     """Represents an DMX light with RGB, rotation, and opacity."""

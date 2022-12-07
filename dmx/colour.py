@@ -36,15 +36,16 @@ from typing import List, Union
 class Colour:
     """Represents a colour in 24 bit RGB."""
 
-    def __init__(self, red: int, green: int, blue: int):
+    def __init__(self, red: int, green: int, blue: int, white: int = 0):
         """Initialise the colour."""
         self._red = red
         self._green = green
         self._blue = blue
+        self._white = white
 
     def serialise(self) -> List[int]:
         """Serialise the colour in RGB order to a sequence of bytes."""
-        return [self._red, self._green, self._blue]
+        return [self._red, self._green, self._blue, self._white]
 
     @property
     def red(self) -> int:
@@ -76,16 +77,28 @@ class Colour:
         """Set blue component."""
         self._blue = int(max(0, min(value, 255)))
 
+    @property
+    def white(self) -> int:
+        """Get white component."""
+        return self._white
+
+    @white.setter
+    def white(self, value: int):
+        """Set white component."""
+        self._white = int(max(0, min(value, 255)))
+
     def __add__(self, other: Union['Colour', int, float]):
         """Handle add."""
         if isinstance(other, Colour):
             self.red += other.red
             self.green += other.green
             self.blue += other.blue
+            self.white += other.white
         elif isinstance(other, (int, float)):
             self.red = int(self.red + other)
             self.green = int(self.green + other)
             self.blue = int(self.blue + other)
+            self.white = int(self.white + other)
 
     def __sub__(self, other: Union['Colour', int, float]):
         """Handle subtract."""
@@ -93,10 +106,12 @@ class Colour:
             self.red -= other.red
             self.green -= other.green
             self.blue -= other.blue
+            self.white -= other.white
         elif isinstance(other, (int, float)):
             self.red = int(self.red - other)
             self.green = int(self.green - other)
             self.blue = int(self.blue - other)
+            self.white = int(self.white - other)
 
     def __mul__(self, other: Union['Colour', int, float]):
         """Handle multiply."""
@@ -104,10 +119,12 @@ class Colour:
             self.red *= other.red
             self.green *= other.green
             self.blue *= other.blue
+            self.white *= other.white
         elif isinstance(other, (int, float)):
             self.red = int(self.red * other)
             self.green = int(self.green * other)
             self.blue = int(self.blue * other)
+            self.white = int(self.white * other)
 
     def __truediv__(self, other: Union['Colour', int, float]):
         """Handle division."""
@@ -115,10 +132,12 @@ class Colour:
             self.red = int(self.red / other.red)
             self.green = int(self.green / other.green)
             self.blue = int(self.blue / other.blue)
+            self.white = int(self.white / other.white)
         elif isinstance(other, (int, float)):
             self.red = int(self.red / other)
             self.green = int(self.green / other)
             self.blue = int(self.blue / other)
+            self.white = int(self.white / other)
 
     def __floordiv__(self, other: Union['Colour', int, float]):
         """Handle floor division."""
@@ -126,14 +145,16 @@ class Colour:
             self.red //= other.red
             self.green //= other.green
             self.blue //= other.blue
+            self.white //= other.white
         elif isinstance(other, (int, float)):
             self.red = int(self.red // other)
             self.green = int(self.green // other)
             self.blue = int(self.blue // other)
+            self.white = int(self.white // other)
 
 
 RED = Colour(255, 0, 0)
 GREEN = Colour(0, 255, 0)
 BLUE = Colour(0, 0, 255)
-WHITE = Colour(255, 255, 255)
+WHITE = Colour(0, 0, 0, 255)
 BLACK = Colour(0, 0, 0)

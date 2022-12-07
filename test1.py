@@ -1,4 +1,5 @@
-from dmx import Colour, DMXInterface, DMXLight3Slot, DMXUniverse
+from dmx import Colour, DMXInterface, DMXUniverse, DMXLight4Slot
+from dmx.colour import WHITE
 
 PURPLE = Colour(255, 255, 255)
 
@@ -8,19 +9,13 @@ with DMXInterface("FT232R") as interface:
     universe = DMXUniverse()
 
     # Define a light
-    light = DMXLight3Slot(address=3)
+    light = DMXLight4Slot(address=1)
 
     # Add the light to a universe
     universe.add_light(light)
 
-    # Update the interface's frame to be the universe's current state
-    interface.set_frame(universe.serialise())
-
-    # Send an update to the DMX network
-    interface.send_update()
-
     # Set light to purple
-    light.set_colour(PURPLE)
+    light.set_colour(WHITE)
 
     # Update the interface's frame to be the universe's current state
     interface.set_frame(universe.serialise())
