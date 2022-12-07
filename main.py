@@ -2,7 +2,7 @@
 # Press Maj+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
-from dmx import DMXInterface, DMXLight3Slot, DMXUniverse, Colour
+from dmx import DMXInterface, DMXUniverse, Colour
 from functions import *
 
 

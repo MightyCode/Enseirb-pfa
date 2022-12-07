@@ -38,7 +38,8 @@ from dmx.colour import BLACK, Colour
 DMX_MAX_ADDRESS = 512
 DMX_MIN_ADDRESS = 1
 
-ligh_map = [0, 1, 2, 27, 28, 29, 3, 4, 5, 30, 31, 32, 6, 7, 8, 33, 34, 35, 9, 10, 11, 36, 37, 38, 12, 13, 14, 39, 40, 41, 15, 16, 17, 42, 43, 44, 18, 19, 20, 45, 46, 47, 21, 22, 23, 48, 49, 50, 24, 25, 26, 51, 52, 53]
+ligh_map = [0, 1, 2, 27, 28, 29, 3, 4, 5, 30, 31, 32, 6, 7, 8, 33, 34, 35, 9, 10, 11, 36, 37, 38, 12, 13, 14, 39, 40,
+            41, 15, 16, 17, 42, 43, 44, 18, 19, 20, 45, 46, 47, 21, 22, 23, 48, 49, 50, 24, 25, 26, 51, 52, 53]
 
 
 class DMXLight(ABC):
@@ -71,27 +72,6 @@ class DMXLight(ABC):
         return 0
 
 
-class DMXLight3Slot(DMXLight):
-    """Represents a DMX light with RGB."""
-
-    def __init__(self, address: int = 1):
-        """Initialise the light."""
-        super().__init__(address=address)
-        self._colour = BLACK
-
-    @property
-    def slot_count(self) -> int:
-        """Get the number of slots used by this light."""
-        return 3
-
-    def set_colour(self, colour: Colour):
-        """Set the colour for the light."""
-        self._colour = colour
-
-    def serialise(self) -> List[int]:
-        """Serialise the DMX light to a sequence of bytes."""
-        return self._colour.serialise()
-
 class DMXLight4Slot(DMXLight):
     """Represents a DMX light with RGBW."""
 
@@ -112,33 +92,3 @@ class DMXLight4Slot(DMXLight):
     def serialise(self) -> List[int]:
         """Serialise the DMX light to a sequence of bytes."""
         return self._colour.serialise()
-
-
-class DMXLight7Slot(DMXLight3Slot):
-    """Represents an DMX light with RGB, rotation, and opacity."""
-
-    def __init__(self, address: int = 1):
-        """Initialise the light."""
-        super().__init__(address=address)
-        self._opacity = 255
-        self._coords = (0, 0, 0)
-
-    def set_rotation(self, pitch: int, roll: int, yaw: int):
-        """Set the rotation of the light, each value between 0 and 255 (inclusive)."""
-        pitch = int(max(0, min(pitch, 255)))
-        roll = int(max(0, min(roll, 255)))
-        yaw = int(max(0, min(yaw, 255)))
-        self._coords = (pitch, roll, yaw)
-
-    def set_opacity(self, value: int):
-        """Set the opacity of the light between 0 and 255 (inclusive)."""
-        self._opacity = int(max(0, min(value, 255)))
-
-    @property
-    def slot_count(self) -> int:
-        """Get the number of slots used by this light."""
-        return 7
-
-    def serialise(self) -> List[int]:
-        """Serialise the DMX light to a sequence of bytes."""
-        return super().serialise() + list(self._coords) + [self._opacity]
