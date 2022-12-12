@@ -3,15 +3,48 @@ from dmx.colour import *
 from dmx.light import *
 
 import time
+import numpy as np
 
 LIGHT_NUMBER = 54
 LINE_NUMBER = 9
 ROW_NUMBER = 6
 
+def pulse_bpm(universe, interface, bpm):
+    # send a pulse of light every bpm
+    while True:
+        a = time.time()
+        pulse(universe, interface, bpm)
+        b = time.time()
+
+        time.sleep(60/bpm-(b-a))
+
+def pulse(universe, interface, duration):
+    lights = []
+    updates = []
+    for i in range(LIGHT_NUMBER):
+        light = DMXLight4Slot(address=light_map[i])
+        # Add the light to a universe
+        universe.add_light(light)
+        lights.append(light)
+
+    #light up and down all lights in "duration" seconds
+    for i in range(0, 255, 50):
+        for l in lights:
+            l.set_colour(Colour(i, i, i, 100))
+        updates.append(universe.serialise())
+    for i in range(255, 0, -50):
+        for l in lights:
+            l.set_colour(Colour(i, i, i, 100))
+        updates.append(universe.serialise())
+    
+    for u in updates:
+        interface.set_frame(u)
+        interface.send_update()
+
 def strobe(universe, interface):
     lights = []
     for i in range(LIGHT_NUMBER):
-        light = DMXLight4Slot(address=ligh_map[i])
+        light = DMXLight4Slot(address=light_map[i])
         # Add the light to a universe
         universe.add_light(light)
         lights.append(light)
@@ -35,7 +68,7 @@ def strobe(universe, interface):
 def tamise(universe, interface):
     lights = []
     for i in range(LIGHT_NUMBER):
-        light = DMXLight4Slot(address=ligh_map[i])
+        light = DMXLight4Slot(address=light_map[i])
         light.set_colour(Colour(200, 50, 0, 100))
         # Add the light to a universe
         universe.add_light(light)
@@ -46,14 +79,13 @@ def tamise(universe, interface):
 
         # Send an update to the DMX network
     interface.send_update()
-    light_test(universe, interface)
     
 def light_test(universe, interface):
     
-    if universe.has_light_at_address(light_coord(0, 1)):
-        universe.get_light_at_address(light_coord(0, 1)).set_colour(WHITE)
+    if universe.has_light_at_address(light_coord(2, 4)):
+        universe.get_light_at_address(light_coord(2, 4)).set_colour(RED)
     else:
-        universe.add_light(DMXLight4Slot(address=light_coord(0, 1)).set_colour(WHITE))
+        universe.add_light(DMXLight4Slot(address=light_coord(2, 4)).set_colour(WHITE))
 
 
     interface.set_frame(universe.serialise())
@@ -61,110 +93,44 @@ def light_test(universe, interface):
     # Send an update to the DMX network
     interface.send_update()
 
-def RGB_fade_loop(universe, interface):
-    lights = []
-    for i in range(LIGHT_NUMBER):
-        light = DMXLight4Slot(address=ligh_map[i])
-        # Add the light to a universe
-        universe.add_light(light)
-        lights.append(light)
-
-    red = 0
-    green = 0
-    blue = 0
-    while True:
-        for i in range(LIGHT_NUMBER):
-            lights[i].set_colour(Colour(red, green, blue, 50))
-        interface.set_frame(universe.serialise())
-        interface.send_update()
-
-        if green == 0 and red < 255:
-            red += 5
-        if red == 255 and green < 255:
-            green += 5
-        if green == 255 and blue == 0:
-            red -= 5
-        if red == 0 and blue < 255:
-            blue += 5
-        if blue == 255 and green > 0:
-            green -= 5
-        if green == 0 and blue == 255:
-            red += 5
-        if red == 255 and blue > 0:
-            blue -= 5
-        
-        time.sleep(0.001)
-
         
 
 def rainbow_wave(universe, interface):
     lights = []
     rainbow_9_colors = [Colour(255, 0, 0), Colour(255, 127, 0), Colour(255, 255, 0), Colour(0, 255, 0), Colour(0, 0, 255), Colour(75, 0, 130), Colour(143, 0, 255), Colour(255, 0, 255), Colour(255, 0, 127)]
+    states = []
     for i in range(LIGHT_NUMBER):
-        light = DMXLight4Slot(address=ligh_map[i])
+        light = DMXLight4Slot(address=light_map[i])
         # Add the light to a universe
         universe.add_light(light)
         lights.append(light)
 
-    cycle = 0
-    while True:
+    states = []
+    for cycle in range(LINE_NUMBER):
         for i in range(LINE_NUMBER):
             # Change the color of the lights line by line
             for j in range(ROW_NUMBER):
                 lights[i * ROW_NUMBER + j].set_colour(rainbow_9_colors[(i - cycle) % LINE_NUMBER])
 
             # Update the interface's frame to be the universe's current state
-        interface.set_frame(universe.serialise())
+        states.append(universe.serialise())
 
-            # Send an update to the DMX network
-        interface.send_update()
+    states.append(states[0])
+    new_states = interpolate(states, 20)
 
-        time.sleep(0.2)
-        cycle+= 1
+    #print(new_states)
+    while True:
+        for s in new_states:
+            interface.set_frame(s)
+            interface.send_update()
 
-def rainbow(universe, interface):
-    lights = []
-    rainbow_9_colors = [Colour(255, 0, 0), Colour(255, 127, 0), Colour(255, 255, 0), Colour(0, 255, 0), Colour(0, 0, 255), Colour(75, 0, 130), Colour(143, 0, 255), Colour(255, 0, 255), Colour(255, 0, 127)]
-    for i in range(LIGHT_NUMBER):
-        light = DMXLight4Slot(address=ligh_map[i])
-        # Add the light to a universe
-        universe.add_light(light)
-        lights.append(light)
+def interpolate(tab, times):
+    new_tab = []
+    for i in range(len(tab)-1):
+        for j in np.linspace(tab[i], tab[i+1], times, dtype=int).tolist():
+            new_tab.append(j)
+    return new_tab
 
-    for i in range(LINE_NUMBER):
-        # Change the color of the lights line by line
-        for j in range(ROW_NUMBER):
-            lights[i * ROW_NUMBER + j].set_colour(rainbow_9_colors[i])
-
-        # Update the interface's frame to be the universe's current state
-        interface.set_frame(universe.serialise())
-
-        # Send an update to the DMX network
-        interface.send_update()
-
-        time.sleep(0.5 - (15.0 / 1000.0))
-
-
-
-def light_up_by_line(universe, interface):
-    lights = []
-    for i in range(LIGHT_NUMBER):
-        light = DMXLight4Slot(address=ligh_map[i])
-        # Add the light to a universe
-        universe.add_light(light)
-        lights.append(light)
-
-    for i in range(LINE_NUMBER):
-        # Change the color of the lights line by line
-        for j in range(ROW_NUMBER):
-            lights[i * ROW_NUMBER + j].set_colour(WHITE)
-
-        # Update the interface's frame to be the universe's current state
-        interface.set_frame(universe.serialise())
-
-        # Send an update to the DMX network
-        interface.send_update()
-
-        time.sleep(0.5 - (15.0 / 1000.0))
+    
 
 
