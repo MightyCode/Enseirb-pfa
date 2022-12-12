@@ -19,5 +19,7 @@ if __name__ == '__main__':
             pulse(universe, interface)
         elif argv[1] == "dust":
             pulse_bpm(universe, interface, 110)
+        elif argv[1] == "fireball":
+            fireball_circle(universe, interface)
         print("Magic Done")
 

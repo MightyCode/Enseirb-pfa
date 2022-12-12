@@ -42,10 +42,10 @@ DMX_MIN_ADDRESS = 1
 light_map = config.light_map
 
 def light_id(id):
-    return ligh_map[id]
+    return light_map[id]
     
 def light_coord(x, y):
-    return ligh_map[x + y * config.row_number]
+    return light_map[x + y * config.row_number]
 
 
 class DMXLight(ABC):

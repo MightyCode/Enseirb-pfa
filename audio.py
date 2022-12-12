@@ -49,9 +49,6 @@ def live_process():
 
 
 
-
-
-
-tempo('/home/juliench/Téléchargements/Michael Jackson - Billie Jean.mp3')
+tempo('/home/siddhartha/Music/Michael Jackson - Billie Jean.mp3')
 #live_process()
 
