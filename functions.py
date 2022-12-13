@@ -147,7 +147,6 @@ def fireball_circle(universe, interface):
     coords = lambda x, y: light_map[x * ROW_NUMBER + y]
     lights = [DMXLight4Slot(address=coords(x, y)) for x, y in path]
 
-
     for l in lights:
         universe.add_light(l)
 

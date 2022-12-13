@@ -1,8 +1,18 @@
+import interpreter from './interpreter.js';
+import state from './state.js';
+import {rawFrameToRGBArray} from "./utils.js";
+
 // Connect to localhost:5000 server
 const socket = io.connect('http://localhost:5000');
 
 const lights = document.querySelectorAll('.light');
 const lightsArray = new Array(54);
+
+// Find buttons in page
+const playButton = document.querySelector('#play-button');
+const stopButton = document.querySelector('#stop-button');
+const nextButton = document.querySelector('#next-button');
+const previousButton = document.querySelector('#previous-button');
 
 const lightMapping = [
     0, 1, 2,
@@ -33,34 +43,44 @@ lights.forEach(light => {
 
 socket.on('connect', () => {
     console.log('[*] Connected to server');
+
+    // Make a deep copy of state
+    const newState = {...state};
+
+    // Set attributes
+    interpreter.setState(newState);
+    interpreter.setLightMapping(lightMapping);
+    interpreter.setLightsArray(lightsArray);
+});
+
+socket.on('lights_state_reset', () => {
+    // Reset the state
+    interpreter.setState({...state});
 });
 
 socket.on('light_frame', (data) => {
     console.log('[*] Update light status');
+    interpreter.pushFrame(rawFrameToRGBArray(data));
 
-    // data is an ArrayBuffer
-    // Convert to Uint8Array
-    const lightsFrame = new Uint8Array(data);
-
-    // Split it in groups of 4 bytes
-    const lightsFrameGroup = [];
-    for (let i = 0; i < lightsFrame.length; i += 4) {
-        lightsFrameGroup.push(lightsFrame.slice(i, i + 4));
+    if (interpreter.isLiveMode()) {
+        interpreter.step();
     }
-
-    // Convert RGBW to RGB
-    const lightsFrameRGB = lightsFrameGroup.map(group => {
-        const [r, g, b, w] = group;
-
-        const newRed = ((r - w) < 0 ? 0 : (r - w)).toString(16).padStart(2, '0');
-        const newGreen = ((g - w) < 0 ? 0 : (g - w)).toString(16).padStart(2, '0');
-        const newBlue = ((b - w) < 0 ? 0 : (b - w)).toString(16).padStart(2, '0');
-
-        return `#${newRed}${newGreen}${newBlue}`;
-    });
-
-    // Set CSS --light-color property for each light
-    lightsArray.forEach((light, index) => {
-        light.style.setProperty('--light-color', lightsFrameRGB[lightMapping[index]]);
-    });
 });
+
+// Add event listeners to buttons
+playButton.addEventListener('click', () => {
+    interpreter.run();
+});
+
+stopButton.addEventListener('click', () => {
+    interpreter.resetAnimation();
+});
+
+nextButton.addEventListener('click', () => {
+    interpreter.step();
+});
+
+previousButton.addEventListener('click', () => {
+    interpreter.previousStep();
+});
+
