@@ -1,10 +1,21 @@
-
 import numpy as np
 import librosa
 import playsound
 import sounddevice as sd
 from functions import *
 import scipy.signal as signal
+import os
+
+interface = DMXInterface("FT232R")
+
+
+def low_pass_filter(data, samplerate, cutoff_freq):
+    aplha = 1/samplerate * cutoff_freq / (1+(1/samplerate)*cutoff_freq)
+    y = [aplha*data[0][0]]
+    for i in range(1, len(data)):
+        y.append(aplha*data[i][0] + (1-aplha)*y[i-1])
+    return y
+
 
 def tempo(file_name):
     # load the audio file
@@ -13,45 +24,54 @@ def tempo(file_name):
     # compute the beat times
     tempo, beat_times = librosa.beat.beat_track(y=y, sr=sr)
 
-    print("tempo: ", tempo )
+    print("tempo: ", tempo)
     playsound.playsound(file_name, False)
-    with DMXInterface("FT232R") as interface:
-        # Create a universe
-        print("Doing Magic...")
-        universe = DMXUniverse()
-        pulse_bpm(universe, interface, tempo)
+    # playsound with os.system("mpg123 " + file_name) in background
+    # os.system("mpg123 " + file_name + " &")
+    # Create a universe
+    print("Doing Magic...")
+    universe = DMXUniverse()
+    pulse_bpm(universe, interface, tempo)
+
 
 def live_process():
     """
-    process microphone input in real time and call function "pulse" when a beat is detected
+    process microphone input in real time and make a pulse when a peak is detected
     """
     samplerate = 44100
     cutoff_freq = 500
     mic = sd.InputStream(samplerate=samplerate, channels=1)
+
+    universe = DMXUniverse()
+    for i in range(LIGHT_NUMBER):
+        universe.add_light(DMXLight4Slot(address=light_map[i]))
+
     with mic:
         print("Listening...")
+        # create fifo of 100 elements
+        fifo = [0]*100
+        l = 0
+        lights_on = False
         while True:
-            aplha = 1/samplerate * cutoff_freq / (1+(1/samplerate)*cutoff_freq)
             data = mic.read(1024)[0]
-            y = [aplha*data[0][0]]
-            for i in range(1, len(data)):
-                y.append(aplha*data[i][0] + (1-aplha)*y[i-1])
-        
-        # print decibel value
-            print(20*np.log10(np.sqrt(np.mean(np.square(y)))))
-            if 20*np.log10(np.sqrt(np.mean(np.square(y)))) > -10:
-                print("beat detected")
-                with DMXInterface("FT232R") as interface:
-                    # Create a universe
-                    print("Doing Magic...")
-                    universe = DMXUniverse()
-                    pulse(universe, interface, 0.5)
+
+            y = low_pass_filter(data, samplerate, cutoff_freq)
+
+            # add new value to fifo
+            fifo[l % 100] = 20*np.log10(np.sqrt(np.mean(np.square(y))))
+
+            #print(abs(np.mean(fifo)), abs(fifo[l%100]))
+            # if last value is superior to the average of the 100 last values, then a beat is detected
+            if abs(fifo[l % 100]) < abs(np.mean(fifo)/1.3) and not lights_on:
+                print("On")
+                lights_up(universe, interface, WHITE)
+                lights_on = True
+            elif abs(fifo[l % 100]) >= abs(np.mean(fifo)/1.3) and lights_on:
+                lights_down(universe, interface, WHITE)
+                print("Off", l)
+                lights_on = False
+            l += 1
 
 
-
-
-
-
-tempo('/home/juliench/Téléchargements/Michael Jackson - Billie Jean.mp3')
-#live_process()
-
+#tempo('/home/juliench/Téléchargements/Michael Jackson - Billie Jean.mp3')
+live_process()
