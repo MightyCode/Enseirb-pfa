@@ -3,7 +3,7 @@ from sys import *
 
 
 if __name__ == '__main__':
-    with DMXInterface("FT232R") as interface:
+    with DMXInterface("SIMULATOR") as interface:
         # Create a universe
         print("Doing Magic...")
         universe = DMXUniverse()
@@ -21,5 +21,7 @@ if __name__ == '__main__':
             pulse_bpm(universe, interface, 110)
         elif argv[1] == "nico":
             trans_flag(universe, interface)
+        elif argv[1] == "fireball":
+            fireball_circle(universe, interface)
         print("Magic Done")
 
