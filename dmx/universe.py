@@ -35,6 +35,8 @@ from typing import List, Set
 from dmx.constants import DMX_MAX_ADDRESS, DMX_EMPTY_BYTE
 from dmx.light import DMXLight
 
+universe_map = []
+
 
 class DMXUniverse:
     """Represents a DMX universe."""
@@ -43,6 +45,7 @@ class DMXUniverse:
         """Initialise the DMX universe."""
         self._lights = set()  # type: Set[DMXLight]
         self._id = universe_id
+        universe_map.append(self)
 
     def add_light(self, light: DMXLight):
         """Add a light to the universe."""
@@ -80,9 +83,10 @@ class DMXUniverse:
         Creates a frame which will update all lights to their current state.
         """
         frame = [DMX_EMPTY_BYTE] * DMX_MAX_ADDRESS
-        for light in self._lights:
-            serialised_light = light.serialise()
-            for address in range(light.start_address, light.end_address + 1): # TODO: Check this
-                frame[address] |= serialised_light[address - light.start_address]
+        for u in universe_map:
+            for light in u._lights:
+                serialised_light = light.serialise()
+                for address in range(light.start_address, light.end_address + 1): # TODO: Check this
+                    frame[address] |= serialised_light[address - light.start_address]
 
         return frame

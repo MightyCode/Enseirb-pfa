@@ -3,10 +3,14 @@ from sys import *
 
 
 if __name__ == '__main__':
-    with DMXInterface("SIMULATOR") as interface:
+    with DMXInterface("FT232R") as interface:
+
         # Create a universe
         print("Doing Magic...")
         universe = DMXUniverse()
+        for i in range(LIGHT_NUMBER):
+            universe.add_light(DMXLight4Slot(address=light_map[i]))
+            
         if argv[1] == "tamise":
             tamise(universe, interface)
         elif argv[1] == "strobe":
