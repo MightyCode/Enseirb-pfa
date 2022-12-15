@@ -40,8 +40,6 @@ if __name__ == "__main__":
         UP, RIGHT, DOWN, LEFT = range(4)
 
         direction: int = UP
-
-        universe = DMXUniverse()
     
         # Create a game loop
         while True:
@@ -61,9 +59,19 @@ if __name__ == "__main__":
             print(direction)
             clock.tick(300)
 
+            universe = DMXUniverse()
+
             for i in range(NUMBER):
                 light = DMXLight4Slot(address=light_map[i])
-                light.set_colour(Colour(200, 50, 0, 100))
+                if direction == UP:
+                    light.set_colour(Colour(200, 50, 0, 100))
+                elif direction == DOWN:
+                    light.set_colour(Colour(0, 50, 0, 100))
+                elif direction == LEFT:
+                    light.set_colour(Colour(0, 200, 50, 100))
+                elif direction == RIGHT:
+                    light.set_colour(Colour(50, 0, 200, 100))
+
                 # Add the light to a universe
                 universe.add_light(light)
                 lights.append(light)
@@ -73,7 +81,6 @@ if __name__ == "__main__":
 
             # Send an update to the DMX network
             interface.send_update()
-            light_test(universe, interface)
 
         pygame.quit()
 

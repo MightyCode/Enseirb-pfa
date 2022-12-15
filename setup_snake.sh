@@ -30,4 +30,4 @@ pip install -U setuptools
 pip install -U -r requirements.txt
 
 # Run the main script file
-python ./main.py "$@"
+python ./snake_main.py "$@"
