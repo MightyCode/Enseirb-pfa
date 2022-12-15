@@ -106,7 +106,7 @@ elif system() == "Windows":
         _WIN32.CloseHandle(timer_handle)
 
 
-class SIMULATOR( DMXDriver):
+class SIMULATOR(DMXDriver):
     """A DMX driver design for the University of York Serial-to-DMX usb adapter based on the FT232R."""
 
     _BITS_8 = 8
