@@ -8,6 +8,7 @@ RIGHT = 1
 DOWN = 2
 LEFT = 3
 
+
 class snake:
     def __init__(self, nb_rows, nb_columns, nb_apples) -> None:
         
@@ -104,8 +105,3 @@ class snake:
                 
             
                 
-            
-
-        
-            
-        
