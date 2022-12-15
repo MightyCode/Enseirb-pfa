@@ -25,6 +25,8 @@ class FallingBlocks:
         new_falling_blocks = []
         for block in self.falling_blocks:
             x, y = block
+            if y+1 >= self.height:
+                continue
             if self.grid[x][y+1] == (0,0,0,0):
                 self.grid[x][y+1] = self.grid[x][y]
                 self.grid[x][y] = (0,0,0,0)
