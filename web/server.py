@@ -1,12 +1,9 @@
 from flask import Flask
-from pathlib import Path
 import socketio
 import eventlet
 
 flask_app = Flask(__name__)
 sio = socketio.Server(cors_allowed_origins='*')
-server_root = Path(__file__).parent
-
 
 @flask_app.route('/')
 def index():
