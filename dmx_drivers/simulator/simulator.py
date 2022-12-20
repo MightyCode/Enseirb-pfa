@@ -129,9 +129,13 @@ class SIMULATOR(DMXDriver):
             byte_data = bytes(data)
         except TypeError:
             byte_data = self.encoder.encode(data)
+
+        wait_ms(10)
+        wait_us(8)
         # Frame body
         # Device.write(self, b"\x00" + byte_data)
         self._client.emit('light_frame', byte_data)
+        wait_ms(15)
 
     def _set_break_on(self):
         pass

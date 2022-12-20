@@ -11,8 +11,6 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
-
-    --light-color: #000000;
 }
 
 .room {
@@ -28,6 +26,8 @@ html, body {
     -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
     -moz-box-sizing: border-box; /* Firefox, other Gecko */
     box-sizing: border-box; /* Opera/IE 8+ */
+
+    border-radius: 1rem;
 }
 
 .light {
@@ -35,7 +35,10 @@ html, body {
     height: 2rem;
 
     border: 1px solid black;
+    --light-color: #000000;
     background-color: var(--light-color);
+
+    border-radius: 0.3rem;
 }
 
 .light-row {
@@ -68,8 +71,10 @@ footer {
     flex-direction: row;
     justify-content: space-evenly;
 
-    padding: 1% 0;
     background-color: #f0f0f0;
+
+    border-radius: 0.5rem;
+    overflow: hidden;
 }
 
 footer svg {
@@ -78,8 +83,9 @@ footer svg {
 }
 
 footer > .button {
-    padding: 0.5rem;
-    border-radius: 0.5rem;
+    padding: 1rem 0.5rem;
+
+    width: 25%;
 
     display: flex;
     justify-content: center;
@@ -119,4 +125,8 @@ header > span {
 .side-column {
     height: 100%;
     width: 25%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

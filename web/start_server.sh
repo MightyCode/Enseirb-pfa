@@ -14,20 +14,29 @@ IFS=$'\n\t'
 if [ ! -d "venv" ]; then
     echo "Virtual environment not found. Creating..."
     python3 -m venv venv
+
+    # Activate virtual environment
+    source venv/bin/activate
+
+    # Upgrade pip
+    pip install -U pip
+
+    # Pip talks mad shit if I don't install those first
+    pip install -U ninja
+    pip install -U setuptools
+
+    # Install dependencies
+    pip install -U -r requirements.txt
 fi
+
+# Build typescript files to javascript
+cd typescript/
+npm i # Install dependencies
+npm run compile # Compile typescript files
+cd ..
 
 # Activate virtual environment
 source venv/bin/activate
-
-# Upgrade pip
-pip install -U pip
-
-# Pip talks mad shit if I don't install those first
-pip install -U ninja
-pip install -U setuptools
-
-# Install dependencies
-pip install -U -r requirements.txt
 
 # Run the server
 python ./server.py
