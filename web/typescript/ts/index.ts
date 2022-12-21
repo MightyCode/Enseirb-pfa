@@ -1,5 +1,7 @@
 import LightsManager from "./lightsManager.js";
 import AnimationManager from "./animationManager.js";
+import ThemeManager from "./themeManager.js";
+import ILight from "./interfaces/ILight.js";
 
 // Connect to localhost:5000 server
 // @ts-ignore - SocketIO is imported in the HTML file
@@ -12,6 +14,9 @@ const nextButton = document.querySelector('#next-button');
 const previousButton = document.querySelector('#previous-button');
 
 const lightInformations = document.querySelector('#light-informations');
+const themeSwitch = document.querySelector('#theme-switch');
+
+const themeManager = new ThemeManager(themeSwitch as HTMLInputElement);
 
 const lightMapping = [
     0, 1, 2,
@@ -34,7 +39,7 @@ const lightMapping = [
     51, 52, 53
 ];
 
-const lightManager = new LightsManager(document);
+const lightManager = new LightsManager(document, displayLightInformations);
 lightManager.mapping = lightMapping;
 
 const animationManager = new AnimationManager(lightManager);
@@ -64,3 +69,31 @@ socket.on('light_frame', (data) => {
 playButton.addEventListener('click', () => {
     animationManager.runAnimation();
 });
+
+// #theme-switch is a checkbox input
+themeSwitch.addEventListener('click', () => {
+    themeManager.switchTheme();
+});
+
+stopButton.addEventListener('click', () => {
+    animationManager.loopMode();
+    animationManager.resetAnimation();
+});
+
+function displayLightInformations(light: ILight) {
+    // Format: #RRGGBBWW
+    const rgbwString = light.rgbwString;
+
+    // Split the RGBW string into an array
+    const rgbwArray = rgbwString.split('#')[1].match(/.{1,2}/g);
+
+    lightInformations.innerHTML = `
+        <span># ${light.id}</span>
+        <span>RGBW: ${light.rgbwString}</span>
+        <span>R: ${rgbwArray[0]}</span>
+        <span>G: ${rgbwArray[1]}</span>
+        <span>B: ${rgbwArray[2]}</span>
+        <span>W: ${rgbwArray[3]}</span>
+        <span>RGB: ${light.rgbString}</span>
+    `;
+}
