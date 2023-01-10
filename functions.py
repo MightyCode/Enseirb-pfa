@@ -81,6 +81,18 @@ def tamise(universe, interface):
     # Send an update to the DMX network
     interface.send_update()
     #light_test(universe, interface)
+
+def white(universe, interface):
+    lights = universe.get_lights()
+    for l in lights:
+        l.set_colour(Colour(150, 150, 100, 255))
+
+        # Update the interface's frame to be the universe's current state
+    interface.set_frame(universe.serialise())
+
+    # Send an update to the DMX network
+    interface.send_update()
+    #light_test(universe, interface)
     
 def light_test(universe, interface):
     
