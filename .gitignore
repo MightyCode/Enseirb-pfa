@@ -131,3 +131,6 @@ dmypy.json
 __pycache__/
 node_modules/
 web/static/js/*.js
+
+.scannerwork/
+sonar-project.properties
