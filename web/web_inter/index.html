@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Web interface</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="https://kit.fontawesome.com/f726544e8a.js" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        
+        <header>
+            <nav class="mininavigation">
+            <a class="tab-links active-link" onclick="opentab('newproj')">Nouveau projet</a>
+            </nav>
+            <nav class="navigation">    
+                <a class="tab-links" onclick="opentab('save')">Sauvegarder&nbsp;&nbsp;&nbsp;</a>
+                <a class="tab-links" onclick="opentab('importer')">Importer</a>
+                <a class="tab-links" onclick="opentab('editproj')">Editer projet</a>
+                <a class="tab-links" onclick="opentab('editlight')">Edition lumières</a><br><br>
+                <a class="tab-links" onclick="opentab('loadproj')">Charger projet</a>
+                <a class="tab-links" onclick="opentab('export')">Exporter</a>
+                <a class="tab-links" onclick="opentab('vis')">Visualiser &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                <a class="tab-links" onclick="opentab('editen')">Edition enceintes</a>
+            </nav>
+            <nav class="mininavigation">
+                <a class="tab-links" onclick="opentab('biblio')">Bibliothèques d'effets</a>
+            </nav>
+            <nav class="mininavigation">
+                <a class="tab-links" onclick="opentab('delete')" style="border-color: brown;">Supprimer projet</a>
+            </nav>
+        </header>
+    
+        <div id="main">
+            
+                <div class="tab-content active-tab" id="newproj">
+                    <h1 class="sub-title">Nouveau projet</h1>
+                    <p>Informations générales.</p>
+
+                    <div class="container">
+                    <form>
+                    <div class="row">
+                        <div class="col-25">
+                        <label for="fname">Nom affiché : </label>
+                        </div>
+                        <div class="col-75">
+                        <input type="text" id="fname" placeholder="Nom .." name="fname">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-25">
+                        <label for="lname">Nombre lumières : </label>
+                        </div>
+                        <div class="col-75">
+                        <input type="number" id="lname" placeholder="Nombre ..">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-25">
+                        <label for="country">Nombre enceintes</label>
+                        </div>
+                        <div class="col-75">
+                            <input type="number" id="country" placeholder="Nombre ..">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-25">
+                        <label for="myfile">Son joué :</label>
+                        </div>
+                        <div class="col-75">
+                            
+                            <input type="file" id="actual-btn" hidden/>
+
+                            <!-- our custom upload button -->
+                            <label class="btn" for="actual-btn"><i class="fa-solid fa-upload"></i></label>
+
+                            <!-- name of file chosen -->
+                            <span id="file-chosen">No file chosen</span>
+                        </div>
+                        
+                    </div>
+                    <br>
+                    <div class="row">
+                        <input type="button" value="Submit" class="tab-links" onclick="opentab('audiovis')" >
+                    </div>
+                    </form>
+                    </div>
+                </div>
+
+
+                <!-- -----------------------------audio vis---------------- --> 
+
+
+                <div class="tab-content" id="audiovis">
+                    <div class="row1">
+                        <div class="about-col-1">
+                        <h1 class="sub-title">Projet :</h1>
+                        <span id="project_name">Informations générales.</span>
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/2.3.0/wavesurfer.min.js"></script>
+                        <div class="audio-container">
+                            <span class="track-name" id="track-name">The name of the track</span>
+                  
+                            <div class="audio"></div>
+                  
+                            <div class="buttons">
+                            <span class="play-btn btn">
+                                <i class="fas fa-play"></i>
+                                <i class="fas fa-pause"></i>
+                            </span>
+                    
+                            <span class="stop-btn btn">
+                                <i class="fas fa-stop"></i>
+                            </span>
+                    
+                            <span class="mute-btn btn">
+                                <i class="fas fa-volume-up"></i>
+                                <i class="fas fa-volume-mute"></i>
+                            </span>
+                    
+                            <input
+                                type="range"
+                                min="0"
+                                max="1"
+                                step="0.1"
+                                value="0.5"
+                                class="volume-slider"
+                            />
+                            </div>
+                            <script src="https://unpkg.com/wavesurfer.js"></script>
+                      <script src="main.js"></script> 
+                
+                      </div></div>
+                      <div class="about-col-2">
+                        <h1 class="sub-title">Drag and drop</h1>
+                        <span id="project_name">TODO</span>
+                        <div class="resize-drag">
+                            Test
+                          </div>
+                          <script>
+                            import interact from 'https://cdn.interactjs.io/v1.10.17/interactjs/index.js' 
+                            interact('.item').draggable({
+                            listeners: {
+                                move (event) {
+                                    console.log(event.pageX,
+                                            event.pageY)
+                                    }
+                                }
+                            })
+                            interact('.resize-drag')
+  .resizable({
+    // resize from all edges and corners
+    edges: { left: true, right: true, bottom: true, top: true },
+
+    listeners: {
+      move (event) {
+        var target = event.target
+        var x = (parseFloat(target.getAttribute('data-x')) || 0)
+        var y = (parseFloat(target.getAttribute('data-y')) || 0)
+
+        // update the element's style
+        target.style.width = event.rect.width + 'px'
+        target.style.height = event.rect.height + 'px'
+
+        // translate when resizing from top or left edges
+        x += event.deltaRect.left
+        y += event.deltaRect.top
+
+        target.style.transform = 'translate(' + x + 'px,' + y + 'px)'
+
+        target.setAttribute('data-x', x)
+        target.setAttribute('data-y', y)
+        target.textContent = Math.round(event.rect.width) + '\u00D7' + Math.round(event.rect.height)
+      }
+    },
+    modifiers: [
+      // keep the edges inside the parent
+      interact.modifiers.restrictEdges({
+        outer: 'parent'
+      }),
+
+      // minimum size
+      interact.modifiers.restrictSize({
+        min: { width: 100, height: 50 }
+      })
+    ],
+
+    inertia: true
+  })
+  .draggable({
+    listeners: { move: window.dragMoveListener },
+    inertia: true,
+    modifiers: [
+      interact.modifiers.restrictRect({
+        restriction: 'parent',
+        endOnly: true
+      })
+    ]
+  })
+                        </script>
+
+                      </div>
+                      
+                    </div>
+                  
+                      
+            </div>
+                <div class="tab-content" id="save">    
+                </div>
+                <div class="tab-content" id="importer">    
+                </div>
+
+                <!-- ---------------------------------Editer projet------------------------------ -->
+
+
+                <div class="tab-content" id="editproj"> 
+                    <h1 class="sub-title">Editer projet</h1>
+                    <p>Informations générales.</p>
+
+                    <div class="container">
+                    <form>
+                    <div class="row">
+                        <div class="col-25">
+                        <label for="fname">Nom affiché : </label>
+                        </div>
+                        <div class="col-75">
+                        <input type="text" id="fname" placeholder="Nom ..">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-25">
+                        <label for="lname">Nombre lumières : </label>
+                        </div>
+                        <div class="col-75">
+                        <input type="number" id="lname" placeholder="Nombre ..">
+                        <button type="submit" class="btn btn2">Edition lumières</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-25">
+                        <label for="country">Nombre enceintes</label>
+                        </div>
+                        <div class="col-75">
+                            <input type="number" id="country" placeholder="Nombre ..">
+                            <button type="submit" class="btn btn2">Edition enceintes</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-25">
+                        <label for="myfile">Son joué :</label>
+                        </div>
+                        <div class="col-75">
+                            
+                            <input type="file" id="actual-btn" hidden/>
+
+                            <!-- our custom upload button -->
+                            <label class="btn" for="actual-btn"><i class="fa-solid fa-upload"></i></label>
+
+                            <!-- name of file chosen -->
+                            <span id="file-chosen">No file chosen</span>
+                        </div>
+                        
+                    </div>
+                    <br>
+                    <div class="row">
+                        <input type="submit" value="Submit">
+                    </div>
+                    </form>
+                    </div>   
+                </div>
+
+
+
+                <div class="tab-content" id="loadproj"> 
+                </div>
+                <div class="tab-content" id="editlight">    
+                </div>
+                <div class="tab-content" id="export">    
+                </div>
+                <div class="tab-content" id="vis">
+                       
+                </div>
+                <div class="tab-content" id="editen">  
+                    
+                </div>
+                <div class="tab-content" id="biblio">    
+                </div>
+                <div class="tab-content" id="delete">    
+                </div>
+            
+        </div>
+
+        
+        <script>
+            
+            
+            const actualBtn = document.getElementById('actual-btn');
+
+            const fileChosen = document.getElementById('file-chosen');
+            
+
+            actualBtn.addEventListener('change', function(){
+                fileChosen.textContent = this.files[0].name
+                
+            })
+
+
+            var tablinks=document.getElementsByClassName("tab-links");
+            var tabcontent=document.getElementsByClassName("tab-content");
+
+            function opentab(tab){
+                for(tablink of tablinks){
+                    tablink.classList.remove("active-link");
+                    
+                }
+                for(tabcontents of tabcontent ){
+                    tabcontents.classList.remove("active-tab");
+                }
+                event.currentTarget.classList.add("active-link");
+                document.getElementById(tab).classList.add("active-tab");
+            }
+
+
+
+        </script>
+    </body>
+</html>

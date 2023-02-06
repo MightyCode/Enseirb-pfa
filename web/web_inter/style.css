@@ -1,0 +1,375 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+::selection {
+    background: rgba(0, 0, 0, .2);
+}
+
+html{
+    scroll-behavior: smooth;
+}
+
+body {
+    background: #131313;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+header {  
+    background-color: #7b7a7a;
+    position: absolute;
+    margin-top: 15px;
+    margin-left: 50px;
+    
+    top: 0;
+    left: 0;
+    width: 1400px;
+    padding: 10px 100px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    z-index: 0;
+    border-radius: 20px;
+    
+    
+}
+.mininavigation{
+    background-color:#7b7a7a;
+    margin-left: 00px;
+    border-radius: 20px;
+    width: 450px;   
+    padding: 10px 0px;
+    
+}
+.mininavigation a{
+    text-decoration: none;
+    color: #000000;
+    padding: 0px 0px;
+    border-radius: 10px;
+    margin: 0 0px;
+    font-weight: 600;
+}
+.navigation{
+    
+    margin-right: 0px;
+    border-radius: 20px;
+    width: 100%;
+    
+    padding: 0px 10px;
+    background-color: #7b7a7a;
+}
+.navigation a {
+    text-decoration: none;
+    color: #000000;
+    padding: 0px 10px;
+    border-radius: 5px;
+    margin-top: 100px;
+    font-weight: 600;
+}
+
+.navigation a:active {
+    background: #292828;
+    color: #fff;
+}
+
+.mininavigation a {
+    text-decoration: none;
+    color: #000000;
+    padding: 0px 10px;
+    border-radius: 5px;
+    margin: 0 0px;
+    font-weight: 600;
+}
+
+.mininavigation a:active {
+    background: #292828;
+    color: #fff;
+}
+
+#main{
+    margin-top: 110px;
+    margin-left: 20px;
+    position: relative;
+    border-radius: 20px;
+    background-color: #7b7a7a;
+    background-size:cover;
+    padding: 10px 30px;
+    color: #000000;
+    width: 1450px;
+    border: 3px solid #000000;
+}
+
+.tab-links{
+    margin-right: 0px;
+    cursor: pointer;
+    position: relative;
+    border-color: rgb(0, 0, 0);
+    border-style: solid;
+    
+    
+}
+
+.tab-links::after{
+    content: '';
+    width: 0;
+    height: 3px;
+    background: #000000;
+    position: absolute;
+    left: 0;
+    bottom: 0px;
+    transition: 0.5s;
+}
+
+.tab-links.active-link::after{
+    width: 100%;
+}
+
+
+
+.tab-content{
+    display: none;
+}
+
+.tab-content.active-tab{
+    display: block;
+}
+
+form input, form textarea{
+    width: 100%;
+    border: 0;
+    outline: none;
+    background: #ababab;
+    padding: 15px;
+    margin: 15px 0;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 6px;
+}
+
+
+
+input[type=text], select, textarea {
+    width: 400px;
+    padding: 12px;
+    border: 3px solid #000000;
+    border-radius: 4px;
+    resize: vertical;
+  }
+
+  input[type=number], select, textarea {
+    width: 200px;
+    padding: 12px;
+    border: 3px solid #000000;
+    border-radius: 4px;
+    resize: vertical;
+  }
+
+  input[type=file], select, textarea {
+    width: 100px;
+    padding: 12px;
+    border: 1px solid #000000;
+    border-radius: 4px;
+    resize: vertical;
+  }
+  
+  label {
+    padding: 12px 12px 12px 0;
+    display: inline-block;
+  }
+
+  label i{
+    color: #000000;
+  }
+  
+  input[type=submit] {
+    background-color: #f8f8f8;
+    color: #45a049;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    float: left;
+    width: 150px;
+  }
+  input[type=button] {
+    background-color: #f8f8f8;
+    color: #45a049;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    float: left;
+    width: 150px;
+  }
+  
+  input[type=submit]:hover {
+    background-color: #45a049;
+    color: #fff;
+  }
+
+  input[type=button]:hover {
+    background-color: #45a049;
+    color: #fff;
+  }
+  
+  .container {
+    border-radius: 5px;
+    background-color: #7b7a7a;
+    padding: 20px;
+  }
+  
+  .col-25 {
+    float: left;
+    width: 25%;
+    margin-top: 6px;
+  }
+  
+  .col-75 {
+    float: left;
+    width: 75%;
+    margin-top: 6px;
+  }
+  
+  /* Clear floats after the columns */
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+
+  .btn.btn2{
+    color: #000000;
+  }
+
+  .btn.btn2:hover{
+    background-color: #7b7a7a;
+  }
+  .btn{
+    
+    width: fit-content;
+    border: 3px solid #000000;
+    padding: 5px 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #fff;
+    transition: background 0.5s;
+    
+    margin-left: 20px;
+}
+
+.btn:hover{
+    background: #45a049;
+}
+
+.audio-container {
+    width: 700px;
+    box-shadow: 0 4px 8px -4px rgba(0, 0, 0, 0.3);
+    font-family: "Roboto", sans-serif;
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #131313;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    height: 240px;
+  }
+  
+  .audio-container .audio {
+    background: #222;
+    width: 100%;
+    margin-top: 50px;
+    height: 130px;
+    margin-bottom: 20px;
+  }
+  
+  .audio-container .track-name {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 8px 32px;
+    border-radius: 10px;
+    font-size: 13px;
+  }
+  
+
+
+.a:hover {
+    background: #292828;
+    color: #fff;
+}
+  
+  .audio-container .volume-slider {
+    width: 200px;
+  }
+  
+  .audio-container .buttons .play-btn .fa-pause {
+    display: none;
+  }
+  
+  .audio-container .buttons .play-btn.playing .fa-pause {
+    display: inline-block;
+  }
+  
+  .audio-container .buttons .play-btn.play-btn.playing .fa-play {
+    display: none;
+  }
+  
+  .audio-container .buttons .mute-btn .fa-volume-mute {
+    display: none;
+  }
+  
+  .audio-container .buttons .mute-btn.muted .fa-volume-mute {
+    display: inline-block;
+  }
+  
+  .audio-container .buttons .mute-btn.muted .fa-volume-up {
+    display: none;
+  }
+
+
+  .row1{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.about-col-1{
+  border-radius: 20px;
+    background-color: #0000006a;
+    font-size:17px;
+    flex-basis:74%;
+    
+}
+
+
+.about-col-2{
+    border-radius: 20px;
+    background-color: #0000006a;
+    font-size:17px;
+    flex-basis: 25%;
+}
+
+.resize-drag {
+  width: 120px;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 1rem;
+  background-color: #29e;
+  color: white;
+  font-size: 20px;
+  font-family: sans-serif;
+
+  touch-action: none;
+
+  /* This makes things *much* easier */
+  box-sizing: border-box;
+}
