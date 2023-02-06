@@ -5,6 +5,7 @@ import sounddevice as sd
 from functions import *
 import scipy.signal as signal
 import os
+import threading
 
 interface = DMXInterface("FT232R")
 

@@ -3,7 +3,7 @@ from sys import *
 
 
 if __name__ == '__main__':
-    with DMXInterface("SIMULATOR") as interface:
+    with DMXInterface("FT232R") as interface:
 
         # Create a universe
         print("Doing Magic...")

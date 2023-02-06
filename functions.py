@@ -1,7 +1,7 @@
 from dmx import Colour, DMXInterface, DMXUniverse, DMXLight4Slot
 from dmx.colour import *
 from dmx.light import *
-
+import threading
 import time
 import numpy as np
 import random
@@ -9,11 +9,13 @@ import random
 LIGHT_NUMBER = 54
 LINE_NUMBER = 9
 ROW_NUMBER = 6
-
+lock = threading.Lock()
 def lights_up(universe, interface, color):
+    
+    lock.acquire(blocking=True, timeout=-1)
     lights = universe.get_lights()
     updates = []
-    for i in np.around(np.arange(0.2, 1.2, 0.2)):
+    for i in np.around(np.arange(0.2, 1.2, 0.4)):
         for l in lights:
             l.set_colour(Colour(int(i*color[0]), int(i*color[1]), int(i*color[2]), int(i*color[3])))
         updates.append(universe.serialise())
@@ -21,11 +23,13 @@ def lights_up(universe, interface, color):
     for u in updates:
         interface.set_frame(u)
         interface.send_update()
+    lock.release()
 
 def lights_down(universe, interface, color):
+    lock.acquire(blocking=True, timeout=-1)
     lights = universe.get_lights()
     updates = []
-    for i in np.around(np.arange(0.8, -0.2, -0.2), 1):
+    for i in np.around(np.arange(0.8, -0.2, -0.4), 1):
         for l in lights:
             l.set_colour(Colour(int(i*color[0]), int(i*color[1]), int(i*color[2]), int(i*color[3])))
         updates.append(universe.serialise())
@@ -33,6 +37,7 @@ def lights_down(universe, interface, color):
     for u in updates:
         interface.set_frame(u)
         interface.send_update()
+    lock.release()
 
 
 
