@@ -9,48 +9,61 @@ function load(){
     button.disabled = false;
 }
 
+
 function tests(){
-    // create a synth using an Oscillator
-    const synth = new Tone.Synth().toDestination();
-
-    // play a note with the synth
-    synth.triggerAttackRelease("C4", "8n");
-
     // create a player from a URL
-    const player = new Tone.Player("mp3/cuicui.mp3").toDestination();
+    var speakersPosition = [
+        [-2, 5, 0],
+        [0, 5, 0],
+        [2, 5, 0],
 
-    setTimeout(() => player.start(), 2000);
-    // start playing the sample
+        [-2, -5, 0],
+        [0, -5, 0],
+        [2, -5, 0],
 
-    /*
+        [-5, 2, 0],
+        [-5, -2, 0],
 
-    // create two Panner3D nodes for the speakers
-    const speaker1 = new Tone.Panner3D().toDestination();
-    console.log(speaker1);
-    speaker1.setPosition(-1, 0, 0);
+        [5, 2, 0],
+        [5, -2, 0],
+    ]
 
-    const speaker2 = new Tone.Panner3D().toDestination();
-    speaker2.setPosition(1, 0, 0);
+    var speakers = [];
+    for (var i = 0; i < 9; ++i){
+        speakers.push(
+            new Tone.Panner3D({
+                panningModel: "HRTF",
+                positionX : speakersPosition[i][0],
+                positionY : speakersPosition[i][1],
+                positionZ : speakersPosition[i][2],
+            }).toDestination()
+        );
+    }
 
-    const player = new Tone.Player("mp3/beeehhhh.mp3");
-    // load audio files into Tone.js AudioBuffers
-    const buffer1 = new Tone.ToneAudioBuffer("mp3/beeehhhh.mp3").load();
-    const buffer2 = new Tone.ToneAudioBuffer("mp3/cuicui.mp3").load();
+    function createPlayerPlusPanner(url, speakerId) {
+        const player = new Tone.Player({
+            url,
+            loop: true,
+        }).connect(speakers[speakerId]);
 
-    buffer1.connect
+        setTimeout(() => player.start(), 2000);
 
-    // start playing the audio files from the speakers
-    buffer1.connect(speaker1).start(0);
-    buffer2.connect(speaker2).start(0);
+        console.log("Play " + url)
+    }
 
-    // set the initial position of the virtual listener
-    const listener = Tone.Listener.setPosition(0, 0, 0);
+    createPlayerPlusPanner("mp3/cuicui.mp3", 0);
+    
+    function setRotation(angle) {
+        document.getElementById("orientationLabel").innerText = angle;
 
-    // move the listener to a new position
-    const moveListener = (x, y, z) => {
-        listener.setPosition(x, y, z);
-    };
+        Tone.Listener.forwardX.value = Math.sin(angle);
+        Tone.Listener.forwardY.value = 0;
+        Tone.Listener.forwardZ.value = -Math.cos(angle);
+    }
+    
+    Tone.Listener.positionX = 0;
+    Tone.Listener.positionY = 0;
+    Tone.Listener.positionZ = 0;
 
-    // Example usage: move the listener to (1, 2, 3) after 2 seconds
-    setTimeout(() => moveListener(1, 2, 3), 2000);*/
+    document.getElementById("orientation").addEventListener("input", (e) => setRotation(parseFloat(e.target.value)));
 }
