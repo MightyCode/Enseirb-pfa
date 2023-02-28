@@ -1,4 +1,4 @@
-from interact import *
+from dmx.interact import *
 
 def pulse(universe, interface, duration):
     lights_up(universe, interface, WHITE.serialise())
@@ -19,11 +19,11 @@ def strobe(universe, interface):
 
 
 def tamise(universe, interface):
-    lights_up(universe, interface, Colour(200, 50, 0, 100))
+    lights_up(universe, interface, Colour(200, 50, 0, 100).serialise(), 10)
 
 
 def white(universe, interface):
-    lights_up(universe, interface, Colour(150, 150, 100, 255))
+    lights_up(universe, interface, Colour(150, 150, 100, 255).serialise(), 10)
     
 def light_test(universe, interface):
     

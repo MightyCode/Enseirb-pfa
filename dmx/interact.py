@@ -1,5 +1,7 @@
-from colour import *
-from light import *
+from dmx.colour import *
+from dmx.light import *
+from dmx.universe import *
+from dmx.interface import *
 import threading
 import time
 import numpy as np
@@ -20,12 +22,12 @@ def set_lights_color(lights, color):
 
 def interpolate(frames, times):
     new_frames = []
-    for i in range(len(tab) - 1):
-        for j in np.linspace(frame[i], tab[i + 1], times, dtype=int).tolist():
+    for i in range(len(frames) - 1):
+        for j in np.linspace(frames[i], frames[i + 1], times, dtype=int).tolist():
             new_frames.append(j)
     return new_frames
 
-def lights_up(universe, interface, color):
+def lights_up(universe, interface, color, times):
     
     lights = universe.get_lights()
     updates = []
@@ -33,13 +35,13 @@ def lights_up(universe, interface, color):
         set_universe_color(universe, Colour(int(i*color[0]), int(i*color[1]), int(i*color[2]), int(i*color[3])))
         updates.append(universe.serialise())
     
-    updates = interpolate(updates, 1)
+    updates = interpolate(updates, times)
     
     for u in updates:
         interface.set_frame(u)
         interface.send_update()
 
-def lights_down(universe, interface, color):
+def lights_down(universe, interface, color, times):
     lights = universe.get_lights()
     updates = []
     
@@ -47,7 +49,7 @@ def lights_down(universe, interface, color):
         set_universe_color(universe, Colour(int(i*color[0]), int(i*color[1]), int(i*color[2]), int(i*color[3])))
         updates.append(universe.serialise())
     
-    updates = interpolate(updates, 1)
+    updates = interpolate(updates, times)
     
     for u in updates:
         interface.set_frame(u)
