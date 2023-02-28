@@ -1,6 +1,7 @@
 <template>
-    <div id="main">
-        <p v-if="!file">Drag a file here or click to upload</p>
+    <div id="file-selector" @dragenter="dragAndDropHandler" @dragover="dragAndDropHandler" @drop="dragAndDropHandler"
+        @dragleave="dragAndDropHandler" @click="clickHandler">
+        <p v-if="!file">Drag a file or click to upload</p>
         <p v-else>{{ file.name }}</p>
     </div>
 </template>
@@ -11,46 +12,58 @@ export default {
     data() {
         return {
             file: null,
+            audio: null
         };
     },
     mounted() {
-        const main = document.getElementById('main');
-        const handler = e => {
-            e.preventDefault();
-            e.stopPropagation();
+
+    },
+    methods: {
+        dragAndDropHandler(event) {
+            event.preventDefault();
+            event.stopPropagation();
 
             // Change background color
-            main.style.backgroundColor = '#000000';
+            fileSelector.style.backgroundColor = '#000000';
 
             // Recover the file
-            if (e.dataTransfer.items) {
-                [...e.dataTransfer.items].forEach((item) => {
+            if (event.dataTransfer.items) {
+                [...event.dataTransfer.items].forEach((item) => {
                     if (item.kind === 'file') {
                         this.file = item.getAsFile();
+                        this.audio = null;
                     }
                 });
             } else {
-                [...e.dataTransfer.files].forEach((file) => {
+                [...event.dataTransfer.files].forEach((file) => {
                     this.file = file;
+                    this.audio = null;
                 });
             }
-        };
-        
-        // Handle drag and drop
-        main.addEventListener('dragenter', handler);
-        main.addEventListener('dragover', handler);
-        main.addEventListener('drop', handler);
-        main.addEventListener('dragleave', handler);
+        },
+
+        clickHandler(event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'audio/*';
+            input.onchange = () => {
+                this.file = input.files[0];
+                this.audio = null;
+            };
+            input.click();
+        },
     }
 }
 </script>
 
 <style scoped>
-
-#main {
+#file-selector {
     width: 100%;
     height: 100%;
-    
+
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -58,5 +71,16 @@ export default {
 
     border: 4px dashed #000000;
     border-radius: 15px;
+
+    transition-duration: 0.4s;
+}
+
+#file-selector>p {
+    font-weight: bold;
+}
+
+#file-selector:hover {
+    background-color: #5b5a5a;
+    cursor: pointer;
 }
 </style>
