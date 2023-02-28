@@ -2,7 +2,7 @@
     <header>
         <div>
             <div>
-                <a class="tab-link active-link" href="/nouveau-projet.html">Nouveau projet</a>
+                <router-link class="tab-link" to="/new-project">Nouveau projet</router-link>
                 <a class="tab-link" onclick="opentab('delete')">Supprimer projet</a>
             </div>
         </div>
@@ -10,8 +10,8 @@
         <div>
             <div class="column">
                 <a class="tab-link" onclick="opentab('loadproj')">Charger projet</a>
-                <a class="tab-link" onclick="opentab('editproj')">Editer projet</a>
-            </div>
+                <router-link class="tab-link" to="/edit-project">Editer projet</router-link>
+              </div>
 
             <div class="column">
                 <a class="tab-link" onclick="opentab('vis')">Visualiser</a>
