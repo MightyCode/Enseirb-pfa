@@ -1,6 +1,10 @@
 <template>
     <div id="wrapper">
         <div class="waveform-wrapper">
+            <div class="spinner-wrapper" v-show="this.loading">
+                <scale-loader :loading="this.loading"></scale-loader>
+            </div>
+
             <div id="waveform"></div>
         </div>
 
@@ -23,6 +27,11 @@
 <script>
 export default {
     name: 'EditProject',
+    data() {
+        return {
+            loading: true
+        }
+    },
     mounted() {
         const waveform = document.getElementById('waveform');
         const wavesurfer = WaveSurfer.create({
@@ -36,8 +45,11 @@ export default {
 
 
         wavesurfer.load('/Metallica –The_unforgiven_3.mp3');
-        wavesurfer.enableDragSelection({
+        wavesurfer.enableDragSelection({});
 
+        wavesurfer.on('ready', () => {
+            this.loading = false;
+            waveform.style.opacity = 1;
         });
 
         // Handle region creation on click and drag
@@ -75,6 +87,10 @@ export default {
     justify-content: space-between;
 }
 
+#waveform {
+    opacity: 0;
+}
+
 .waveform-wrapper {
     width: 100%;
     height: 20%;
@@ -83,6 +99,7 @@ export default {
     flex-direction: column;
 
     justify-content: center;
+    position: relative;
 }
 
 .timeline {
@@ -116,5 +133,16 @@ export default {
     align-items: center;
 
     background-color: red;
+}
+
+.spinner-wrapper {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: absolute;
 }
 </style>

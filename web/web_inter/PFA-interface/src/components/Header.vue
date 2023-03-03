@@ -31,7 +31,7 @@
 
         <div>
             <div>
-                <a class="tab-link" onclick="opentab('biblio')">Effets</a>
+                <router-link class="tab-link" to="/effects-library">Effets</router-link>
             </div>
         </div>
 

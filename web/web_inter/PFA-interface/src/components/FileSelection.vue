@@ -7,16 +7,23 @@
 </template>
 
 <script>
+import emitter from '../emitter.js';
+
 export default {
     name: 'FileSelection',
     data() {
         return {
             file: null,
-            audio: null
         };
     },
+    props: {
+        accept: {
+            type: String,
+            default: '*/*'
+        }
+    },
     mounted() {
-
+        
     },
     methods: {
         dragAndDropHandler(event) {
@@ -31,13 +38,13 @@ export default {
                 [...event.dataTransfer.items].forEach((item) => {
                     if (item.kind === 'file') {
                         this.file = item.getAsFile();
-                        this.audio = null;
+                        emitter.emit('fileImported', this.file)
                     }
                 });
             } else {
                 [...event.dataTransfer.files].forEach((file) => {
                     this.file = file;
-                    this.audio = null;
+                    emitter.emit('fileImported', this.file)
                 });
             }
         },
@@ -48,10 +55,10 @@ export default {
 
             const input = document.createElement('input');
             input.type = 'file';
-            input.accept = 'audio/*';
+            input.accept = this.accept;
             input.onchange = () => {
                 this.file = input.files[0];
-                this.audio = null;
+                emitter.emit('fileImported', this.file)
             };
             input.click();
         },

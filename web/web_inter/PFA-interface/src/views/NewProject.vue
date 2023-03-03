@@ -28,7 +28,7 @@
 
                     <section>
                         <div class="row">
-                            <FileSelection />
+                            <FileSelection accept="audio/*"/>
                         </div>
 
                         <div class="row">

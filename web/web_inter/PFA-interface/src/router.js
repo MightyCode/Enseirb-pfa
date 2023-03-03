@@ -15,6 +15,11 @@ const routes = [
         path: "/edit-project",
         name: "EditProject",
         component: () => import("./views/EditProject.vue"),
+    },
+    {
+        path: "/effects-library",
+        name: "EffectsLibrary",
+        component: () => import("./views/EffectsLibrary.vue"),
     }
 ];
 
