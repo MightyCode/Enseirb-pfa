@@ -20,6 +20,16 @@ const routes = [
         path: "/effects-library",
         name: "EffectsLibrary",
         component: () => import("./views/EffectsLibrary.vue"),
+    },
+    {
+        path: "/projects",
+        name: "Projects",
+        component: () => import("./views/ManageProjects.vue"),
+    },
+    {
+        path: "/configs",
+        name: "Configs",
+        component: () => import("./views/ManageConfigs.vue"),
     }
 ];
 

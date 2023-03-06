@@ -2,8 +2,8 @@
     <header>
         <div>
             <div>
-                <router-link class="tab-link" to="/new-project">Nouveau projet</router-link>
-                <a class="tab-link" onclick="opentab('delete')">Supprimer projet</a>
+                <router-link class="tab-link" to="/configs">Gérer configs</router-link>
+                <router-link class="tab-link" to="/projects">Gérer projets</router-link>
             </div>
         </div>
 
