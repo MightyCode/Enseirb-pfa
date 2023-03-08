@@ -23,7 +23,9 @@ export default {
         }
     },
     mounted() {
-        
+        emitter.on('clearFileSelection', () => {
+            this.file = null;
+        });
     },
     methods: {
         dragAndDropHandler(event) {

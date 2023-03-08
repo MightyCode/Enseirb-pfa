@@ -123,7 +123,7 @@ export default {
     padding: 0 0.5em;
 }
 
-.projects-list>div {
+.configs-list>div {
     flex: 1;
 
     background-color: green;
@@ -188,11 +188,6 @@ export default {
     background-color: #3b3b3b;
     padding: 0.5em 1em;
     transition-duration: 0.4s;
-}
-
-.config-item:hover {
-    cursor: pointer;
-    background-color: #4b4b4b;
 }
 
 .menu {

@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import axiosInstance from '../axiosInstance';
+
 export default {
     name: 'EditProject',
     data() {
@@ -43,8 +45,15 @@ export default {
             ]
         });
 
+        axiosInstance.get('/static/audios/Metallica –The_unforgiven_3.mp3', {
+            responseType: 'blob'
+        }).then(response => {
+            const blob = new Blob([response.data], { type: 'audio/mpeg' });
+            const url = URL.createObjectURL(blob);
 
-        wavesurfer.load('/Metallica –The_unforgiven_3.mp3');
+            wavesurfer.load(url);
+        });
+
         wavesurfer.enableDragSelection({});
 
         wavesurfer.on('ready', () => {

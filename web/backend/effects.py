@@ -16,7 +16,7 @@ def get_effects():
 @app.route('/effects', methods=['POST'])
 def create_effect():
     effect = request.json
-    with open(os.path.join('effects', effect['id']+'.json'), 'w') as f:
+    with open(os.path.join('effects', effect['id'] + '.json'), 'w') as f:
         json.dump(effect, f)
     return jsonify(effect), 201
 

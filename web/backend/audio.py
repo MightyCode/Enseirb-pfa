@@ -9,7 +9,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in {'wav', 'mp3', 'ogg'}
 
 # Route for audio file upload
-@app.route('/upload', methods=['POST'])
+@app.route('/audios', methods=['POST'])
 def upload_file():
     # Check if file is present in the request
     if 'file' not in request.files:
@@ -23,9 +23,14 @@ def upload_file():
 
     if not allowed_file(uploaded_file.filename):
         return jsonify({'error': 'Invalid file type'}), 400
+    
+    # Check if file already exists
+    if os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], uploaded_file.filename)):
+        return jsonify({'error': 'File already exists', 'filename': secure_filename(uploaded_file.filename) }), 409
 
     # Save file to upload folder
     filename = secure_filename(uploaded_file.filename)
     uploaded_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-    return jsonify({'success': 'File uploaded successfully'}), 200
+    return jsonify({'success': 'File uploaded successfully', 'filename': filename}), 200
+

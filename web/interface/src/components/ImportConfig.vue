@@ -3,7 +3,8 @@
         <div class="configs-list">
             <h2>Liste des configurations</h2>
             <div>
-                <div class="config-item" v-for="config in configsList" :key="config.id" @click="this.$store.commit('setActiveConfig', config);">
+                <div class="config-item" v-for="config in configsList" :key="config.id"
+                    @click="this.$store.commit('setActiveConfig', config);">
                     {{ config.id }}
                 </div>
             </div>
@@ -56,6 +57,7 @@ export default {
                         // If the server returns a 200, the config is valid
                         // We can then set it as the active config
                         this.$store.commit('setActiveConfig', response.data);
+
                     })
                     .catch((error) => {
                         // If the server returns a 400, the config is invalid
@@ -78,6 +80,17 @@ export default {
 
             fileReader.readAsText(file);
         });
+    },
+    methods: {
+        fetchConfigs() {
+            axiosInstance.get('/configs')
+                .then((response) => {
+                    this.configsList = response.data;
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
     }
 }
 </script>

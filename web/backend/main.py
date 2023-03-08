@@ -13,12 +13,15 @@ def after_request(response):
     return response
 
 # Check if folders exist, create them if not
-folders = ["effects", "configs", "projects"]
+folders = ["effects", "configs", "projects", "static/audios"]
 for folder in folders:
     if not os.path.exists(folder):
         os.makedirs(folder)
 
 import configs, effects, projects, audio
+
+# Set up static folder
+app.config['UPLOAD_FOLDER'] = 'static/audios'
 
 # Run on 0.0.0.0
 if __name__ == '__main__':

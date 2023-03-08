@@ -25,6 +25,18 @@ const routes = [
         path: "/projects",
         name: "Projects",
         component: () => import("./views/ManageProjects.vue"),
+        children: [
+            {
+                path: "",
+                name: "NewProject",
+                component: () => import("./views/projects/NewProject.vue"),
+            },
+            {
+                path: "import",
+                name: "ImportProject",
+                component: () => import("./views/projects/ImportProject.vue"),
+            }
+        ]
     },
     {
         path: "/configs",
