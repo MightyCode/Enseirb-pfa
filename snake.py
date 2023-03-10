@@ -26,7 +26,6 @@ class snake:
                 apple = (np.random.randint(nb_rows), np.random.randint(nb_columns))
             self.matrix[apple[0], apple[1]]=APPLE
             
-        self.direction = np.random.randint(4)
         
         self.win = 0 #0 si partie en cours, 1 si partie terminée et gagnée
         self.lost = 0 #0 si partie en cours, 1 si crash 
@@ -60,8 +59,6 @@ class snake:
         self.matrix[new_apple[0], new_apple[1]] = APPLE
 
     
-    def update_direction(self, new_dir):
-        self.direction = new_dir
         
     #fait avancer le snake d'une case, agrandit le snake si il y a une pomme dans la case où on veut avancer, et ajoute une pomme si on en mange une
     def update_snake(self, new_box):
