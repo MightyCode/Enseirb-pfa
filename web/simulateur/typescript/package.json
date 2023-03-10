@@ -1,0 +1,23 @@
+{
+  "name": "pfa-web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"[*] Testing Typescript code...\" && ts-mocha -p ts/tsconfig.json test/*.ts && echo \"[*] Done!\"",
+    "compile": "echo \"[*] Compiling Typescript code...\" && tsc --build ./ts/ && echo \"[*] Done!\""
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/chai": "^4.3.4",
+    "@types/expect": "^24.3.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^18.11.17",
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
+    "ts-mocha": "^10.0.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4"
+  }
+}

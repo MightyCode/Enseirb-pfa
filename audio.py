@@ -5,6 +5,7 @@ import sounddevice as sd
 from functions import *
 import scipy.signal as signal
 import os
+import threading
 
 interface = DMXInterface("FT232R")
 
@@ -41,7 +42,7 @@ def live_process():
     process microphone input in real time and make a pulse when a peak is detected
     """
     samplerate = 44100
-    cutoff_freq = 400
+    cutoff_freq = 25
     sample_timpe = 20
     mic = sd.InputStream(samplerate=samplerate, channels=1)
 
@@ -49,8 +50,8 @@ def live_process():
     universe = DMXUniverse()
     for i in range(LIGHT_NUMBER):
         universe2.add_light(DMXLight4Slot(address=light_map[i]))
-    tamise(universe2, interface)
-    universe.add_light(DMXLight4Slot(address=light_coord(0, 8)))
+    white(universe2, interface)
+    universe.add_light(DMXLight4Slot(address=light_coord(2, 4)))
 
     with mic:
         print("Listening...")
@@ -65,16 +66,16 @@ def live_process():
 
             # add new value to fifo
             fifo[l % sample_timpe] = 20*np.log10(np.sqrt(np.mean(np.square(y))))
-            print(fifo[l % sample_timpe], np.mean(fifo)/1.6)
+            print(fifo[l % sample_timpe], np.mean(fifo)/1.3)
 
             # if last value is superior to the average of the 100 last values, then a beat is detected
-            if fifo[l % sample_timpe] > np.mean(fifo)/1.6 and not lights_on:
+            if fifo[l % sample_timpe] > np.mean(fifo)/1.3 and not lights_on:
                 print("On")
                 lights_up(universe, interface, WHITE.serialise())
                 lights_on = True
-            elif fifo[l % sample_timpe] < np.mean(fifo)/1.6 and lights_on:
-                lights_down(universe, interface, WHITE.serialise())
+            elif fifo[l % sample_timpe] < np.mean(fifo)/1.3 and lights_on:
                 print("Off", l)
+                lights_down(universe, interface, WHITE.serialise())
                 lights_on = False
             l += 1
 
