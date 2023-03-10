@@ -78,6 +78,8 @@ try:
     import soundfile as sf
 
     client = jack.Client(args.clientname)
+    print(len(client.outports))
+
 
     blocksize = client.blocksize
     samplerate = client.samplerate
@@ -85,32 +87,41 @@ try:
     client.set_shutdown_callback(shutdown)
     client.set_process_callback(process)
 
+    print(blocksize, samplerate)
+
     with sf.SoundFile(args.filename) as f:
+        
         for ch in range(f.channels):
             client.outports.register(f'out_{ch + 1}')
-        block_generator = f.blocks(blocksize=blocksize, dtype='float32',
-                                   always_2d=True, fill_value=0)
+        block_generator = f.blocks(blocksize=blocksize, dtype='float32', always_2d=True, fill_value=0)
+        print("generator created")
         for _, data in zip(range(args.buffersize), block_generator):
             q.put_nowait(data)  # Pre-fill queue
+        print("Pre-filled queue")
 
         with client:
             if not args.manual:
                 target_ports = client.get_ports(
                     is_physical=True, is_input=True, is_audio=True)
 
-                print(target_ports)
-
+                print(client.outports, target_ports)
+                print("Preparation to connect :", len(client.outports), len(target_ports))
+                
                 if len(client.outports) == 1 and len(target_ports) > 1:
-                    # Connect mono file to stereo output
-                    client.outports[1].connect(target_ports[0])
-                    client.outports[1].connect(target_ports[1])
+
+                    for i in range(len(target_ports) // 2):
+                        client.outports[0].connect(target_ports[i])
+                        client.outports[0].connect(target_ports[i + 1])
                 else:
                     for source, target in zip(client.outports, target_ports):
+                        print(target)
                         source.connect(target)
-                    print("sdfsdf")
+
+            print("Target connected to source")
             timeout = blocksize * args.buffersize / samplerate
             for data in block_generator:
                 q.put(data, timeout=timeout)
+                
             q.put(None, timeout=timeout)  # Signal end of file
             event.wait()  # Wait until playback is finished
 except KeyboardInterrupt:

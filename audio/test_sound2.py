@@ -1,146 +1,126 @@
 #!/usr/bin/env python3
-"""Very basic MIDI synthesizer.
 
-This only works in Python 3.x because it uses memoryview.cast() and a
-few other sweet Python-3-only features.
+"""Play a sound file.
 
-This is inspired by the JACK example program "jack_midisine":
-http://github.com/jackaudio/jack2/blob/master/example-clients/midisine.c
+This only reads a certain number of blocks at a time into memory,
+therefore it can handle very long files and also files with many
+channels.
 
-But it is actually better:
-
-+ ASR envelope
-+ unlimited polyphony (well, "only" limited by CPU and memory)
-+ arbitrarily many MIDI events per block
-+ can handle NoteOn and NoteOff event of the same pitch in one block
-
-It is also worse:
-
-- horribly inefficient (dynamic allocations, sample-wise processing)
-- unpredictable because of garbage collection (?)
-
-It sounds a little better than the original, but still quite boring.
+NumPy and the soundfile module (http://PySoundFile.rtfd.io/) must be
+installed for this to work.
 
 """
-import jack
-import math
-import operator
+import argparse
+try:
+    import queue  # Python 3.x
+except ImportError:
+    import Queue as queue  # Python 2.x
+import sys
 import threading
 
-# First 4 bits of status byte:
-NOTEON = 0x9
-NOTEOFF = 0x8
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('filename', help='audio file to be played back')
+parser.add_argument(
+    '-b', '--buffersize', type=int, default=20,
+    help='number of blocks used for buffering (default: %(default)s)')
+parser.add_argument('-c', '--clientname', default='file player',
+                    help='JACK client name')
+parser.add_argument('-m', '--manual', action='store_true',
+                    help="don't connect to output ports automatically")
+args = parser.parse_args()
+if args.buffersize < 1:
+    parser.error('buffersize must be at least 1')
 
-attack = 0.01  # seconds
-release = 0.2  # seconds
-
-fs = None
-voices = {}
-
-client = jack.Client('MIDI-Sine')
-midiport = client.midi_inports.register('midi_in')
-audioport = client.outports.register('audio_out')
+q = queue.Queue(maxsize=args.buffersize)
 event = threading.Event()
 
 
-def m2f(note):
-    """Convert MIDI note number to frequency in Hertz.
-
-    See https://en.wikipedia.org/wiki/MIDI_Tuning_Standard.
-
-    """
-    return 2 ** ((note - 69) / 12) * 440
+def print_error(*args):
+    print(*args, file=sys.stderr)
 
 
-class Voice:
-
-    def __init__(self, pitch):
-        self.time = 0
-        self.time_increment = m2f(pitch) / fs
-        self.weight = 0
-
-        self.target_weight = 0
-        self.weight_step = 0
-        self.compare = None
-
-    def trigger(self, vel):
-        if vel:
-            dur = attack * fs
-        else:
-            dur = release * fs
-        self.target_weight = vel / 127
-        self.weight_step = (self.target_weight - self.weight) / dur
-        self.compare = operator.ge if self.weight_step > 0 else operator.le
-
-    def update(self):
-        """Increment weight."""
-        if self.weight_step:
-            self.weight += self.weight_step
-            if self.compare(self.weight, self.target_weight):
-                self.weight = self.target_weight
-                self.weight_step = 0
+def xrun(delay):
+    print_error("An xrun occured, increase JACK's period size?")
 
 
-@client.set_process_callback
-def process(frames):
-    """Main callback."""
-    events = {}
-    buf = memoryview(audioport.get_buffer()).cast('f')
-    for offset, data in midiport.incoming_midi_events():
-        if len(data) == 3:
-            status, pitch, vel = bytes(data)
-            # MIDI channel number is ignored!
-            status >>= 4
-            if status == NOTEON and vel > 0:
-                events.setdefault(offset, []).append((pitch, vel))
-            elif status in (NOTEON, NOTEOFF):
-                # NoteOff velocity is ignored!
-                events.setdefault(offset, []).append((pitch, 0))
-            else:
-                pass  # ignore
-        else:
-            pass  # ignore
-    for i in range(len(buf)):
-        buf[i] = 0
-        try:
-            eventlist = events[i]
-        except KeyError:
-            pass
-        else:
-            for pitch, vel in eventlist:
-                if pitch not in voices:
-                    if not vel:
-                        break
-                    voices[pitch] = Voice(pitch)
-                voices[pitch].trigger(vel)
-        for voice in voices.values():
-            voice.update()
-            if voice.weight > 0:
-                buf[i] += voice.weight * math.sin(2 * math.pi * voice.time)
-                voice.time += voice.time_increment
-                if voice.time >= 1:
-                    voice.time -= 1
-    dead = [k for k, v in voices.items() if v.weight <= 0]
-    for pitch in dead:
-        del voices[pitch]
-
-
-@client.set_samplerate_callback
-def samplerate(samplerate):
-    global fs
-    fs = samplerate
-    voices.clear()
-
-
-@client.set_shutdown_callback
 def shutdown(status, reason):
-    print('JACK shutdown:', reason, status)
+    print_error('JACK shutdown!')
+    print_error('status:', status)
+    print_error('reason:', reason)
     event.set()
 
 
-with client:
-    print('Press Ctrl+C to stop')
+def stop_callback(msg=''):
+    if msg:
+        print_error(msg)
+    for port in client.outports:
+        port.get_array().fill(0)
+    event.set()
+    raise jack.CallbackExit
+
+
+def process(frames):
+    if frames != blocksize:
+        stop_callback('blocksize must not be changed, I quit!')
     try:
-        event.wait()
-    except KeyboardInterrupt:
-        print('\nInterrupted by user')
+        data = q.get_nowait()
+    except queue.Empty:
+        stop_callback('Buffer is empty: increase buffersize?')
+    if data is None:
+        stop_callback()  # Playback is finished
+    
+
+    side = 0
+    for i in range(len(client.outports)):
+        print(data.T, len(data.T[0]), data.T[0])
+        array = [0] * 1024
+
+        client.outports[i].get_array()[:] = data.T[side] 
+        side = (len(data.T) - 1) - side
+        
+try:
+    import jack
+    import soundfile as sf
+
+    client = jack.Client(args.clientname)
+    print(len(client.outports))
+
+
+    blocksize = client.blocksize
+    samplerate = client.samplerate
+    client.set_xrun_callback(xrun)
+    client.set_shutdown_callback(shutdown)
+    client.set_process_callback(process)
+
+    print(blocksize, samplerate)
+
+    with sf.SoundFile(args.filename) as f:
+        block_generator = f.blocks(blocksize=blocksize, dtype='float32', always_2d=True, fill_value=0)
+        print("generator created")
+        for _, data in zip(range(args.buffersize), block_generator):
+            q.put_nowait(data)  # Pre-fill queue
+        print("Pre-filled queue")
+
+        with client:
+            if not args.manual:
+                target_ports = client.get_ports(
+                    is_physical=True, is_input=True, is_audio=True)
+                     
+                for i in range(len(target_ports)):
+                    client.outports.register(f'out_{i}')
+                    client.outports[i].connect(target_ports[i])
+
+            print("Target connected to source")
+            timeout = blocksize * args.buffersize / samplerate
+            for data in block_generator:
+                q.put(data, timeout=timeout)
+                
+            q.put(None, timeout=timeout)  # Signal end of file
+            event.wait()  # Wait until playback is finished
+except KeyboardInterrupt:
+    parser.exit('\nInterrupted by user')
+except (queue.Full):
+    # A timeout occured, i.e. there was an error in the callback
+    parser.exit(1)
+except Exception as e:
+    parser.exit(type(e).__name__ + ': ' + str(e))
