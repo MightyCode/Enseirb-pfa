@@ -51,7 +51,7 @@ function tests(){
         console.log("Play " + url)
     }
 
-    createPlayerPlusPanner("mp3/cuicui.mp3", 0);
+    createPlayerPlusPanner("sound/cuicui.mp3", 0);
     
     function setRotation(angle) {
         document.getElementById("orientationLabel").innerText = angle;
