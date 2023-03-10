@@ -10,7 +10,7 @@ import emitter from '../../emitter';
 import axiosInstance from '../../axiosInstance';
 
 export default {
-    name: "ImportProject",
+    name: "ImportConfig",
     components: {
         FileSelection
     },
@@ -20,18 +20,18 @@ export default {
 
             // POST content of the file to the server as JSON
             fileReader.addEventListener('load', (event) => {
-                axiosInstance.post('/projects', JSON.parse(event.target.result))
+                axiosInstance.post('/configs', JSON.parse(event.target.result))
                     .then((response) => {
-                        // If the server returns a 200, the project is valid
-                        // We can then set it as the active project
-                        this.$store.commit('setActiveProject', response.data);
+                        // If the server returns a 200, the config is valid
+                        // We can then set it as the active config
+                        this.$store.commit('setActiveConfig', response.data);
 
-                        // Fetch the list of projects again
-                        emitter.emit('fetchProjects');
+                        // Fetch the list of configs again
+                        emitter.emit('fetchConfigs');
                     })
                     .catch((error) => {
-                        // If the server returns a 400, the project is invalid
-                        // If the server returns a 409, the project already exists
+                        // If the server returns a 400, the config is invalid
+                        // If the server returns a 409, the config already exists
 
                         // We can then display an error message
                         emitter.emit('error', error.response.data.error)

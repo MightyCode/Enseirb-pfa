@@ -42,6 +42,18 @@ const routes = [
         path: "/configs",
         name: "Configs",
         component: () => import("./views/ManageConfigs.vue"),
+        children: [
+            {
+                path: "",
+                name: "NewConfig",
+                component: () => import("./views/configs/NewConfig.vue"),
+            },
+            {
+                path: "import",
+                name: "ImportConfig",
+                component: () => import("./views/configs/ImportConfig.vue"),
+            }
+        ]
     }
 ];
 

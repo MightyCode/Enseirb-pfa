@@ -230,10 +230,6 @@ export default {
     flex-direction: column;
 }
 
-.active-tab {
-    background-color: #4b4b4b;
-}
-
 .error-field {
     height: 2em;
     width: 100%;
