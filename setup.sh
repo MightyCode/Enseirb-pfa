@@ -32,5 +32,7 @@ fi
 # Activate virtual environment
 source venv/bin/activate
 
+echo "test"
+
 # Run the main script file
 python ./main.py "$@"

@@ -80,7 +80,7 @@ def connect_all_speakers(client):
 
 
 def main():
-    client_name = "s1ddharthaa"
+    client_name = "system"
     client = jack.Client(client_name)
 
     if client.status.server_started:
@@ -93,6 +93,8 @@ def main():
 
     # Activate client
     client.activate()
+    display_all_inputs(client)
+    display_all_outputs(client)
 
     # Display all ports
     disconnect_all_from_outputs(client)
