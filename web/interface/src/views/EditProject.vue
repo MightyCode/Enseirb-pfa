@@ -35,17 +35,27 @@ export default {
         }
     },
     mounted() {
+        var ctx = document.createElement('canvas').getContext('2d');
+        var linGrad = ctx.createLinearGradient(0, 64, 0, 200);
+        linGrad.addColorStop(0.5, 'rgba(255, 255, 255, 1.000)');
+        linGrad.addColorStop(0.5, 'rgba(183, 183, 183, 1.000)');
+
         const waveform = document.getElementById('waveform');
         const wavesurfer = WaveSurfer.create({
             container: waveform,
-            waveColor: 'blue',
-            progressColor: 'lightblue',
+            waveColor: linGrad,
             plugins: [
                 WaveSurfer.regions.create({})
-            ]
+            ],
+            progressColor: 'hsla(200, 100%, 30%, 0.5)',
+            // This parameter makes the waveform look like SoundCloud's player
+            barWidth: 3
         });
 
-        axiosInstance.get('/static/audios/Metallica –The_unforgiven_3.mp3', {
+        console.log(this.activeProject)
+
+        // Load current project's audio
+        axiosInstance.get(`/static/audios/${this.activeProject.audio}`, {
             responseType: 'blob'
         }).then(response => {
             const blob = new Blob([response.data], { type: 'audio/mpeg' });
@@ -82,6 +92,11 @@ export default {
 
         // Delete region on click anywhere
         wavesurfer.on('interaction', deleteRegion);
+    },
+    computed: {
+        activeProject() {
+            return this.$store.state.activeProject;
+        }
     }
 }
 </script>

@@ -62,16 +62,20 @@ export default {
                 this.$store.commit('setActiveProject', response.data);
 
                 // Clear fields
-                this.name = '';
-                this.filename = '';
-                emitter.emit('clearFileSelection');
-                emitter.emit('error', '');
+                this.clearUI();
 
                 // Refresh project list
                 emitter.emit('fetchProjects');
             }).catch((error) => {
                 emitter.emit('error', error.response.data.error);
             });
+        },
+
+        clearUI() {
+            this.name = '';
+            this.filename = '';
+            emitter.emit('clearFileSelection');
+            emitter.emit('error', '');
         }
     }
 }
@@ -119,8 +123,6 @@ export default {
 .fileupload-wrapper {
     width: 25vw;
     height: 25vw;
-
-    background-color: green;
 }
 
 .validation-wrapper {
@@ -132,11 +134,11 @@ export default {
 
 .validation-button {
     width: 100%;
-    background-color: red;
     padding: 1em 4em;
     border-radius: 7px;
 
     transition-duration: 0.4s;
+    background-color: #5b5b5b;
 }
 
 .validation-button:hover {

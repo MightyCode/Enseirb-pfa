@@ -116,6 +116,8 @@ export default {
 
     display: flex;
     align-items: center;
+
+    color: black;
 }
 
 .wrapper {
@@ -123,6 +125,7 @@ export default {
     flex-direction: row;
 
     height: 95%;
+    color: black;   
 }
 
 .projects-list {
@@ -131,20 +134,21 @@ export default {
     display: flex;
     flex-direction: column;
 
-    background-color: red;
     border-right: 1px solid #3b3b3b;
+    background-color: #5b5b5b;
 }
 
 
 .projects-list>h2 {
     font-size: 1.2em;
-    padding: 0 0.5em;
+    padding: 1em 0.5em;
+    margin: 0;
+    border-bottom: 1px solid #3b3b3b;
 }
 
 .projects-list>div {
     flex: 1;
 
-    background-color: green;
     overflow-y: auto;
 }
 
@@ -157,8 +161,8 @@ export default {
     flex-direction: column;
 
     color: black;
-    background-color: blue;
 }
+
 
 .projects-item {
     width: 100%;
@@ -183,6 +187,7 @@ export default {
     align-items: center;
 
     border-bottom: #3b3b3b 1px solid;
+    background-color: #5b5b5b;
 }
 
 .menu>.link {
@@ -236,12 +241,10 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-
-    background-color: red;
 }
 
 .error-field>span {
-    background-color: blue;
+    color: #aa0000;
 }
 
 .icon-wrapper {
@@ -250,6 +253,7 @@ export default {
     border-radius: 5px;
 
     transition-duration: 0.4s;
+    color: white;
 }
 
 .icon-wrapper:hover {
