@@ -1,3 +1,4 @@
+from interface.python.ResourceManager import ResourceManager
 from enum import Enum
 
 class EEffectType(Enum):
@@ -8,10 +9,23 @@ class EEffectType(Enum):
 
 class ModelEffect:
     _id = 0
+
     def __init__(self, effectType):
-        self.id = _id
-        _id += 1
+        self.id = ModelEffect._id
+        ModelEffect._id += 1
+
         self.type = effectType
+        self.resourceManager = ResourceManager()
+        self.info = {}
+
+    def setInfo(self, key, value):
+        self.info[key] = value
 
     def id(self):
         return self.id
+
+    def getLength(self):
+        return 0
+
+    def preprocess(self):
+        pass

@@ -1,5 +1,5 @@
-import ../ModelEffect as ModelEffect
+from interface.python.ModelEffect import ModelEffect, EEffectType
 
-class ModelAudioEffect(ModelEffect.ModelEffect):
+class ModelAudioEffect(ModelEffect):
     def __init__(self):
-        super().__init__(ModelEffect.EffectPlay.SOUND)
+        super().__init__(EEffectType.SOUND)
