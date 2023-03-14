@@ -9,12 +9,11 @@ class AudioResult:
         for i in range(nb_speakers):
             self.data[i] = [0] * samplerate * length
 
-        self.blocks = [0] * nb_speakers
+        self.blocks_generator = [0] * nb_speakers
 
     def process(main_sound):
-        sound
-
+        pass
 
     def generate_block():
         for i in range(self.nb_speakers):
-            self.blocks[i] = 
+            self.blocks_generator[i] = 0
