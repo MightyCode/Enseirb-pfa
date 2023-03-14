@@ -73,7 +73,6 @@ def process(frames):
     side = 0
     for i in range(len(client.outports)):
         print(data.T, len(data.T[0]), data.T[0])
-        array = [0] * 1024
 
         client.outports[i].get_array()[:] = data.T[side] 
         side = (len(data.T) - 1) - side
