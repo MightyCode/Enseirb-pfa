@@ -5,15 +5,21 @@
                 <label for="name">Name</label>
                 <input type="text" id="name" v-model="name">
             </div>
+
+            <div class="field-wrapper">
+                <label for="name">Number of lights</label>
+                <input type="number" id="name" v-model="nbLights">
+            </div>
+
+            <div class="field-wrapper">
+                <label for="name">Number of speakers</label>
+                <input type="number" id="name" v-model="nbSpeakers">
+            </div>
         </div>
 
         <div class="column">
-            <div class="fileupload-wrapper">
-                <FileSelection accept="audio/*" />
-            </div>
-
             <div class="validation-wrapper">
-                <span class="validation-button" @click="createProject">Validate</span>
+                <span class="validation-button" @click="createConfig">Validate</span>
             </div>
         </div>
     </div>
@@ -25,47 +31,32 @@ import emitter from '../../emitter';
 import axiosInstance from '../../axiosInstance';
 
 export default {
-    name: 'NewProject',
+    name: 'NewConfig',
     components: {
         FileSelection
     },
     data() {
         return {
             name: '',
-            filename: ''
+            nbLights: 0,
+            nbSpeakers: 0
         }
     },
-    mounted() {
-        emitter.on('fileImported', (file) => {
-            const formData = new FormData();
-            formData.append('file', file);
-
-            axiosInstance.post('/audios', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            }).then((response) => {
-                this.filename = response.data.filename;
-            }).catch((error) => {
-                emitter.emit('error', error.response.data.error);
-                this.filename = error.response.data.filename;
-            });
-        });
-    },
     methods: {
-        createProject() {
-            axiosInstance.post('/projects', {
+        createConfig() {
+            axiosInstance.post('/configs', {
                 id: this.name,
-                audio: this.filename
+                nbLights: this.nbLights,
+                nbSpeakers: this.nbSpeakers
             }).then((response) => {
-                // Set active project
-                this.$store.commit('setActiveProject', response.data);
+                // Set active config
+                this.$store.commit('setActiveConfig', response.data);
 
                 // Clear fields
                 this.clearUI();
 
-                // Refresh project list
-                emitter.emit('fetchProjects');
+                // Refresh config list
+                emitter.emit('fetchConfigs');
             }).catch((error) => {
                 emitter.emit('error', error.response.data.error);
             });
@@ -73,7 +64,8 @@ export default {
 
         clearUI() {
             this.name = '';
-            this.filename = '';
+            this.nbLights = 0;
+            this.nbSpeakers = 0;
             emitter.emit('clearFileSelection');
             emitter.emit('error', '');
         }
@@ -115,9 +107,13 @@ export default {
 
 .column:last-of-type {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: flex-end;
+    align-items: flex-end;
     flex-direction: column;
+}
+
+.column:first-of-type>div {
+    margin-bottom: 1em;
 }
 
 .fileupload-wrapper {
@@ -127,15 +123,13 @@ export default {
 
 .validation-wrapper {
     height: fit-content;
-    width: 100%;
     display: flex;
 
     margin-top: 1em;
-    justify-content: flex-end;
 }
 
 .validation-button {
-    width: fit-content;
+    width: 100%;
     padding: 1em 4em;
     border-radius: 7px;
 

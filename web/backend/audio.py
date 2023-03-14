@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 # Function to check if file extension is allowed
 def allowed_file(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in {'wav', 'mp3', 'ogg'}
+           filename.rsplit('.', 1)[1].lower() in {'wav', 'mp3', 'ogg', 'flac'}
 
 # Route for audio file upload
 @app.route('/audios', methods=['POST'])
