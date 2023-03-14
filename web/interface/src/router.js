@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from "vue-router";
+import store from "./store";
 
 const routes = [
     {
@@ -54,6 +55,14 @@ const routes = [
                 component: () => import("./views/configs/ImportConfig.vue"),
             }
         ]
+    },
+    {
+        path: "/configs/env",
+        name: "ConfigEnv",
+        component: () => import("./views/configs/ConfigEnv.vue"),
+        meta: {
+            needsConfig: true
+        }
     }
 ];
 
@@ -61,5 +70,14 @@ const router = createRouter({
     history: createWebHashHistory(),
     routes,
 });
+
+router.beforeEach((to, from, next) => {
+    if (to.meta.needsConfig && !store.state.activeConfig) {
+        next({ name: "Configs" });
+    } else {
+        next();
+    }
+});
+
 
 export default router;
