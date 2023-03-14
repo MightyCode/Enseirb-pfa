@@ -8,7 +8,7 @@ class SoundPlayer:
         self.speakersGroups = []
 
 
-    def temporaryLoad():
+    def temporaryLoad(self):
         self.speakersGroups.append(
             SpeakerGroup()
         )
@@ -16,9 +16,9 @@ class SoundPlayer:
         for i in range(10):
             self.speakersGroups[0].add(i)
 
-    def readProject(path):
+    def readProject(self,path):
         # Todo
-        temporaryLoad()
+        self.temporaryLoad()
 
 
     

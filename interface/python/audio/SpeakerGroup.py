@@ -2,7 +2,7 @@ class SpeakerGroup:
     _id = 0
 
     def __init__(self):
-        self.id_group = _id
+        self.group_id = _id
         _id += 1
 
         self.speakers = []
@@ -13,5 +13,5 @@ class SpeakerGroup:
     def remove(self, id):
         self.speakers.remove(id)
 
-    def id(self):
-        return self.id_group
+    def get_id(self):
+        return self.group_id
