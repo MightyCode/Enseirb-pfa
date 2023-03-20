@@ -11,17 +11,17 @@ const store = createStore({
     mutations: {
         setActiveConfig(state, config) {
             if (config) {
-                console.log('[PROJECT] Setting active config to', config.id)
+                console.info('[store.js:PROJECT] Setting active config to', config.id)
             } else {
-                console.log('[PROJECT] Setting active config to null')
+                console.info('[store.js:PROJECT] Setting active config to null')
             }
             state.activeConfig = config;
         },
         setActiveProject(state, project) {
             if (project) {
-                console.log('[PROJECT] Setting active project to', project.id)
+                console.info('[store.js:PROJECT] Setting active project to', project.id)
             } else {
-                console.log('[PROJECT] Setting active project to null')
+                console.info('[store.js:PROJECT] Setting active project to null')
             }
             state.activeProject = project;
         }
