@@ -3,6 +3,9 @@ from interface.python.audio.SoundCreation import SoundCreation
 
 from interface.python.audio.effects.EffectPlay import EffectPlay
 
+import numpy as np
+import soundfile as sf
+
                 
 if __name__ == "__main__":
     print("Start")
@@ -16,12 +19,7 @@ if __name__ == "__main__":
 
     #Create a reference model effect
     sound_creation.effects.append(
-        TimelineSoundEffect(
-            effect_play,
-            0, 
-            0
-
-        )
+        TimelineSoundEffect(effect_play, 0, 0)
     )
 
     sound_creation.readProject("")

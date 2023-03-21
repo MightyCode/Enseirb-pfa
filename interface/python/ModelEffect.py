@@ -27,5 +27,8 @@ class ModelEffect:
     def getLength(self):
         return 0
 
+    def computeValue(self, startTime, tick, value, speakerId, speakerGroup):
+        return 0
+
     def preprocess(self):
         pass

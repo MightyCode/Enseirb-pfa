@@ -8,6 +8,8 @@ class SoundCreation:
         self.speakers_groups = []
         self.samplerate = samplerate
 
+        self.audio_result = None
+
     def temporaryLoad(self):
         self.speakers_groups.append(
             SpeakerGroup()
@@ -26,7 +28,17 @@ class SoundCreation:
         for effect in self.effects:
             effect.preprocess()
 
+
+    def computeForSpeaker(self, effect, tick, speaker, isLeft):
+        value = effect.computeValue(tick, 
+            self.audio_result.getAudioValue(speaker, tick),
+            speaker, self.speakers_groups[effect.groupSpeakerId], isLeft)
+                                    
+        self.audio_result.setAudioValue(speaker, tick, value, isLeft)
+
     def create(self):
+        display_pourcent = 0.1
+
         priorities: list = [0] * self.audio_result.nb_speakers
 
         for tick in range(self.audio_result.getNumberTick()):
@@ -44,8 +56,12 @@ class SoundCreation:
                         if priorities[speaker] > priority:
                             continue
 
-                        value = effect.computeValue(tick, self.audio_result.getAudioValue(speaker, tick))
-                            
-                        self.audio_result.setAudioValue(speaker, tick, value)
+                        self.computeForSpeaker(effect, tick, speaker, False)
+                        self.computeForSpeaker(effect, tick, speaker, True)
 
-                    print(tick, value)
+            if tick > display_pourcent * self.audio_result.getNumberTick():
+                print("Done " + str(round(display_pourcent * 100)), "%, "  \
+                    + str(round(display_pourcent * self.audio_result.getNumberTick())) + "/"  \
+                    + str(self.audio_result.getNumberTick()))
+
+                display_pourcent += 0.1

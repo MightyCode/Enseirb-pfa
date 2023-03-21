@@ -1,4 +1,5 @@
 from interface.python.audio.ModelAudioEffect import ModelAudioEffect
+from interface.python.ResourceManager import ResourceConstants
 
 class EffectPlay(ModelAudioEffect):
     def __init__(self):
@@ -11,15 +12,18 @@ class EffectPlay(ModelAudioEffect):
         self.samplerate = int(self.info["samplerate"])
 
         self.soundFile = self.resourceManager.getAudio(self.info["file"])
-        print(self.soundFile)
+        self.soundFile = self.resourceManager.getAudio("interface/python/audio/sound/vache.wav")
+        
     
-    def computeValue(self, startTime, tick, value):
+    def computeValue(self, startTime, tick, value, speakerId, speakerGroup, isLeft):
         now = tick - startTime
 
-        if now > len(self.soundFile[0]):
+        channel = 0 if isLeft else 1
+
+        if now < 0 or now > len(self.soundFile[ResourceConstants.AUDIO_DATA]):
             return value
             
-        return self.soundFile[0][now]
+        return self.soundFile[ResourceConstants.AUDIO_DATA][now][channel]
 
     def getLength(self):
-        return 15
+        return len(self.soundFile[ResourceConstants.AUDIO_DATA])
