@@ -1,13 +1,15 @@
 from interface.python.audio.SpeakerGroup import SpeakerGroup
 from interface.python.audio.AudioResult import AudioResult
+from interface.python.ResourceManager import ResourceManager
+
 
 class SoundCreation:
-    def __init__(self, samplerate):
+    def __init__(self, samplerate, length):
         # Todo
         self.effects = []
         self.speakers_groups = []
         self.samplerate = samplerate
-
+        self.length = length
         self.audio_result = None
 
     def temporaryLoad(self):
@@ -17,8 +19,8 @@ class SoundCreation:
 
         for i in range(10):
             self.speakers_groups[0].add(i)
-
-        self.audio_result = AudioResult(10, self.samplerate, 15)
+  
+        self.audio_result = AudioResult(10, self.samplerate, self.length)
 
 
     def readProject(self, path):

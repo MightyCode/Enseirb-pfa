@@ -10,14 +10,14 @@ class AudioResult:
         self.data = [0] * nb_speakers * 2
 
         for i in range(nb_speakers * 2):
-            self.data[i] = [0] * samplerate * length
+            self.data[i] = [0] * length
 
         self.data = np.asarray(self.data)
 
         self.blockAdvancement = 0
 
     def getNumberTick(self):
-        return int(self.samplerate * self.length)
+        return int(self.length)
 
     def generate_block(self):
         for i in range(self.nb_speakers):

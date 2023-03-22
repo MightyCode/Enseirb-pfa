@@ -38,6 +38,14 @@ class ResourceManager:
         self.audios[path] = file
 
         return file
+    
+    def exportWavFromChannels(self, path, leftChannel, rightChannel, samplerate):
+        reformed = np.zeros((len(leftChannel), 2), dtype=float)
 
+        for i in range(len(leftChannel)):
+            reformed[i][0] = leftChannel[i]
+            reformed[i][1] = rightChannel[i]
+
+        sf.write(path, reformed, samplerate)
 if __name__ == "__main__":
     ResourceManager().getAudio("interface/python/audio/sound/vache.wav")
