@@ -33,9 +33,9 @@ class SoundCreation:
 
     def computeForSpeaker(self, effect, tick, speaker, isLeft):
         value = effect.computeValue(tick, 
-            self.audio_result.getAudioValue(speaker, tick),
+            self.audio_result.getAudioValue(speaker, tick, isLeft),
             speaker, self.speakers_groups[effect.groupSpeakerId], isLeft)
-                                    
+        
         self.audio_result.setAudioValue(speaker, tick, value, isLeft)
 
     def create(self):

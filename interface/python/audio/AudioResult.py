@@ -12,7 +12,7 @@ class AudioResult:
         for i in range(nb_speakers * 2):
             self.data[i] = [0] * length
 
-        self.data = np.asarray(self.data)
+        self.data = np.asarray(self.data, dtype=float)
 
         self.blockAdvancement = 0
 
@@ -24,8 +24,12 @@ class AudioResult:
             self.blocks_generator[i] = 0
 
     def getAudioValue(self, id_speaker, tick, isLeft=False):
-        return self.data[id_speaker * 2][tick] if isLeft else self.data[id_speaker * 2 + 1][tick]
+        index = id_speaker * 2 if isLeft else id_speaker * 2 + 1
+
+        return self.data[index][tick]
 
 
     def setAudioValue(self, id_speaker, tick, value, isLeft=False):
-        self.data[(id_speaker * 2) if isLeft else (id_speaker * 2 + 1)][tick] = value
+        index = (id_speaker * 2) if isLeft else (id_speaker * 2 + 1) 
+
+        self.data[index][tick] = value

@@ -7,7 +7,7 @@ from interface.python.ResourceManager import ResourceManager
                 
 if __name__ == "__main__":
     print("Start")
-    mainSoundPath = "interface/python/audio/sound/vache.wav"
+    mainSoundPath = "interface/python/audio/sound/retro.wav"
     mainSoundData, samplerate = ResourceManager().getAudio(mainSoundPath)
 
     sound_creation = SoundCreation(samplerate, len(mainSoundData))
@@ -28,7 +28,6 @@ if __name__ == "__main__":
     sound_creation.create()
 
     for i in range(10):
-        print(sound_creation.audio_result.data[i * 2])
         ResourceManager().exportWavFromChannels("out/speaker" + str(i) + ".wav", 
                                                 sound_creation.audio_result.data[i * 2], 
                                                 sound_creation.audio_result.data[i * 2 + 1], 
