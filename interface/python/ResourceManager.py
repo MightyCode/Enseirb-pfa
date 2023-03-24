@@ -1,5 +1,6 @@
 import soundfile as sf
 import numpy as np
+import json
 
 def singleton(class_):
     instances = {}
@@ -18,6 +19,7 @@ class ResourceManager:
 
     def __init__(self):
         self.audios: dict = {}
+        self.jsons: dict = {}
 
     def getAudio(self, path):
         if path in self.audios.keys():
@@ -47,5 +49,15 @@ class ResourceManager:
             reformed[i][1] = rightChannel[i]
 
         sf.write(path, reformed, samplerate)
+    
+    def getJson(self, path):
+        if path in self.jsons.keys():
+            return self.jsons[path]
+        
+        with open(path, encoding="utf8") as json_file:
+            self.jsons[path] = json.load(json_file)
+
+        return self.jsons[path]
+
 if __name__ == "__main__":
     ResourceManager().getAudio("interface/python/audio/sound/vache.wav")

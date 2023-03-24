@@ -1,27 +1,74 @@
-from pydub import AudioSegment
-import numpy as np
+from interface.python.ResourceManager import ResourceManager
+from openal import *
 
-# Load the sound file as a Pydub AudioSegment object
-sound: AudioSegment = AudioSegment.from_file("interface/python/audio/sound/retro.wav")
-sound.get_frame
+import time
+import wave
 
-# Create a time array for the sinusoidal wave
-duration = sound.duration_seconds
-t = np.linspace(0, duration, len(sound.get_array_of_samples()))
 
-# Compute the sinusoidal wave with a frequency of 1 Hz
-modulation = np.sin(2 * np.pi * 1 * t)
+def main():
+    device = alcOpenDevice(None)
+    if not device:
+        error = alcGetError()
+        # do something with the error, which is a ctypes value
+        return -1
+    
+    # Omit error checking
+    context = alcCreateContext(device, None)
+    alcMakeContextCurrent(context)
 
-# Scale the modulation to the range [0, 1] and convert to dB
-modulation = 20 * np.log10(0.5 * modulation + 0.5)
+    config = ResourceManager.getJson("configs/eirlab")
+    sources = []
 
-# Apply the modulation to the left and right channels of the sound
-left_channel, right_channel = sound.split_to_mono()
-left_channel = left_channel.apply_gain_typed(modulation, 2)
-right_channel = right_channel.apply_gain_typed(modulation, 2)
+    for i in range(10):
+        data = wave.open("out/speaker" + str(i) + ".wav")
 
-# Mix the channels back into a stereo sound
-stereo_sound = AudioSegment.from_mono_audiosegments(left_channel, right_channel)
+        source = ALuint(0)
+        sources.append(source)
 
-# Export the modulated sound to a file
-stereo_sound.export("output_sound.wav", format="wav")
+        # Do more things
+        alGenSources(1, source)
+        alSourcef(source, AL_PITCH, 1)
+        alSourcef(source, AL_GAIN, 1)
+        alSource3f(source, AL_POSITION, 10, 0, 0)
+        alSource3f(source, AL_VELOCITY, 0, 0, 0)
+        alSourcei(source, AL_LOOPING, 1)
+
+    alSourcePlay(source)
+
+    alDeleteSources(1, source)
+    alcDestroyContext(context)
+    alcCloseDevice(device)
+    return 0
+
+main()
+"""
+# Load the WAV file using SoundFile
+data, samplerate = sf.read('interface/python/audio/sound/vache.wav')
+
+# Create an OpenAL context and listener
+device = openal.Device()
+context = device.create_context()
+listener = openal.Listener()
+
+# Create an OpenAL buffer and source
+buffer = openal.Buffer(data)
+source = openal.Source()
+
+# Set the position of the source
+source.position = (0, 0, 0)  # Replace with your desired position
+
+# Queue the buffer to the source
+source.queue(buffer)
+
+# Play the source
+source.play()
+
+# Wait for the sound to finish playing
+while source.get_state() == openal.AL_PLAYING:
+    pass
+
+# Cleanup
+source.delete()
+buffer.delete()
+context.delete()
+device.close()"""
