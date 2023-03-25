@@ -1,7 +1,5 @@
-from interface.python.audio.TimelineSoundEffect import TimelineSoundEffect
 from interface.python.audio.SoundCreation import SoundCreation
 
-from interface.python.audio.effects.EffectPlay import EffectPlay
 from interface.python.ResourceManager import ResourceManager
 
                 
@@ -12,18 +10,7 @@ if __name__ == "__main__":
 
     sound_creation = SoundCreation(samplerate, len(mainSoundData))
 
-    effect_play = EffectPlay()
-    effect_play.setInfo("file", mainSoundPath)
-    effect_play.setInfo("samplerate", str(samplerate))
-
-    #Create a reference model effect
-    sound_creation.effects.append(
-        TimelineSoundEffect(effect_play, 0, 0)
-    )
-
-    sound_creation.readProject("")
-
-    sound_creation.effects[0].setGroupSpeaker(1)
+    sound_creation.readProject("configs/project1.json")
 
     sound_creation.create()
 

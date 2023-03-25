@@ -1,15 +1,17 @@
+from interface.python.ResourceManager import ResourceManager
 from interface.python.audio.SpeakerGroup import SpeakerGroup
 from interface.python.audio.AudioResult import AudioResult
 
+from interface.python.audio.effects.EffectPlay import EffectPlay
+from interface.python.audio.TimelineSoundEffect import TimelineSoundEffect
 
 class SoundCreation:
     def __init__(self, samplerate, length):
-        # Todo
         self.effects = []
         self.speakers_groups = []
         self.samplerate = samplerate
         self.length = length
-        self.audio_result = None
+        self.audio_result = AudioResult(10, self.samplerate, self.length)
     
     def addGroup(self):
         self.speakers_groups.append(
@@ -24,27 +26,6 @@ class SoundCreation:
             return
 
         self.speakers_groups[groupId].add(speakerId)
-
-
-    def temporaryLoad(self):
-        self.addGroup()
-
-        for i in range(10):
-            self.addToGroup(0, i)
-
-        self.addGroup()
-        for i in range(1):
-            self.addToGroup(1, i)
-  
-        self.audio_result = AudioResult(10, self.samplerate, self.length)
-
-
-    def readProject(self, path):
-        # Todo
-        self.temporaryLoad()
-
-        for effect in self.effects:
-            effect.preprocess()
 
 
     def computeForSpeaker(self, effect, tick, speaker, isLeft):
@@ -83,3 +64,37 @@ class SoundCreation:
                     + str(self.audio_result.getNumberTick()))
 
                 display_pourcent += 0.1
+
+
+
+    def createEffectFromName(self, modelEffectInfo):
+        if modelEffectInfo["name"] == "play":
+            effect = EffectPlay()
+            effect.setInfo("file",  modelEffectInfo["file"])
+            effect.setInfo("amplitude",  modelEffectInfo["amplitude"])
+            return effect
+
+        return None
+
+    def readProject(self, path):
+        project = ResourceManager().getJson(path)
+        audioTimeline = project["audioTimeline"]
+
+        groupIndex = 0
+        for speakersGroup in project["project"]["speakersGroups"]:
+            self.addGroup()
+
+            for i in speakersGroup:
+                self.addToGroup(groupIndex, i)
+            
+            groupIndex += 1
+
+        for effectRawData in audioTimeline:
+            effect = self.createEffectFromName(effectRawData["modelEffect"])
+            timelineEffect = TimelineSoundEffect(effect, effectRawData["priority"], effectRawData["start"])
+            timelineEffect.setGroupSpeaker(effectRawData["speakersGroup"])
+
+            self.effects.append(timelineEffect)
+
+        for effect in self.effects:
+            effect.preprocess()
