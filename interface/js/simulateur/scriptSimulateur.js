@@ -2,7 +2,7 @@ function load(){
     var head = document.getElementsByTagName('head')[0];
     var js = document.createElement("script");
     js.type = "text/javascript";
-    js.src = 'tone.js';
+    js.src = 'interface/js/simulateur/tone.js';
     head.appendChild(js);
 
     var button = document.getElementById("lauchTests");

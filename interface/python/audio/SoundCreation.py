@@ -65,8 +65,6 @@ class SoundCreation:
 
                 display_pourcent += 0.1
 
-
-
     def createEffectFromName(self, modelEffectInfo):
         if modelEffectInfo["name"] == "play":
             effect = EffectPlay()
