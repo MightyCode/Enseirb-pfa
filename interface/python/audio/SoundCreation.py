@@ -1,6 +1,5 @@
 from interface.python.audio.SpeakerGroup import SpeakerGroup
 from interface.python.audio.AudioResult import AudioResult
-from interface.python.ResourceManager import ResourceManager
 
 
 class SoundCreation:
@@ -11,14 +10,31 @@ class SoundCreation:
         self.samplerate = samplerate
         self.length = length
         self.audio_result = None
-
-    def temporaryLoad(self):
+    
+    def addGroup(self):
         self.speakers_groups.append(
             SpeakerGroup()
         )
 
+    def addToGroup(self, groupId, speakerId):
+        if 0 > groupId or groupId >= len(self.speakers_groups):
+            return
+
+        if self.speakers_groups[groupId].contains(speakerId):
+            return
+
+        self.speakers_groups[groupId].add(speakerId)
+
+
+    def temporaryLoad(self):
+        self.addGroup()
+
         for i in range(10):
-            self.speakers_groups[0].add(i)
+            self.addToGroup(0, i)
+
+        self.addGroup()
+        for i in range(1):
+            self.addToGroup(1, i)
   
         self.audio_result = AudioResult(10, self.samplerate, self.length)
 

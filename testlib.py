@@ -1,74 +1,128 @@
+from sympy import im
 from interface.python.ResourceManager import ResourceManager
 from openal import *
 
 import time
 import wave
 
+class Listener:
+    def __init__(self):
+        self.device = alcOpenDevice(None)
+
+        if not self.device:
+            error = alcGetError()
+            print("Open al init error : " + error)
+
+        self.context = alcCreateContext(self.device, None)
+        alcMakeContextCurrent(self.context)
+
+        self._position = [0, 0, 0]
+        self.setPosition(self._position)
+
+    def setPosition(self, pos):
+            self._position = pos
+            x, y, z = pos
+            alListener3f(AL_POSITION, x, y, z)
+
+    def delete(self):
+        alcDestroyContext(self.context)
+        alcCloseDevice(self.device)
+
+class SoundData:
+    def __init__(self, path) -> None:
+        data = wave.open(path)
+        channels = data.getnchannels()
+        bitrate = data.getsampwidth() * 8
+        samplerate = data.getframerate()
+        wavbuf = data.readframes(data.getnframes())
+
+        self.duration = (len(wavbuf) / float(samplerate))/2
+        self.length = len(wavbuf)
+        
+        formatmap = {
+            (1, 8) : AL_FORMAT_MONO8,
+            (2, 8) : AL_FORMAT_STEREO8,
+            (1, 16): AL_FORMAT_MONO16,
+            (2, 16) : AL_FORMAT_STEREO16,
+        }
+
+        alformat = formatmap[(channels, bitrate)]
+
+        self.bufferId = ALuint(0)
+
+        alGenBuffers(1, self.bufferId)
+        alBufferData(self.bufferId, alformat, wavbuf, len(wavbuf), samplerate)
+
+    def id(self):
+        return self.bufferId
+
+    def delete(self):
+        alDeleteBuffers(1, self.bufferId)
+
+class SoundSource:
+    def __init__(self, position) -> None:
+        self.position = position
+        
+        self.source = ALuint(0)
+        
+        alGenSources(1, self.source)
+
+        alSourcef(self.source, AL_PITCH, 1)
+        alSourcef(self.source, AL_GAIN, 1)
+        alSourcef(self.source, AL_ROLLOFF_FACTOR, 0.5)
+        alSource3f(self.source, AL_VELOCITY, 0, 0, 0)
+        alSourcei(self.source, AL_LOOPING, AL_FALSE)
+
+        self.setPosition(self.position)
+
+    def setPosition(self, position):
+        alSource3f(self.source, AL_POSITION, position[0], position[1], position[2])
+
+    def play(self):
+        alSourcePlay(self.source)
+
+    def addSound(self, soundData):
+        alSourceQueueBuffers(self.source, 1, soundData.id())
+
+    def isPlaying(self):
+        state = ALint(0)
+
+        alGetSourcei(self.source, AL_SOURCE_STATE, state)
+        return state.value == al.AL_PLAYING
+
+    def delete(self):
+        alDeleteSources(1, self.source)
+
 
 def main():
-    device = alcOpenDevice(None)
-    if not device:
-        error = alcGetError()
-        # do something with the error, which is a ctypes value
-        return -1
+    config = ResourceManager().getJson("configs/eirlab.json")
     
-    # Omit error checking
-    context = alcCreateContext(device, None)
-    alcMakeContextCurrent(context)
+    listener = Listener()
 
-    config = ResourceManager.getJson("configs/eirlab")
+    buffers = []
     sources = []
+    for i in range(10):
+        soundData = SoundData("out/speaker" + str(i) + ".wav")
+        buffers.append(soundData)
+
+        soundSource = SoundSource(config["speakerPosition"][i])
+        sources.append(soundSource)
+        soundSource.addSound(soundData)
+
+        soundSource.play()
+
+    for a in range(0,704,64):
+        listener.setPosition([a, 240, 0])
+        time.sleep(0.1)
 
     for i in range(10):
-        data = wave.open("out/speaker" + str(i) + ".wav")
-
-        source = ALuint(0)
-        sources.append(source)
-
-        # Do more things
-        alGenSources(1, source)
-        alSourcef(source, AL_PITCH, 1)
-        alSourcef(source, AL_GAIN, 1)
-        alSource3f(source, AL_POSITION, 10, 0, 0)
-        alSource3f(source, AL_VELOCITY, 0, 0, 0)
-        alSourcei(source, AL_LOOPING, 1)
-
-    alSourcePlay(source)
-
-    alDeleteSources(1, source)
-    alcDestroyContext(context)
-    alcCloseDevice(device)
-    return 0
+        while sources[i].isPlaying():
+            time.sleep(0.1)
+        
+    for i in range(10):
+        sources[i].delete()
+        buffers[i].delete()
+    
+    listener.delete()
 
 main()
-"""
-# Load the WAV file using SoundFile
-data, samplerate = sf.read('interface/python/audio/sound/vache.wav')
-
-# Create an OpenAL context and listener
-device = openal.Device()
-context = device.create_context()
-listener = openal.Listener()
-
-# Create an OpenAL buffer and source
-buffer = openal.Buffer(data)
-source = openal.Source()
-
-# Set the position of the source
-source.position = (0, 0, 0)  # Replace with your desired position
-
-# Queue the buffer to the source
-source.queue(buffer)
-
-# Play the source
-source.play()
-
-# Wait for the sound to finish playing
-while source.get_state() == openal.AL_PLAYING:
-    pass
-
-# Cleanup
-source.delete()
-buffer.delete()
-context.delete()
-device.close()"""

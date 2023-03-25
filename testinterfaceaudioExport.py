@@ -23,11 +23,12 @@ if __name__ == "__main__":
 
     sound_creation.readProject("")
 
-    sound_creation.effects[0].setGroupSpeaker(0)
+    sound_creation.effects[0].setGroupSpeaker(1)
 
     sound_creation.create()
 
     for i in range(10):
+        print("Generate sound for speaker " + str(i))
         ResourceManager().exportWavFromChannels("out/speaker" + str(i) + ".wav", 
                                                 sound_creation.audio_result.data[i * 2], 
                                                 sound_creation.audio_result.data[i * 2 + 1], 

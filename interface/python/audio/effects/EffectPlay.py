@@ -10,8 +10,8 @@ class EffectPlay(ModelAudioEffect):
 
     def preprocess(self):
         self.samplerate = int(self.info["samplerate"])
-
         self.soundFile = self.resourceManager.getAudio(self.info["file"])
+        self.amplitude = self.info["amplitude"] if "amplitude" in self.info.keys() else 1
         
     
     def computeValue(self, startTime, tick, value, speakerId, speakerGroup, isLeft):
@@ -22,7 +22,7 @@ class EffectPlay(ModelAudioEffect):
         if now < 0 or now > self.getLength():
             return value
             
-        return self.soundFile[ResourceConstants.AUDIO_DATA][now][channel]
+        return self.soundFile[ResourceConstants.AUDIO_DATA][now][channel] * self.amplitude
 
     def getLength(self):
         return len(self.soundFile[ResourceConstants.AUDIO_DATA])

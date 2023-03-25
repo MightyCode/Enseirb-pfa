@@ -7,11 +7,15 @@ class SpeakerGroup:
 
         self.speakers = []
     
-    def add(self, id):
-        self.speakers.append(id)
+    def add(self, speakerId):
+        self.speakers.append(speakerId)
+        self.speakers.sort()
 
-    def remove(self, id):
-        self.speakers.remove(id)
+    def remove(self, speakerId):
+        self.speakers.remove(speakerId)
+
+    def contains(self, speakerId):
+        return speakerId in self.speakers
 
     def id(self):
         return self.group_id
