@@ -9,7 +9,7 @@
 
         <div>
             <div class="column">
-                <a class="tab-link" onclick="opentab('loadproj')">Charger projet</a>
+                <router-link class="tab-link" to="/configs/env">Environnement</router-link>
                 <router-link class="tab-link" to="/edit-project">Editer projet</router-link>
               </div>
 

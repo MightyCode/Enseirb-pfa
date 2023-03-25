@@ -15,7 +15,8 @@
     "vue-router": "^4.1.6",
     "vue-select": "^4.0.0-beta.6",
     "vue-spinner": "^1.0.4",
-    "vuex": "^4.0.2"
+    "vuex": "^4.0.2",
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",
