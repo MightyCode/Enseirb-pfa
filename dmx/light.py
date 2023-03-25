@@ -33,7 +33,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from dmx.colour import BLACK, Colour
+from dmx.color import BLACK, Color
 import config
 
 DMX_MAX_ADDRESS = 512
@@ -91,10 +91,14 @@ class DMXLight4Slot(DMXLight):
         """Get the number of slots used by this light."""
         return 4
 
-    def set_colour(self, colour: Colour):
-        """Set the colour for the light."""
-        self._colour = colour
+    def set_colour(self, color: Color):
+        """Set the color for the light."""
+        self._colour = color
 
+    def get_colour(self) -> Color:
+        """Get the color for the light."""
+        return self._colour
+    
     def serialise(self) -> List[int]:
         """Serialise the DMX light to a sequence of bytes."""
         return self._colour.serialise()

@@ -29,7 +29,7 @@ function tests(){
     ]
 
     var speakers = [];
-    for (var i = 0; i < 9; ++i){
+    for (var i = 0; i <= 9; ++i){
         speakers.push(
             new Tone.Panner3D({
                 panningModel: "HRTF",
@@ -51,7 +51,9 @@ function tests(){
         console.log("Play " + url)
     }
 
-    createPlayerPlusPanner("sound/cuicui.mp3", 0);
+    for (var i = 0; i <= 9; ++i){ 
+        createPlayerPlusPanner("out/speaker" + i + ".wav", i);
+    }
     
     function setRotation(angle) {
         document.getElementById("orientationLabel").innerText = angle;

@@ -1,4 +1,3 @@
-from sympy import im
 from interface.python.ResourceManager import ResourceManager
 from openal import *
 
@@ -13,10 +12,11 @@ def checkError(text = ""):
 class Listener:
     def __init__(self):
         self.device = alcOpenDevice(None)
-        checkError("Init openAl")
+
+        if self.devie == None:
+            checkError(None)
 
         self.context = alcCreateContext(self.device, None)
-        checkError("Create context")
 
         alcMakeContextCurrent(self.context)
         checkError("Init openAl")
