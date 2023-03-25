@@ -84,9 +84,9 @@ try:
 
     universe2 = DMXUniverse()
     universe = DMXUniverse()
-    for i in range(LIGHT_NUMBER):
+    for i in range(NUMBER_OF_LIGHTS):
         universe2.add_light(DMXLight4Slot(address=light_map[i]))
-    white(universe2, interface)
+    soft_white_effect(universe2, interface)
     universe.add_light(DMXLight4Slot(address=light_coord(3, 8)))
 
     def callback(indata, frames, time, status):

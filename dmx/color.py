@@ -1,4 +1,4 @@
-"""Module for DMX colour."""
+"""Module for DMX color."""
 
 # BSD 3-Clause License
 #
@@ -33,18 +33,18 @@
 from typing import List, Union
 
 
-class Colour:
-    """Represents a colour in 24 bit RGB."""
+class Color:
+    """Represents a color in 24 bit RGB."""
 
     def __init__(self, red: int, green: int, blue: int, white: int = 0):
-        """Initialise the colour."""
+        """Initialise the color."""
         self._red = red
         self._green = green
         self._blue = blue
         self._white = white
 
     def serialise(self) -> List[int]:
-        """Serialise the colour in RGB order to a sequence of bytes."""
+        """Serialise the color in RGB order to a sequence of bytes."""
         return [self._red, self._green, self._blue, self._white]
 
     @property
@@ -87,9 +87,9 @@ class Colour:
         """Set white component."""
         self._white = int(max(0, min(value, 255)))
 
-    def __add__(self, other: Union['Colour', int, float]):
+    def __add__(self, other: Union['Color', int, float]):
         """Handle add."""
-        if isinstance(other, Colour):
+        if isinstance(other, Color):
             self.red += other.red
             self.green += other.green
             self.blue += other.blue
@@ -100,9 +100,9 @@ class Colour:
             self.blue = int(self.blue + other)
             self.white = int(self.white + other)
 
-    def __sub__(self, other: Union['Colour', int, float]):
+    def __sub__(self, other: Union['Color', int, float]):
         """Handle subtract."""
-        if isinstance(other, Colour):
+        if isinstance(other, Color):
             self.red -= other.red
             self.green -= other.green
             self.blue -= other.blue
@@ -113,9 +113,9 @@ class Colour:
             self.blue = int(self.blue - other)
             self.white = int(self.white - other)
 
-    def __mul__(self, other: Union['Colour', int, float]):
+    def __mul__(self, other: Union['Color', int, float]):
         """Handle multiply."""
-        if isinstance(other, Colour):
+        if isinstance(other, Color):
             self.red *= other.red
             self.green *= other.green
             self.blue *= other.blue
@@ -126,9 +126,9 @@ class Colour:
             self.blue = int(self.blue * other)
             self.white = int(self.white * other)
 
-    def __truediv__(self, other: Union['Colour', int, float]):
+    def __truediv__(self, other: Union['Color', int, float]):
         """Handle division."""
-        if isinstance(other, Colour):
+        if isinstance(other, Color):
             self.red = int(self.red / other.red)
             self.green = int(self.green / other.green)
             self.blue = int(self.blue / other.blue)
@@ -139,9 +139,9 @@ class Colour:
             self.blue = int(self.blue / other)
             self.white = int(self.white / other)
 
-    def __floordiv__(self, other: Union['Colour', int, float]):
+    def __floordiv__(self, other: Union['Color', int, float]):
         """Handle floor division."""
-        if isinstance(other, Colour):
+        if isinstance(other, Color):
             self.red //= other.red
             self.green //= other.green
             self.blue //= other.blue
@@ -153,8 +153,8 @@ class Colour:
             self.white = int(self.white // other)
 
 
-RED = Colour(255, 0, 0, 10)
-GREEN = Colour(0, 255, 0, 10)
-BLUE = Colour(0, 0, 255, 10)
-WHITE = Colour(255, 255, 255, 255)
-BLACK = Colour(0, 0, 0, 10)
+RED = Color(255, 0, 0, 10)
+GREEN = Color(0, 255, 0, 10)
+BLUE = Color(0, 0, 255, 10)
+WHITE = Color(255, 255, 255, 255)
+BLACK = Color(0, 0, 0, 10)

@@ -1,5 +1,5 @@
-from dmx import Colour, DMXInterface, DMXUniverse, DMXLight4Slot
-from dmx.colour import *
+from dmx import Color, DMXInterface, DMXUniverse, DMXLight4Slot
+from dmx.color import *
 from dmx.light import *
 
 import time
@@ -64,13 +64,13 @@ if __name__ == "__main__":
             for i in range(NUMBER):
                 light = DMXLight4Slot(address=light_map[i])
                 if direction == UP:
-                    light.set_colour(Colour(200, 50, 0, 100))
+                    light.set_colour(Color(200, 50, 0, 100))
                 elif direction == DOWN:
-                    light.set_colour(Colour(0, 50, 0, 100))
+                    light.set_colour(Color(0, 50, 0, 100))
                 elif direction == LEFT:
-                    light.set_colour(Colour(0, 200, 50, 100))
+                    light.set_colour(Color(0, 200, 50, 100))
                 elif direction == RIGHT:
-                    light.set_colour(Colour(50, 0, 200, 100))
+                    light.set_colour(Color(50, 0, 200, 100))
 
                 # Add the light to a universe
                 universe.add_light(light)
