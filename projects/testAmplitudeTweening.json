@@ -26,11 +26,11 @@
             "speakersGroup" : 1,
             "modelEffect" : {
                 "name" : "amplitudeTweening",
-                "tweeningType" : "linear",
-                "tweeningBehaviour" : "in",
-                "minValue" : 1,
-                "maxValue" : 0,
-                "length" : 44100
+                "tweeningType" : "quadratic",
+                "tweeningBehaviour" : "in_out",
+                "minValue" : 0,
+                "maxValue" : 1.6,
+                "length" : 73500
             }
         }
     ]

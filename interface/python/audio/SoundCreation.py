@@ -48,8 +48,8 @@ class SoundCreation:
                 audioValue[i] = 0
 
             for effect in self.effects:
-                start = effect.start * self.audio_result.samplerate
-                end = start + effect.getLength() * self.audio_result.samplerate
+                start = effect.start
+                end = start + effect.getLength()
 
                 if tick >= start and tick <= end:
                     priority = effect.priority
