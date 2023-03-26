@@ -1,4 +1,4 @@
-from ETweeningBehaviour import ETweeningBehaviour as ETB
+from interface.python.Tweenings.ETweeningBehaviour import ETweeningBehaviour as ETB
 
 class Back:
     SWING_BACK_DEFAULT: float = 1.70158

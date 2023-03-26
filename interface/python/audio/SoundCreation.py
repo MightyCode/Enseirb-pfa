@@ -2,8 +2,10 @@ from interface.python.ResourceManager import ResourceManager
 from interface.python.audio.SpeakerGroup import SpeakerGroup
 from interface.python.audio.AudioResult import AudioResult
 
-from interface.python.audio.effects.EffectPlay import EffectPlay
 from interface.python.audio.TimelineSoundEffect import TimelineSoundEffect
+
+from interface.python.audio.effects.EffectPlay import EffectPlay
+from interface.python.audio.effects.EffectAmplitudeTweening import EffectAmplitudeTweening
 
 class SoundCreation:
     def __init__(self, samplerate, length):
@@ -28,21 +30,22 @@ class SoundCreation:
         self.speakers_groups[groupId].add(speakerId)
 
 
-    def computeForSpeaker(self, effect, tick, speaker, isLeft):
-        value = effect.computeValue(tick, 
-            self.audio_result.getAudioValue(speaker, tick, isLeft),
+    def computeForSpeaker(self, effect, tick, speaker, isLeft, audioValues):
+        index = speaker * 2 + (1 if isLeft else 0)
+
+        audioValues[index] = effect.computeValue(tick, audioValues[index],
             speaker, self.speakers_groups[effect.groupSpeakerId], isLeft)
-        
-        self.audio_result.setAudioValue(speaker, tick, value, isLeft)
 
     def create(self):
         display_pourcent = 0.1
 
         priorities: list = [0] * self.audio_result.nb_speakers
+        audioValue: list = [0] * self.audio_result.nb_speakers * 2
 
         for tick in range(self.audio_result.getNumberTick()):
             for i in range(self.audio_result.nb_speakers):
-                priorities[0] = -1
+                priorities[i] = -1
+                audioValue[i] = 0
 
             for effect in self.effects:
                 start = effect.start * self.audio_result.samplerate
@@ -54,9 +57,13 @@ class SoundCreation:
                     for speaker in self.speakers_groups[effect.groupSpeakerId].speakers:
                         if priorities[speaker] > priority:
                             continue
+                            
+                        self.computeForSpeaker(effect, tick, speaker, False, audioValue)
+                        self.computeForSpeaker(effect, tick, speaker, True, audioValue)
 
-                        self.computeForSpeaker(effect, tick, speaker, False)
-                        self.computeForSpeaker(effect, tick, speaker, True)
+            for i in range(self.audio_result.nb_speakers * 2):
+                if audioValue[i] != 0:
+                    self.audio_result.setAudioValue(i // 2, tick, audioValue[i], i % 2 == 0)
 
             if tick > display_pourcent * self.audio_result.getNumberTick():
                 print("Done " + str(round(display_pourcent * 100)), "%, "  \
@@ -66,13 +73,21 @@ class SoundCreation:
                 display_pourcent += 0.1
 
     def createEffectFromName(self, modelEffectInfo):
+        effect = None
+
         if modelEffectInfo["name"] == "play":
             effect = EffectPlay()
-            effect.setInfo("file",  modelEffectInfo["file"])
-            effect.setInfo("amplitude",  modelEffectInfo["amplitude"])
-            return effect
 
-        return None
+        elif modelEffectInfo["name"] == "amplitudeTweening":
+            effect = EffectAmplitudeTweening()
+
+        for key in modelEffectInfo.keys():
+            if key == "name":
+                continue
+        
+            effect.setInfo(key, modelEffectInfo[key])
+
+        return effect
 
     def readProject(self, path):
         project = ResourceManager().getJson(path)

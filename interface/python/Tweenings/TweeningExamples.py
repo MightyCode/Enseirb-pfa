@@ -1,6 +1,6 @@
-from Tweening import Tweening
-from ETweeningBehaviour import ETweeningBehaviour as ETB
-from ETweeningType import ETweeningType as ETT
+from interface.python.Tweenings.Tweening import Tweening
+from interface.python.Tweenings.ETweeningBehaviour import ETweeningBehaviour as ETB
+from interface.python.Tweenings.ETweeningType import ETweeningType as ETT
 
 import matplotlib.pyplot as plt
 

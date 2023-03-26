@@ -5,12 +5,16 @@ from interface.python.ResourceManager import ResourceManager
                 
 if __name__ == "__main__":
     print("Start")
-    mainSoundPath = "interface/python/audio/sound/retro.wav"
+    projectPath = "projects/testAmplitudeTweening.json"
+
+    project = ResourceManager().getJson(projectPath)
+
+    mainSoundPath = project["project"]["mainSound"]
     mainSoundData, samplerate = ResourceManager().getAudio(mainSoundPath)
 
     sound_creation = SoundCreation(samplerate, len(mainSoundData))
 
-    sound_creation.readProject("configs/project1.json")
+    sound_creation.readProject(projectPath)
 
     sound_creation.create()
 

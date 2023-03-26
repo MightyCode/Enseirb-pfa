@@ -1,0 +1,37 @@
+{
+    "project" : {
+        "name" : "la ferme au animaux",
+        "speakersGroups" : [
+          [0, 1, 2, 3, 4, 5, 6, 7],
+          [0, 1, 2, 3, 4]
+        ],
+        "mainSound" : "interface/python/audio/sound/retro.wav"
+    },
+    "audioTimeline" : [
+        {
+            "name" : "meuh11",
+            "start" : 0,
+            "priority" : 0,
+            "speakersGroup" : 0,
+            "modelEffect" : {
+                "name" : "play",
+                "file" : "interface/python/audio/sound/retro.wav",
+                "amplitude" : 1
+            }
+        },
+        {
+            "name" : "startMeuh",
+            "start" : 0,
+            "priority" : 1,
+            "speakersGroup" : 1,
+            "modelEffect" : {
+                "name" : "amplitudeTweening",
+                "tweeningType" : "linear",
+                "tweeningBehaviour" : "in",
+                "minValue" : 1,
+                "maxValue" : 0,
+                "length" : 44100
+            }
+        }
+    ]
+}

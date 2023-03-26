@@ -22,7 +22,7 @@ class EffectPlay(ModelAudioEffect):
 
         if now < 0 or now > self.getLength():
             return value
-            
+
         return self.soundData[now][channel] * self.amplitude
 
     def getLength(self):

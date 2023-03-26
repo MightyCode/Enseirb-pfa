@@ -1,15 +1,15 @@
-from ETweeningType import ETweeningType as ETT
-from back import Back
-from bounce import Bounce
-from linear import Linear
-from quartic import Quartic
-from quintinc import Quintic
-from sinusoidal import Sinusoidal
-from exponentional import Exponentional
-from elastic import Elastic
-from circular import Circular
-from cubic import Cubic
-from quadratic import Quadratic
+from interface.python.Tweenings.ETweeningType import ETweeningType as ETT
+from interface.python.Tweenings.back import Back
+from interface.python.Tweenings.bounce import Bounce
+from interface.python.Tweenings.linear import Linear
+from interface.python.Tweenings.quartic import Quartic
+from interface.python.Tweenings.quintinc import Quintic
+from interface.python.Tweenings.sinusoidal import Sinusoidal
+from interface.python.Tweenings.exponentional import Exponentional
+from interface.python.Tweenings.elastic import Elastic
+from interface.python.Tweenings.circular import Circular
+from interface.python.Tweenings.cubic import Cubic
+from interface.python.Tweenings.quadratic import Quadratic
 
 class Tweening :
     # 

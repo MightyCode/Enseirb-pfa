@@ -1,4 +1,4 @@
-from ETweeningBehaviour import ETweeningBehaviour as ETB
+from interface.python.Tweenings.ETweeningBehaviour import ETweeningBehaviour as ETB
 import math
 
 class Elastic:

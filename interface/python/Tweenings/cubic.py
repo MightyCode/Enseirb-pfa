@@ -1,4 +1,4 @@
-from ETweeningBehaviour import ETweeningBehaviour as ETB
+from interface.python.Tweenings.ETweeningBehaviour import ETweeningBehaviour as ETB
 
 class Cubic:
     def evaluate(tweeningBehaviour, t, b, c, d) :

@@ -1,0 +1,23 @@
+{
+    "project" : {
+        "name" : "la ferme au animaux",
+        "speakersGroups" : [
+          [0, 1, 2, 3, 4, 5, 6, 7],
+          [0, 1, 2, 3, 4]
+        ],
+        "mainSound" : "interface/python/audio/sound/vache.wav"
+    },
+    "audioTimeline" : [
+        {
+            "name" : "meuh11",
+            "start" : 0,
+            "priority" : 0,
+            "speakersGroup" : 0,
+            "modelEffect" : {
+                "name" : "play",
+                "file" : "interface/python/audio/sound/vache.wav",
+                "amplitude" : 1
+            }
+        }
+    ]
+}
