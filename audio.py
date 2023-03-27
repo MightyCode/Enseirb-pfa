@@ -51,7 +51,7 @@ def live_process():
     for i in range(NUMBER_OF_LIGHTS):
         universe2.add_light(DMXLight4Slot(address=light_map[i]))
     soft_white_effect(universe2, interface)
-    universe.add_light(DMXLight4Slot(address=light_coord(2, 4)))
+    universe.add_light(DMXLight4Slot(address=light_coord_to_id(2, 4)))
 
     with mic:
         print("Listening...")

@@ -1,4 +1,5 @@
 from dmx.interact import *
+from light import distance_between_lights, light_id
 
 def pulse_effect(universe, interface, color, interpolation_rate):
     """Pulses the lights in the universe once to the given color and interpolation rate.
@@ -36,10 +37,10 @@ def soft_white_effect(universe, interface):
 
 def light_test(universe, interface):
     
-    if universe.has_light_at_address(light_coord(1, 4)):
-        universe.get_light_at_address(light_coord(1, 4)).set_colour(WHITE)
+    if universe.has_light_at_address(light_coord_to_id(1, 4)):
+        universe.get_light_at_address(light_coord_to_id(1, 4)).set_colour(WHITE)
     else:
-        universe.add_light(DMXLight4Slot(address=light_coord(2, 4)).set_colour(WHITE))
+        universe.add_light(DMXLight4Slot(address=light_coord_to_id(2, 4)).set_colour(WHITE))
 
     interface.set_frame(universe.serialise())
 
@@ -124,47 +125,33 @@ def fireball_circle_effect(universe, interface):
         current_light %= len(lights)
         
         
-def virus_spreading_wave_effect(universe, random, interface):
-    # Create a list of lights
-    lights = [DMXLight4Slot(address=light_map[i]) for i in range(NUMBER_OF_LIGHTS)]
+# def virus_spreading_wave_effect(universe, random, interface):
+#     # Create a list of lights
+#     lights = [DMXLight4Slot(address=light_id(i)) for i in range(NUMBER_OF_LIGHTS)]
 
-    # Add the lights to the universe
-    for l in lights:
-        universe.add_light(l)
+#     # Add the lights to the universe
+#     for l in lights:
+#         universe.add_light(l)
 
-    # Turn off all lights
-    for l in lights:
-        l.set_colour(Color(0, 0, 0, 0))
-    interface.set_frame(universe.serialise())
-    interface.send_update()
+#     # Turn off all lights
+#     for l in lights:
+#         l.set_colour(Color(0, 0, 0, 0))
+#     interface.set_frame(universe.serialise())
+#     interface.send_update()
 
-    # Pick a random light to start with
-    current_light = random.randint(0, NUMBER_OF_LIGHTS - 1)
+#     # Pick a random light to start with
+#     current_light = random.randint(0, NUMBER_OF_LIGHTS - 1)
 
-    while True:
-        # For each light, make one of them red at a time
-        for i in range(len(lights)):
-            if i == current_light:
-                # Turn on the current light
-                lights[i].set_colour(RED)
-            else:
-                # If i is at a distance > 3 from the current light, turn it off
-                # else, interpolate the color between red and black
-                if (current_light - i) > 3:
-                    lights[i].set_colour(Color(0, 0, 0, 0))
-                elif current_light - i > 0:
-                    # The less i is from current_light, the more red it is
-                    red = 255 // (current_light - i + 2)
-                    lights[i].set_colour(Color(red, 0, 0, 0))
+#     while True:
+#        #spread the virus around current light
+        
+       
 
-        interface.set_frame(universe.serialise())
-        interface.send_update()
-        time.sleep(.05)
+#         interface.set_frame(universe.serialise())
+#         interface.send_update()
+#         time.sleep(.05)
 
-        current_light += 1
-        current_light %= len(lights)
+#         current_light += 1
+#         current_light %= len(lights)
     
 
-
-def light_number_to_coords(light_number):
-    return light_number // NUMBER_OF_COLUMNS, light_number % NUMBER_OF_COLUMNS

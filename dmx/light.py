@@ -41,12 +41,45 @@ DMX_MIN_ADDRESS = 1
 
 light_map = config.light_map
 
-def light_id(id):
-    return light_map[id]
+def light_id(adress):
+    return light_map[adress]
     
-def light_coord(x, y):
-    return light_map[x + y * config.row_number]
+def light_coord_to_id(x, y):
+    """ Convert a coordinate to a light id, where (0, 0) is the top left corner.
 
+    Args:
+        x (int): column number 
+        y (int): row number
+
+    Returns:
+        int: id of the light in the config file
+    """
+    return light_map[y + x * config.number_of_columns]
+
+def light_id_to_coord(id):
+    """ Convert a light id to a coordinate, where (0, 0) is the top left corner.
+
+    Args:
+        id (int): id of the light in the config file
+
+    Returns:
+        tuple: x, y coordinate of the light
+    """
+    return light_map.index(id) % config.number_of_columns, light_map.index(id) // config.number_of_columns
+
+def distance_between_lights(id1, id2):
+    """ Calculate the distance between two lights.
+
+    Args:
+        id1 (int): id of the first light
+        id2 (int): id of the second light
+
+    Returns:
+        float: distance between the two lights
+    """
+    x1, y1 = light_id_to_coord(id1)
+    x2, y2 = light_id_to_coord(id2)
+    return ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5
 
 class DMXLight(ABC):
     """Represents a DMX light."""

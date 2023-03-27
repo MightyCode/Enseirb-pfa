@@ -9,10 +9,10 @@ import numpy as np
 
 def light_test(universe, interface):
     
-    if universe.has_light_at_address(light_coord(1, 4)):
-        universe.get_light_at_address(light_coord(1, 4)).set_colour(WHITE)
+    if universe.has_light_at_address(light_coord_to_id(1, 4)):
+        universe.get_light_at_address(light_coord_to_id(1, 4)).set_colour(WHITE)
     else:
-        universe.add_light(DMXLight4Slot(address=light_coord(2, 4)).set_colour(WHITE))
+        universe.add_light(DMXLight4Slot(address=light_coord_to_id(2, 4)).set_colour(WHITE))
 
     interface.set_frame(universe.serialise())
 
