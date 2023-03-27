@@ -6,14 +6,14 @@ from interface.python.audio.TimelineSoundEffect import TimelineSoundEffect
 
 from interface.python.audio.effects.EffectPlay import EffectPlay
 from interface.python.audio.effects.EffectAmplitudeTweening import EffectAmplitudeTweening
+from interface.python.audio.effects.EffectOscillator import EffectOscillator
 
 class SoundCreation:
-    def __init__(self, samplerate, length):
+    def __init__(self):
         self.effects = []
         self.speakers_groups = []
-        self.samplerate = samplerate
-        self.length = length
-        self.audio_result = AudioResult(10, self.samplerate, self.length)
+        self.length = 0
+        self.audio_result = None
     
     def addGroup(self):
         self.speakers_groups.append(
@@ -48,7 +48,7 @@ class SoundCreation:
                 audioValue[i] = 0
 
             for effect in self.effects:
-                start = effect.start
+                start = effect.start * self.samplerate
                 end = start + effect.getLength()
 
                 if tick >= start and tick <= end:
@@ -72,7 +72,7 @@ class SoundCreation:
 
                 display_pourcent += 0.1
 
-    def createEffectFromName(self, modelEffectInfo):
+    def createEffectFromName(self, modelEffectInfo, projectInfo):
         effect = None
 
         if modelEffectInfo["name"] == "play":
@@ -81,17 +81,29 @@ class SoundCreation:
         elif modelEffectInfo["name"] == "amplitudeTweening":
             effect = EffectAmplitudeTweening()
 
+        elif modelEffectInfo["name"] == "oscillator":
+             effect = EffectOscillator()
+
         for key in modelEffectInfo.keys():
             if key == "name":
                 continue
         
             effect.setInfo(key, modelEffectInfo[key])
 
+        effect.setInfo("sampleRate", projectInfo["sampleRate"])
+
         return effect
 
     def readProject(self, path):
         project = ResourceManager().getJson(path)
         audioTimeline = project["audioTimeline"]
+
+        mainSoundData, self.samplerate = ResourceManager().getAudio(project["project"]["mainSound"])
+
+        mainSoundPath = project["project"]["mainSound"]
+        mainSoundData, samplerate = ResourceManager().getAudio(mainSoundPath)
+
+        self.audio_result = AudioResult(10, self.samplerate, len(mainSoundData))
 
         groupIndex = 0
         for speakersGroup in project["project"]["speakersGroups"]:
@@ -103,7 +115,7 @@ class SoundCreation:
             groupIndex += 1
 
         for effectRawData in audioTimeline:
-            effect = self.createEffectFromName(effectRawData["modelEffect"])
+            effect = self.createEffectFromName(effectRawData["modelEffect"], project["project"])
             timelineEffect = TimelineSoundEffect(effect, effectRawData["priority"], effectRawData["start"])
             timelineEffect.setGroupSpeaker(effectRawData["speakersGroup"])
 

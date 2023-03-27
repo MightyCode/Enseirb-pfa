@@ -23,6 +23,7 @@ class EffectAmplitudeTweening(ModelAudioEffect):
         self.length = 0
 
     def preprocess(self):
+        self.samplerate = int(self.info["sampleRate"])
         self.tweeningType = ETT.from_str(self.info["tweeningType"])
         self.tweeningBehaviour = ETB.from_str(self.info["tweeningBehaviour"])
 
@@ -37,7 +38,8 @@ class EffectAmplitudeTweening(ModelAudioEffect):
         if "arg2" in self.info.keys():
            self.arg2 = float(self.info["arg2"])
 
-        self.length = int(self.info["length"])
+        self.numberSeconds = int(self.info["length"])
+        self.length = int(self.numberSeconds * self.samplerate)
 
     def computeValue(self, startTime, tick, value, speakerId, speakerGroup, isLeft):
         now: int = tick - startTime

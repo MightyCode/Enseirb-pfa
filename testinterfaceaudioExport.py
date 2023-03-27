@@ -7,13 +7,7 @@ if __name__ == "__main__":
     print("Start")
     projectPath = "projects/testAmplitudeTweening.json"
 
-    project = ResourceManager().getJson(projectPath)
-
-    mainSoundPath = project["project"]["mainSound"]
-    mainSoundData, samplerate = ResourceManager().getAudio(mainSoundPath)
-
-    sound_creation = SoundCreation(samplerate, len(mainSoundData))
-
+    sound_creation = SoundCreation()
     sound_creation.readProject(projectPath)
 
     sound_creation.create()

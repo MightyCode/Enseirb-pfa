@@ -13,7 +13,6 @@ class EffectPlay(ModelAudioEffect):
         self.soundData = self.resourceManager.getAudio(self.info["file"])[ResourceConstants.AUDIO_DATA] 
         self.samplerate = self.resourceManager.getAudio(self.info["file"])[ResourceConstants.AUDIO_SAMPLE_RATE] 
         self.amplitude = self.info["amplitude"] if "amplitude" in self.info.keys() else 1
-        
     
     def computeValue(self, startTime, tick, value, speakerId, speakerGroup, isLeft):
         now = tick - startTime

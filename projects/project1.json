@@ -5,7 +5,8 @@
           [0, 1, 2, 3, 4, 5, 6, 7],
           [0, 1, 2, 3, 4]
         ],
-        "mainSound" : "interface/python/audio/sound/vache.wav"
+        "mainSound" : "interface/python/audio/sound/vache.wav",
+        "sampleRate" : 44100
     },
     "audioTimeline" : [
         {

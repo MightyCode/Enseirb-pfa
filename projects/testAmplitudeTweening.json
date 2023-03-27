@@ -3,9 +3,11 @@
         "name" : "la ferme au animaux",
         "speakersGroups" : [
           [0, 1, 2, 3, 4, 5, 6, 7],
-          [0, 1, 2, 3, 4]
+          [0, 1, 2, 3, 4],
+          [0, 1]
         ],
-        "mainSound" : "interface/python/audio/sound/retro.wav"
+        "mainSound" : "interface/python/audio/sound/retro.wav",
+        "sampleRate" : 44100
     },
     "audioTimeline" : [
         {
@@ -30,7 +32,19 @@
                 "tweeningBehaviour" : "in_out",
                 "minValue" : 0,
                 "maxValue" : 1.6,
-                "length" : 73500
+                "length" : 1.66666
+            }
+        },
+        {
+            "name" : "starstMeuh",
+            "start" : 0,
+            "priority" : 2,
+            "speakersGroup" : 2,
+            "modelEffect" : {
+                "name" : "oscillator",
+                "frequency" : 440,
+                "amplitude" : 0.4,
+                "length" : 3.6
             }
         }
     ]
