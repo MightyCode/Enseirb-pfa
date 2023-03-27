@@ -125,33 +125,33 @@ def fireball_circle_effect(universe, interface):
         current_light %= len(lights)
         
         
-def virus_spreading_wave_effect(universe, random, interface):
-    # Create a list of lights
-    lights = [DMXLight4Slot(address=light_id(i)) for i in range(NUMBER_OF_LIGHTS)]
+# def virus_spreading_wave_effect(universe, random, interface):
+#     # Create a list of lights
+#     lights = [DMXLight4Slot(address=light_id(i)) for i in range(NUMBER_OF_LIGHTS)]
 
-    # Add the lights to the universe
-    for l in lights:
-        universe.add_light(l)
+#     # Add the lights to the universe
+#     for l in lights:
+#         universe.add_light(l)
 
-    # Turn off all lights
-    for l in lights:
-        l.set_colour(Color(0, 0, 0, 0))
-    interface.set_frame(universe.serialise())
-    interface.send_update()
+#     # Turn off all lights
+#     for l in lights:
+#         l.set_colour(Color(0, 0, 0, 0))
+#     interface.set_frame(universe.serialise())
+#     interface.send_update()
 
-    # Pick a random light to start with
-    current_light = random.randint(0, NUMBER_OF_LIGHTS - 1)
+#     # Pick a random light to start with
+#     current_light = random.randint(0, NUMBER_OF_LIGHTS - 1)
 
-    while True:
-       #spread the virus around current light
+#     while True:
+#        #spread the virus around current light
         
        
 
-        interface.set_frame(universe.serialise())
-        interface.send_update()
-        time.sleep(.05)
+#         interface.set_frame(universe.serialise())
+#         interface.send_update()
+#         time.sleep(.05)
 
-        current_light += 1
-        current_light %= len(lights)
+#         current_light += 1
+#         current_light %= len(lights)
     
 
