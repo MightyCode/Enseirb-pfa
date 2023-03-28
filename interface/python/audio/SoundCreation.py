@@ -7,6 +7,8 @@ from interface.python.audio.TimelineSoundEffect import TimelineSoundEffect
 from interface.python.audio.effects.EffectPlay import EffectPlay
 from interface.python.audio.effects.EffectAmplitudeTweening import EffectAmplitudeTweening
 from interface.python.audio.effects.EffectOscillator import EffectOscillator
+from interface.python.audio.effects.EffectMute import EffectMute
+from interface.python.audio.effects.EffectAffect import EffectAffect
 
 class SoundCreation:
     def __init__(self):
@@ -86,6 +88,10 @@ class SoundCreation:
 
         elif modelEffectInfo["name"] == "mute":
             effect = EffectOscillator(speakerGroup)
+
+        elif modelEffectInfo["name"] == "affect":
+            subEffect = self.createEffectFromName(speakerGroup, modelEffectInfo["subModel"], projectInfo)
+            effect = EffectAffect(speakerGroup, subEffect)
 
         for key in modelEffectInfo.keys():
             if key == "name":

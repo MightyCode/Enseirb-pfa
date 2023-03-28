@@ -1,7 +1,7 @@
 from interface.python.audio.ModelAudioEffect import ModelAudioEffect
 from interface.python.ResourceManager import ResourceConstants
 
-class EffectPlay(ModelAudioEffect):
+class EffectMute(ModelAudioEffect):
     def __init__(self, speakerGroup):
         super().__init__( speakerGroup)
 

@@ -44,6 +44,9 @@ class EffectAmplitudeTweening(ModelAudioEffect):
     def computeValue(self, startTime, tick, value, speakerId, isLeft):
         now: int = tick - startTime
 
+        if now < 0 or now > self.getLength():
+            return value
+
         #print(now, Tweening.evaluate(self.tweeningType, self.tweeningBehaviour, now, self.minValue, self.delta, self.length, self.arg1, self.arg2))
         return value * Tweening.evaluate(self.tweeningType, self.tweeningBehaviour, now, self.minValue, self.delta, self.length, self.arg1, self.arg2)
 
