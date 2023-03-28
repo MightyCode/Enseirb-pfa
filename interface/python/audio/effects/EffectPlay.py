@@ -27,8 +27,10 @@ class EffectPlay(ModelAudioEffect):
     def getLength(self):
         return len(self.soundData)
 
+    @staticmethod
     def Instanciate(soundCreation, speakerGroup, modelEffectInfo, projectInfo):
         return EffectPlay(speakerGroup)
 
+    @staticmethod
     def GetEffectName():
         return "play"

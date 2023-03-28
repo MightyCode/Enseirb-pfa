@@ -58,7 +58,7 @@ class SoundCreation:
                 start = effect.start * self.samplerate
                 end = start + effect.getLength()
 
-                if tick >= start and tick <= end:
+                if tick >= start and tick < end:
                     priority = effect.priority
 
                     for speaker in self.speakers_groups[effect.groupSpeakerId].speakers:
@@ -139,7 +139,7 @@ class SoundCreation:
         for effectRawData in audioTimeline:
             effect = self.createEffectFromName(self.speakers_groups[effectRawData["speakersGroup"]].speakers, 
                                                effectRawData["modelEffect"], project["project"])
-            timelineEffect = TimelineSoundEffect(effect, effectRawData["priority"], effectRawData["start"])
+            timelineEffect = TimelineSoundEffect(effect, effectRawData["priority"], effectRawData["start"], self.samplerate)
             timelineEffect.setGroupSpeaker(effectRawData["speakersGroup"])
 
             self.effects.append(timelineEffect)

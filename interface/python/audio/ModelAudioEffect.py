@@ -5,9 +5,10 @@ class ModelAudioEffect(ModelEffect):
         super().__init__(EEffectType.SOUND)
         self.speakerGroup = speakerGroup
 
-
+    @staticmethod
     def Instanciate(soundCreation, speakerGroup, modelEffectInfo, projectInfo):
         return ModelAudioEffect(speakerGroup)
 
+    @staticmethod
     def GetEffectName():
         return "empty"

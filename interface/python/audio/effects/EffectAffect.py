@@ -5,12 +5,22 @@ from interface.python.Tweenings.ETweeningType import ETweeningType as ETT
 from interface.python.audio.ModelAudioEffect import ModelAudioEffect
 
 class AffectFunction:
+    @staticmethod
     def add(a, b) : return a + b
+    @staticmethod
     def sub(a, b) : return a - b
+    @staticmethod
     def rsub(a, b) : return b - a
+    @staticmethod
     def mul(a, b) : return a * b
+    @staticmethod
     def div (a, b) : return a / b
+    @staticmethod
     def rdiv(a, b) : return b / a
+    @staticmethod
+    def max(a, b) : return max(a, b)
+    @staticmethod
+    def min(a, b) : return min(a, b)
 
     def str_to_affect_function(funcName: str):
         if hasattr(AffectFunction, funcName):
@@ -29,13 +39,12 @@ class EffectAffect(ModelAudioEffect):
     def preprocess(self):
         self.subModel.preprocess()
         self.length = self.subModel.getLength()
-
         self.func =  AffectFunction.str_to_affect_function(self.info["affect"])
 
     def computeValue(self, startTime, tick, value, speakerId, isLeft):
         now: int = tick - startTime
 
-        if now < 0 or now > self.getLength():
+        if now < 0 or now >= self.getLength():
             return value
 
         return self.func(value, self.subModel.computeValue(startTime, tick, value, speakerId, isLeft))
@@ -43,9 +52,11 @@ class EffectAffect(ModelAudioEffect):
     def getLength(self):
         return self.length
 
+    @staticmethod
     def Instanciate(soundCreation, speakerGroup, modelEffectInfo, projectInfo):
         subEffect = soundCreation.createEffectFromName(speakerGroup, modelEffectInfo["subModel"], projectInfo)
         return EffectAffect(speakerGroup, subEffect)
 
+    @staticmethod
     def GetEffectName():
         return "affect"

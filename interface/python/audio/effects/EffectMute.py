@@ -23,8 +23,10 @@ class EffectMute(ModelAudioEffect):
     def getLength(self):
         return self.length
 
+    @staticmethod
     def Instanciate(soundCreation, speakerGroup, modelEffectInfo, projectInfo):
         return EffectMute(speakerGroup)
 
+    @staticmethod
     def GetEffectName():
         return "mute"

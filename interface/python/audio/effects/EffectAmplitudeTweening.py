@@ -53,9 +53,10 @@ class EffectAmplitudeTweening(ModelAudioEffect):
     def getLength(self):
         return self.length
 
-    
+    @staticmethod
     def Instanciate(soundCreation, speakerGroup, modelEffectInfo, projectInfo):
         return EffectAmplitudeTweening(speakerGroup)
 
+    @staticmethod
     def GetEffectName():
         return "amplitudeTweening"
