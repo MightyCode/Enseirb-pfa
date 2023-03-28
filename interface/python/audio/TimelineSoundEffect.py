@@ -12,8 +12,8 @@ class TimelineSoundEffect:
     def setGroupSpeaker(self, id):
         self.groupSpeakerId = id
 
-    def computeValue(self, time, value, speakerId, speakerGroup, isLeft):
-        return self.refAudioModelEffect.computeValue(self.start, time, value, speakerId, speakerGroup, isLeft)
+    def computeValue(self, time, value, speakerId, isLeft):
+        return self.refAudioModelEffect.computeValue(self.start, time, value, speakerId, isLeft)
 
     def getLength(self):
         return self.refAudioModelEffect.getLength()

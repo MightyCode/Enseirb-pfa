@@ -2,8 +2,8 @@ from interface.python.audio.ModelAudioEffect import ModelAudioEffect
 from interface.python.ResourceManager import ResourceConstants
 
 class EffectPlay(ModelAudioEffect):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, speakerGroup):
+        super().__init__(speakerGroup)
 
         self.samplerate = 0
         self.soundFile = None
@@ -14,7 +14,7 @@ class EffectPlay(ModelAudioEffect):
         self.samplerate = self.resourceManager.getAudio(self.info["file"])[ResourceConstants.AUDIO_SAMPLE_RATE] 
         self.amplitude = self.info["amplitude"] if "amplitude" in self.info.keys() else 1
     
-    def computeValue(self, startTime, tick, value, speakerId, speakerGroup, isLeft):
+    def computeValue(self, startTime, tick, value, speakerId, isLeft):
         now = tick - startTime
 
         channel = 0 if isLeft else 1

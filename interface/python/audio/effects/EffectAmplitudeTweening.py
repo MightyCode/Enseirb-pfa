@@ -5,8 +5,8 @@ from interface.python.Tweenings.ETweeningType import ETweeningType as ETT
 from interface.python.audio.ModelAudioEffect import ModelAudioEffect
 
 class EffectAmplitudeTweening(ModelAudioEffect):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, speakerGroup):
+        super().__init__(speakerGroup)
 
         self.tweeningType = -1
         self.tweeningBehaviour = -1
@@ -41,7 +41,7 @@ class EffectAmplitudeTweening(ModelAudioEffect):
         self.numberSeconds = int(self.info["length"])
         self.length = int(self.numberSeconds * self.samplerate)
 
-    def computeValue(self, startTime, tick, value, speakerId, speakerGroup, isLeft):
+    def computeValue(self, startTime, tick, value, speakerId, isLeft):
         now: int = tick - startTime
 
         #print(now, Tweening.evaluate(self.tweeningType, self.tweeningBehaviour, now, self.minValue, self.delta, self.length, self.arg1, self.arg2))

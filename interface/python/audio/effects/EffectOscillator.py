@@ -4,8 +4,8 @@ from interface.python.ResourceManager import ResourceConstants
 import numpy as np
 
 class EffectOscillator(ModelAudioEffect):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, speakerGroup):
+        super().__init__( speakerGroup)
 
         self.freq = 440.0  # frequency in Hz
         self.amp = 0.5  # amplitude between 0 and 1
@@ -26,7 +26,7 @@ class EffectOscillator(ModelAudioEffect):
         # create the oscillator waveform
         self.osc = self.amplitude * np.sin(2 * np.pi * self.freq * t)
         
-    def computeValue(self, startTime, tick, value, speakerId, speakerGroup, isLeft):
+    def computeValue(self, startTime, tick, value, speakerId, isLeft):
         now = tick - startTime
 
         if now < 0 or now > self.getLength():

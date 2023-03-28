@@ -34,7 +34,7 @@ class SoundCreation:
         index = speaker * 2 + (1 if isLeft else 0)
 
         audioValues[index] = effect.computeValue(tick, audioValues[index],
-            speaker, self.speakers_groups[effect.groupSpeakerId], isLeft)
+            speaker, isLeft)
 
     def create(self):
         display_pourcent = 0.1
@@ -72,20 +72,20 @@ class SoundCreation:
 
                 display_pourcent += 0.1
 
-    def createEffectFromName(self, modelEffectInfo, projectInfo):
+    def createEffectFromName(self, speakerGroup, modelEffectInfo, projectInfo):
         effect = None
 
         if modelEffectInfo["name"] == "play":
-            effect = EffectPlay()
+            effect = EffectPlay(speakerGroup)
 
         elif modelEffectInfo["name"] == "amplitudeTweening":
-            effect = EffectAmplitudeTweening()
+            effect = EffectAmplitudeTweening(speakerGroup)
 
         elif modelEffectInfo["name"] == "oscillator":
-             effect = EffectOscillator()
+            effect = EffectOscillator(speakerGroup)
 
         elif modelEffectInfo["name"] == "mute":
-             effect = EffectOscillator()
+            effect = EffectOscillator(speakerGroup)
 
         for key in modelEffectInfo.keys():
             if key == "name":
@@ -115,7 +115,8 @@ class SoundCreation:
             groupIndex += 1
 
         for effectRawData in audioTimeline:
-            effect = self.createEffectFromName(effectRawData["modelEffect"], project["project"])
+            effect = self.createEffectFromName(self.speakers_groups[effectRawData["speakersGroup"]].speakers, 
+                                               effectRawData["modelEffect"], project["project"])
             timelineEffect = TimelineSoundEffect(effect, effectRawData["priority"], effectRawData["start"])
             timelineEffect.setGroupSpeaker(effectRawData["speakersGroup"])
 
