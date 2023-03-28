@@ -84,6 +84,9 @@ class SoundCreation:
         elif modelEffectInfo["name"] == "oscillator":
              effect = EffectOscillator()
 
+        elif modelEffectInfo["name"] == "mute":
+             effect = EffectOscillator()
+
         for key in modelEffectInfo.keys():
             if key == "name":
                 continue
@@ -99,9 +102,6 @@ class SoundCreation:
         audioTimeline = project["audioTimeline"]
 
         mainSoundData, self.samplerate = ResourceManager().getAudio(project["project"]["mainSound"])
-
-        mainSoundPath = project["project"]["mainSound"]
-        mainSoundData, samplerate = ResourceManager().getAudio(mainSoundPath)
 
         self.audio_result = AudioResult(10, self.samplerate, len(mainSoundData))
 
