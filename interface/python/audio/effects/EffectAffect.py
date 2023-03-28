@@ -42,3 +42,10 @@ class EffectAffect(ModelAudioEffect):
 
     def getLength(self):
         return self.length
+
+    def Instanciate(soundCreation, speakerGroup, modelEffectInfo, projectInfo):
+        subEffect = soundCreation.createEffectFromName(speakerGroup, modelEffectInfo["subModel"], projectInfo)
+        return EffectAffect(speakerGroup, subEffect)
+
+    def GetEffectName():
+        return "affect"

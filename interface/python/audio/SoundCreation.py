@@ -1,3 +1,4 @@
+from re import A
 from interface.python.ResourceManager import ResourceManager
 from interface.python.audio.SpeakerGroup import SpeakerGroup
 from interface.python.audio.AudioResult import AudioResult
@@ -10,12 +11,17 @@ from interface.python.audio.effects.EffectOscillator import EffectOscillator
 from interface.python.audio.effects.EffectMute import EffectMute
 from interface.python.audio.effects.EffectAffect import EffectAffect
 
+import importlib.util
+import os
+
 class SoundCreation:
     def __init__(self):
         self.effects = []
         self.speakers_groups = []
         self.length = 0
         self.audio_result = None
+
+        self.referenceEffects = []
     
     def addGroup(self):
         self.speakers_groups.append(
@@ -34,7 +40,6 @@ class SoundCreation:
 
     def computeForSpeaker(self, effect, tick, speaker, isLeft, audioValues):
         index = speaker * 2 + (1 if isLeft else 0)
-
         audioValues[index] = effect.computeValue(tick, audioValues[index],
             speaker, isLeft)
 
@@ -74,24 +79,30 @@ class SoundCreation:
 
                 display_pourcent += 0.1
 
+
+    def load_custom_effects(self, path):
+        if os.path.exists(path):
+            for filename in os.listdir(path):
+                if filename.endswith(".py"):
+                    effect_module_name = os.path.splitext(filename)[0]
+                    effect_module_path = os.path.join(path, filename)
+
+                    # Load the module and find the effect class
+                    spec = importlib.util.spec_from_file_location(effect_module_name, effect_module_path)
+                    effect_module = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(effect_module)
+                    for attr_name in dir(effect_module):
+                        attr = getattr(effect_module, attr_name)
+                        if hasattr(attr, "GetEffectName") and hasattr(attr, "Instanciate"):
+                            self.referenceEffects.append(attr)
+
+    
     def createEffectFromName(self, speakerGroup, modelEffectInfo, projectInfo):
         effect = None
 
-        if modelEffectInfo["name"] == "play":
-            effect = EffectPlay(speakerGroup)
-
-        elif modelEffectInfo["name"] == "amplitudeTweening":
-            effect = EffectAmplitudeTweening(speakerGroup)
-
-        elif modelEffectInfo["name"] == "oscillator":
-            effect = EffectOscillator(speakerGroup)
-
-        elif modelEffectInfo["name"] == "mute":
-            effect = EffectOscillator(speakerGroup)
-
-        elif modelEffectInfo["name"] == "affect":
-            subEffect = self.createEffectFromName(speakerGroup, modelEffectInfo["subModel"], projectInfo)
-            effect = EffectAffect(speakerGroup, subEffect)
+        for tested in self.referenceEffects:
+            if modelEffectInfo["name"] in tested.GetEffectName():
+                effect = tested.Instanciate(self, speakerGroup, modelEffectInfo, projectInfo)
 
         for key in modelEffectInfo.keys():
             if key == "name":
@@ -108,6 +119,11 @@ class SoundCreation:
         audioTimeline = project["audioTimeline"]
 
         mainSoundData, self.samplerate = ResourceManager().getAudio(project["project"]["mainSound"])
+
+        self.load_custom_effects("interface/python/audio/effects")
+        
+        if ("externScripts" in project["project"].keys()):
+            self.load_custom_effects(project["project"]["externScripts"])
 
         self.audio_result = AudioResult(10, self.samplerate, len(mainSoundData))
 

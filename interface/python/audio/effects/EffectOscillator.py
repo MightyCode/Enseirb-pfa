@@ -36,3 +36,9 @@ class EffectOscillator(ModelAudioEffect):
 
     def getLength(self):
         return self.length
+
+    def Instanciate(soundCreation, speakerGroup, modelEffectInfo, projectInfo):
+        return EffectOscillator(speakerGroup)
+
+    def GetEffectName():
+        return "oscillator"
