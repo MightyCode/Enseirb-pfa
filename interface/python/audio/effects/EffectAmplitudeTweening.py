@@ -11,7 +11,7 @@ class EffectAmplitudeTweening(ModelAudioEffect):
         self.tweeningType = -1
         self.tweeningBehaviour = -1
 
-        self.minValue = 0
+        self.startValue = 0
         self.maxValue = 0
 
         self.delta = 0
@@ -27,10 +27,10 @@ class EffectAmplitudeTweening(ModelAudioEffect):
         self.tweeningType = ETT.from_str(self.info["tweeningType"])
         self.tweeningBehaviour = ETB.from_str(self.info["tweeningBehaviour"])
 
-        self.minValue = float(self.info["minValue"]) if "minValue" in self.info.keys() else 0
-        self.maxValue = float(self.info["maxValue"]) if "maxValue" in self.info.keys() else 1
+        self.startValue = float(self.info["startValue"]) if "startValue" in self.info.keys() else 0
+        self.endValue = float(self.info["endValue"]) if "endValue" in self.info.keys() else 1
 
-        self.delta = self.maxValue - self.minValue
+        self.delta = self.endValue - self.startValue
 
         if "arg1" in self.info.keys():
            self.arg1 = float(self.info["arg1"])
@@ -47,8 +47,7 @@ class EffectAmplitudeTweening(ModelAudioEffect):
         if now < 0 or now > self.getLength():
             return value
 
-        #print(now, Tweening.evaluate(self.tweeningType, self.tweeningBehaviour, now, self.minValue, self.delta, self.length, self.arg1, self.arg2))
-        return value * Tweening.evaluate(self.tweeningType, self.tweeningBehaviour, now, self.minValue, self.delta, self.length, self.arg1, self.arg2)
+        return value * Tweening.evaluate(self.tweeningType, self.tweeningBehaviour, now, self.startValue, self.delta, self.length, self.arg1, self.arg2)
 
     def getLength(self):
         return self.length

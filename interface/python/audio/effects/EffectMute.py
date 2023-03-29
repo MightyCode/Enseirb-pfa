@@ -10,6 +10,7 @@ class EffectMute(ModelAudioEffect):
 
     def preprocess(self):
         self.samplerate = int(self.info["sampleRate"])
+        self.numberSecond = float(self.info["length"])
         self.length = int(self.numberSecond * self.samplerate)
     
     def computeValue(self, startTime, tick, value, speakerId, isLeft):

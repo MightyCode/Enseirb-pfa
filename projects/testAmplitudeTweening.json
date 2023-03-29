@@ -30,8 +30,8 @@
                 "name" : "amplitudeTweening",
                 "tweeningType" : "quadratic",
                 "tweeningBehaviour" : "in_out",
-                "minValue" : 0,
-                "maxValue" : 1.6,
+                "startValue" : 0,
+                "endValue" : 1.6,
                 "length" : 1.66666
             }
         },
