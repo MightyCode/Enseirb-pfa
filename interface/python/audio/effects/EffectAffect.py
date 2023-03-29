@@ -4,6 +4,8 @@ from interface.python.Tweenings.ETweeningType import ETweeningType as ETT
 
 from interface.python.audio.ModelAudioEffect import ModelAudioEffect
 
+import math
+
 class AffectFunction:
     @staticmethod
     def add(a, b) : return a + b
@@ -21,6 +23,10 @@ class AffectFunction:
     def max(a, b) : return max(a, b)
     @staticmethod
     def min(a, b) : return min(a, b)
+    @staticmethod
+    def mean(a, b) : return (a + b) / 2
+    @staticmethod
+    def dist(a, b) : return math.sqrt(a * a + b * b)
 
     def str_to_affect_function(funcName: str):
         if hasattr(AffectFunction, funcName):

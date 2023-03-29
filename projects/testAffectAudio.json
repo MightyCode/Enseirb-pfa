@@ -42,7 +42,7 @@
             "speakersGroup" : 0,
             "modelEffect" : {
                 "name" : "affect",
-                "affect" : "max",
+                "affect" : "dist",
                 "subModel" : {
                     "name" : "play",
                     "file" : "interface/python/audio/sound/retro.wav",

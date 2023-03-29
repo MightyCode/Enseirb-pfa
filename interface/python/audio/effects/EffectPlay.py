@@ -12,6 +12,8 @@ class EffectPlay(ModelAudioEffect):
         self.samplerate = int(self.info["sampleRate"])
         self.soundData = self.resourceManager.getAudio(self.info["file"], self.samplerate)[ResourceConstants.AUDIO_DATA] 
         self.amplitude = self.info["amplitude"] if "amplitude" in self.info.keys() else 1
+
+        self.loopTime = self.info["loopTime"] if "loopTime" in self.info.keys() else 1
     
     def computeValue(self, startTime, tick, value, speakerId, isLeft):
         now = tick - startTime
@@ -21,10 +23,10 @@ class EffectPlay(ModelAudioEffect):
         if now < 0 or now > self.getLength():
             return value
 
-        return self.soundData[now][channel] * self.amplitude
+        return self.soundData[now % len(self.soundData)][channel] * self.amplitude
 
     def getLength(self):
-        return len(self.soundData)
+        return len(self.soundData) * self.loopTime
 
     @staticmethod
     def Instanciate(soundCreation, speakerGroup, modelEffectInfo, projectInfo):

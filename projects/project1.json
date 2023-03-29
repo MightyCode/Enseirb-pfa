@@ -17,8 +17,9 @@
             "speakersGroup" : 0,
             "modelEffect" : {
                 "name" : "play",
-                "file" : "interface/python/audio/sound/vache.wav",
-                "amplitude" : 1
+                "file" : "interface/python/audio/sound/retro.wav",
+                "amplitude" : 1,
+                "loopTime" : 3
             }
         }
     ]
