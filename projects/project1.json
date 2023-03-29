@@ -6,7 +6,7 @@
           [0, 1, 2, 3, 4]
         ],
         "mainSound" : "interface/python/audio/sound/vache.wav",
-        "sampleRate" : 44100,
+        "sampleRate" : 48000,
         "externScripts" : ""
     },
     "audioTimeline" : [

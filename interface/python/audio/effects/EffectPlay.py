@@ -5,13 +5,12 @@ class EffectPlay(ModelAudioEffect):
     def __init__(self, speakerGroup):
         super().__init__(speakerGroup)
 
-        self.samplerate = 0
         self.soundFile = None
         self.amplitude = 1
 
     def preprocess(self):
-        self.soundData = self.resourceManager.getAudio(self.info["file"])[ResourceConstants.AUDIO_DATA] 
-        self.samplerate = self.resourceManager.getAudio(self.info["file"])[ResourceConstants.AUDIO_SAMPLE_RATE] 
+        self.samplerate = int(self.info["sampleRate"])
+        self.soundData = self.resourceManager.getAudio(self.info["file"], self.samplerate)[ResourceConstants.AUDIO_DATA] 
         self.amplitude = self.info["amplitude"] if "amplitude" in self.info.keys() else 1
     
     def computeValue(self, startTime, tick, value, speakerId, isLeft):

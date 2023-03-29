@@ -1,5 +1,5 @@
 from re import A
-from interface.python.ResourceManager import ResourceManager
+from interface.python.ResourceManager import ResourceManager, ResourceConstants
 from interface.python.audio.SpeakerGroup import SpeakerGroup
 from interface.python.audio.AudioResult import AudioResult
 
@@ -110,7 +110,7 @@ class SoundCreation:
         
             effect.setInfo(key, modelEffectInfo[key])
 
-        effect.setInfo("sampleRate", projectInfo["sampleRate"])
+        effect.setInfo("sampleRate", self.samplerate)
 
         return effect
 
@@ -118,7 +118,9 @@ class SoundCreation:
         project = ResourceManager().getJson(path)
         audioTimeline = project["audioTimeline"]
 
-        mainSoundData, self.samplerate = ResourceManager().getAudio(project["project"]["mainSound"])
+        self.samplerate = project["project"]["sampleRate"]
+
+        mainSoundData = ResourceManager().getAudio(project["project"]["mainSound"], self.samplerate)[ResourceConstants.AUDIO_DATA]
 
         self.load_custom_effects("interface/python/audio/effects")
         
