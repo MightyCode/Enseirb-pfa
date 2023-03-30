@@ -49,6 +49,7 @@ class Effect2Merge(ModelAudioEffect):
 
     def setAudioStreamId(self, streamsInId, streamOutId):
         assert len(streamsInId) == 2
+        assert streamOutId != None and len(streamOutId) != 0
 
     def computeValue(self, startTime, tick, audioStreams):
         now: int = tick - startTime

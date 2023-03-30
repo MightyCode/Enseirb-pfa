@@ -18,12 +18,13 @@ class EffectPlay(ModelAudioEffect):
 
     def setAudioStreamId(self, streamsInId, streamOutId):
         assert streamOutId != None and len(streamOutId) != 0
+        assert streamsInId == None or len(streamsInId) == 0
+
     
     def computeValue(self, startTime, tick, audioStreams):
         now = tick - startTime
 
         assert now >= 0 or now < self.getLength()
-        assert audioStreams == None or len(audioStreams) == 0
 
         return self.soundData[now % len(self.soundData)] * self.amplitude
 
