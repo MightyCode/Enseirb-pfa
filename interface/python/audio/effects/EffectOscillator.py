@@ -27,7 +27,7 @@ class EffectOscillator(ModelAudioEffect):
         # create the oscillator waveform
         self.osc = self.amplitude * np.sin(2 * np.pi * self.freq * t)
     
-        def setAudioStreamId(self, streamsInId, streamOutId):
+    def setAudioStreamId(self, streamsInId, streamOutId):
         assert streamOutId != None and len(streamOutId) != 0
 
     def computeValue(self, startTime, tick, audioStreams):

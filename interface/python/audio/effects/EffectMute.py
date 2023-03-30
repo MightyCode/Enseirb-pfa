@@ -13,6 +13,7 @@ class EffectMute(ModelAudioEffect):
     
     def setAudioStreamId(self, streamsInId, streamOutId):
         assert streamOutId != None and len(streamOutId) != 0
+        assert streamsInId == None or len(streamsInId) == 0
 
     def computeValue(self, startTime, tick, audioStreams):
         now = tick - startTime
