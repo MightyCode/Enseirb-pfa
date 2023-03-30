@@ -2,31 +2,25 @@ from interface.python.audio.ModelAudioEffect import ModelAudioEffect
 from interface.python.ResourceManager import ResourceConstants
 
 class EffectMute(ModelAudioEffect):
-    def __init__(self, speakerGroup):
-        super().__init__( speakerGroup)
-
-        self.samplerate = 0
-        self.length = 0
+    def __init__(self):
+        super().__init__()
 
     def preprocess(self):
-        self.samplerate = int(self.info["sampleRate"])
+        super().preprocess()
+
         self.numberSecond = float(self.info["length"])
-        self.length = int(self.numberSecond * self.samplerate)
+        self.length = int(self.numberSecond * self.sampleRate)
     
-    def computeValue(self, startTime, tick, value, speakerId, isLeft):
+    def computeValue(self, startTime, tick, audioStreams):
         now = tick - startTime
 
-        if now < 0 or now > self.getLength():
-            return value
+        assert now >= 0 or now < self.getLength()
 
         return 0
 
-    def getLength(self):
-        return self.length
-
     @staticmethod
-    def Instanciate(soundCreation, speakerGroup, modelEffectInfo, projectInfo):
-        return EffectMute(speakerGroup)
+    def Instanciate():
+        return EffectMute()
 
     @staticmethod
     def GetEffectName():

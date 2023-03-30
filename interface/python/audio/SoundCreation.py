@@ -1,28 +1,135 @@
-from re import A
+from operator import concat
 from interface.python.ResourceManager import ResourceManager, ResourceConstants
+from interface.python.audio.AudioSteam import AudioStream
 from interface.python.audio.SpeakerGroup import SpeakerGroup
 from interface.python.audio.AudioResult import AudioResult
 
 from interface.python.audio.TimelineSoundEffect import TimelineSoundEffect
 
-from interface.python.audio.effects.EffectPlay import EffectPlay
-from interface.python.audio.effects.EffectAmplitudeTweening import EffectAmplitudeTweening
-from interface.python.audio.effects.EffectOscillator import EffectOscillator
-from interface.python.audio.effects.EffectMute import EffectMute
-from interface.python.audio.effects.EffectAffect import EffectAffect
-
 import importlib.util
-import os
+import os, math
 
 class SoundCreation:
-    def __init__(self):
-        self.effects = []
-        self.speakers_groups = []
-        self.length = 0
-        self.audio_result = None
+    SEGMENT_SIZE = 2
 
+    def __init__(self):
+        self.referenceEffects: list = []
+
+        self.timelineEffects: list = []
+        self.segmentEffects: list = [] # Optimization purpose
+
+        self.speakers_groups: list = []
+
+        # Can have number of audioStreams > nb of groups of speaker, but at the end audioStreams[i] => groupSpeaker[i]
+        self.audioStreams: list = []
+        self.audioStreamIdMapping: dict = {}
+
+        self.audio_result: AudioResult = None
+        self.length: int = 0
+
+
+    def readProject(self, path):
+        project = ResourceManager().getJson(path)
+        audioTimeline = project["audioTimeline"]
+
+        self.samplerate = project["project"]["sampleRate"]
+
+        mainSoundData = ResourceManager().getAudio(project["project"]["mainSound"], self.samplerate)[ResourceConstants.AUDIO_DATA]
+
+        # Load Effects
         self.referenceEffects = []
+        self.load_custom_effects("interface/python/audio/effects")
+        
+        if ("externScripts" in project["project"].keys()):
+            self.load_custom_effects(project["project"]["externScripts"])
+
+        self.audio_result = AudioResult(10, self.samplerate, len(mainSoundData))
+
+        # Create as segment effects needed, number of segment is given by SEGMENT SIZE and sound result length
+        self.segmentEffects = [None] * math.ceil(self.audio_result.getNumberTick() / (SoundCreation.SEGMENT_SIZE * self.samplerate))
+        for i in range(len(self.segmentEffects)):
+            self.segmentEffects[i] = []
+
+        # Create speakers group
+        self.audioStreamIdMapping.clear()
+        for speakersGroup, groupIndex in zip(project["project"]["speakersGroups"], range(len(project["project"]["speakersGroups"]))):
+            self.addGroup()
+            self.audioStreamIdMapping[groupIndex] = groupIndex
+
+            for i in speakersGroup:
+                self.addToGroup(groupIndex, i)
+
+        # Create all effect
+        for effectRawData in audioTimeline:
+            effect = self.createEffectFromName(effectRawData["modelEffect"], project["project"])
+            timelineEffect = TimelineSoundEffect(effect, effectRawData["priority"], effectRawData["start"], self.samplerate)
+            streamInId = None
+            if "audioStreamIn" in effectRawData.keys():
+                streamInId = [effectRawData["audioStreamIn"]] if isinstance(effectRawData["audioStreamIn"], int) else effectRawData["audioStreamIn"]
+            streamOutId = [effectRawData["audioStreamOut"]] if isinstance(effectRawData["audioStreamOut"], int) else effectRawData["audioStreamOut"]
+
+            timelineEffect.setAudioStreamsId(streamInId, streamOutId)
+            self.timelineEffects.append(timelineEffect)
+
+            # Append potentially new audio stream
+
+            for audioStreamId in streamOutId if streamInId == None else concat(streamInId, streamOutId):
+                if audioStreamId not in self.audioStreamIdMapping.keys():
+                    self.audioStreamIdMapping[audioStreamId] = len(self.audioStreamIdMapping.keys())
+
+        for effect in self.timelineEffects:
+            effect.preprocess()
+
+        # Append timeline effect in segment
+        for effect in self.timelineEffects:
+            segmentStart: int = int(effect.start // SoundCreation.SEGMENT_SIZE)
+            segmentEnd: int = int((effect.getLength() / self.samplerate + effect.start) // SoundCreation.SEGMENT_SIZE)
+
+            for i in range(max(segmentStart, 0), min(segmentEnd + 1, len(self.segmentEffects))):
+                self.segmentEffects[i].append(effect)
+
+        # Create audio Streams
+        self.audioStreams = [None] * len(self.audioStreamIdMapping.keys())
+        for i in self.audioStreamIdMapping.keys():
+            self.audioStreams[self.audioStreamIdMapping[i]] = AudioStream(i)
+
+    def load_custom_effects(self, path):
+        if not os.path.exists(path):
+            return 
+
+        for filename in os.listdir(path):
+            if not filename.endswith(".py"):
+                continue 
+            
+            effect_module_name = os.path.splitext(filename)[0]
+            effect_module_path = os.path.join(path, filename)
+
+            # Load the module and find the effect class
+            spec = importlib.util.spec_from_file_location(effect_module_name, effect_module_path)
+            effect_module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(effect_module)
+            for attr_name in dir(effect_module):
+                attr = getattr(effect_module, attr_name)
+                if hasattr(attr, "GetEffectName") and hasattr(attr, "Instanciate"):
+                    self.referenceEffects.append(attr)
+
     
+    def createEffectFromName(self, modelEffectInfo, projectInfo):
+        effect = None
+
+        for tested in self.referenceEffects:
+            if modelEffectInfo["name"] in tested.GetEffectName():
+                effect = tested.Instanciate()
+
+        for key in modelEffectInfo.keys():
+            if key != "name":
+                effect.setInfo(key, modelEffectInfo[key])
+
+        effect.setInfo("sampleRate", self.samplerate)
+        effect.setInfo("audio", self.samplerate)
+
+        return effect
+
     def addGroup(self):
         self.speakers_groups.append(
             SpeakerGroup()
@@ -38,39 +145,73 @@ class SoundCreation:
         self.speakers_groups[groupId].add(speakerId)
 
 
-    def computeForSpeaker(self, effect, tick, speaker, isLeft, audioValues):
-        index = speaker * 2 + (1 if isLeft else 0)
-        audioValues[index] = effect.computeValue(tick, audioValues[index],
-            speaker, isLeft)
+    def computeResultForAudio(self, effectPriority, result, audioStreams):
+        if isinstance(result, dict):
+            pass # Todo
+        elif isinstance(result, float) or isinstance(result, int):
+            for audioStream in audioStreams:
+                audioStream.setValueBoth(effectPriority, result)
+        elif isinstance(result[0], float) or isinstance(result[0], int):
+            for audioStream in audioStreams:
+                audioStream.setBothValue(effectPriority, result[0], result[1])
+        else:
+            assert len(result) == len(audioStreams)
+
+            for value, audioStream in zip(result, audioStreams):
+                if isinstance(value, float) or isinstance(value, int):
+                    audioStream.setValueBoth(effectPriority, result)
+                else :
+                    audioStream.setBothValue(effectPriority, value[0], value[1])
+
+    def getAudioStreams(self, ids):
+        if ids == None : return None
+
+        result = []
+        for id in ids:
+            result.append(self.audioStreams[self.audioStreamIdMapping[id]])
+
+        return result
+    
+    def computeTick(self, tick):
+        # Alter audio stream with effects
+        for effect in self.segmentEffects[tick // (SoundCreation.SEGMENT_SIZE * self.samplerate)]:
+            start = effect.start * self.samplerate
+
+            if tick >= start and tick < start + effect.getLength():
+                audioStreamsIn = self.getAudioStreams(effect.audioStreamsIn)
+                audioStreamsOut = self.getAudioStreams(effect.audioStreamsOut)
+
+                result = effect.computeValue(tick, audioStreamsIn)
+
+                self.computeResultForAudio(effect.priority, result, audioStreamsOut)
 
     def create(self):
         display_pourcent = 0.1
 
-        priorities: list = [0] * self.audio_result.nb_speakers
-        audioValue: list = [0] * self.audio_result.nb_speakers * 2
-
         for tick in range(self.audio_result.getNumberTick()):
+            for audioStream in self.audioStreams:
+                audioStream.reset()
+
+            self.computeTick(tick)
+
+            # Apply audio stream to audio result
             for i in range(self.audio_result.nb_speakers):
-                priorities[i] = -1
-                audioValue[i] = 0
+                priority: int = -1
+                values = [0, 0]
 
-            for effect in self.effects:
-                start = effect.start * self.samplerate
-                end = start + effect.getLength()
+                for group in self.speakers_groups:
+                    if i not in group.speakers:
+                        continue
+                    
+                    audioStream = self.audioStreams[group.id()]
+                    if audioStream.priority() >= priority:
+                        values = audioStream.bothValue()
+                        priority = audioStream.priority()
 
-                if tick >= start and tick < end:
-                    priority = effect.priority
-
-                    for speaker in self.speakers_groups[effect.groupSpeakerId].speakers:
-                        if priorities[speaker] > priority:
-                            continue
-                            
-                        self.computeForSpeaker(effect, tick, speaker, False, audioValue)
-                        self.computeForSpeaker(effect, tick, speaker, True, audioValue)
-
-            for i in range(self.audio_result.nb_speakers * 2):
-                if audioValue[i] != 0:
-                    self.audio_result.setAudioValue(i // 2, tick, audioValue[i], i % 2 == 0)
+                        if values[0] != 0: # Left
+                            self.audio_result.setAudioValue(i, tick, values[0], 0)
+                        if values[1] != 0: # Right
+                            self.audio_result.setAudioValue(i , tick, values[1], 1)
 
             if tick > display_pourcent * self.audio_result.getNumberTick():
                 print("Done " + str(round(display_pourcent * 100)), "%, "  \
@@ -78,73 +219,3 @@ class SoundCreation:
                     + str(self.audio_result.getNumberTick()))
 
                 display_pourcent += 0.1
-
-
-    def load_custom_effects(self, path):
-        if os.path.exists(path):
-            for filename in os.listdir(path):
-                if filename.endswith(".py"):
-                    effect_module_name = os.path.splitext(filename)[0]
-                    effect_module_path = os.path.join(path, filename)
-
-                    # Load the module and find the effect class
-                    spec = importlib.util.spec_from_file_location(effect_module_name, effect_module_path)
-                    effect_module = importlib.util.module_from_spec(spec)
-                    spec.loader.exec_module(effect_module)
-                    for attr_name in dir(effect_module):
-                        attr = getattr(effect_module, attr_name)
-                        if hasattr(attr, "GetEffectName") and hasattr(attr, "Instanciate"):
-                            self.referenceEffects.append(attr)
-
-    
-    def createEffectFromName(self, speakerGroup, modelEffectInfo, projectInfo):
-        effect = None
-
-        for tested in self.referenceEffects:
-            if modelEffectInfo["name"] in tested.GetEffectName():
-                effect = tested.Instanciate(self, speakerGroup, modelEffectInfo, projectInfo)
-
-        for key in modelEffectInfo.keys():
-            if key == "name":
-                continue
-        
-            effect.setInfo(key, modelEffectInfo[key])
-
-        effect.setInfo("sampleRate", self.samplerate)
-
-        return effect
-
-    def readProject(self, path):
-        project = ResourceManager().getJson(path)
-        audioTimeline = project["audioTimeline"]
-
-        self.samplerate = project["project"]["sampleRate"]
-
-        mainSoundData = ResourceManager().getAudio(project["project"]["mainSound"], self.samplerate)[ResourceConstants.AUDIO_DATA]
-
-        self.load_custom_effects("interface/python/audio/effects")
-        
-        if ("externScripts" in project["project"].keys()):
-            self.load_custom_effects(project["project"]["externScripts"])
-
-        self.audio_result = AudioResult(10, self.samplerate, len(mainSoundData))
-
-        groupIndex = 0
-        for speakersGroup in project["project"]["speakersGroups"]:
-            self.addGroup()
-
-            for i in speakersGroup:
-                self.addToGroup(groupIndex, i)
-            
-            groupIndex += 1
-
-        for effectRawData in audioTimeline:
-            effect = self.createEffectFromName(self.speakers_groups[effectRawData["speakersGroup"]].speakers, 
-                                               effectRawData["modelEffect"], project["project"])
-            timelineEffect = TimelineSoundEffect(effect, effectRawData["priority"], effectRawData["start"], self.samplerate)
-            timelineEffect.setGroupSpeaker(effectRawData["speakersGroup"])
-
-            self.effects.append(timelineEffect)
-
-        for effect in self.effects:
-            effect.preprocess()

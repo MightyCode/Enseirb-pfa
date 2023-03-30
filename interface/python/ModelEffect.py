@@ -11,7 +11,7 @@ class ModelEffect:
     _id = 0
 
     def __init__(self, effectType):
-        self.id = ModelEffect._id
+        self._id = ModelEffect._id
         ModelEffect._id += 1
 
         self.type = effectType
@@ -22,7 +22,7 @@ class ModelEffect:
         self.info[key] = value
 
     def id(self):
-        return self.id
+        return self._id
 
     def getLength(self):
         return 0

@@ -34,35 +34,36 @@ class AffectFunction:
         else:
             raise ValueError(f"Function {funcName} not found in AffectFunction")
 
-class EffectAffect(ModelAudioEffect):
-    def __init__(self, speakerGroup, subModelAudioEffect: ModelAudioEffect):
-        super().__init__(speakerGroup)
+class Effect2Merge(ModelAudioEffect):
+    def __init__(self):
+        super().__init__()
 
         self.func: function = AffectFunction.add
-        self.subModel: ModelAudioEffect = subModelAudioEffect
-        self.length: int = 0
 
     def preprocess(self):
-        self.subModel.preprocess()
-        self.length = self.subModel.getLength()
-        self.func =  AffectFunction.str_to_affect_function(self.info["affect"])
+        super().preprocess()
 
-    def computeValue(self, startTime, tick, value, speakerId, isLeft):
+        self.numberSecond = float(self.info["length"])
+        self.length = round(self.numberSecond * self.sampleRate)
+        self.func =  AffectFunction.str_to_affect_function(self.info["func"])
+
+    def setAudioStreamId(self, streamsInId, streamOutId):
+        assert len(streamsInId) == 2
+
+    def computeValue(self, startTime, tick, audioStreams):
         now: int = tick - startTime
 
-        if now < 0 or now >= self.getLength():
-            return value
+        assert now >= 0 or now < self.getLength()
 
-        return self.func(value, self.subModel.computeValue(startTime, tick, value, speakerId, isLeft))
-
-    def getLength(self):
-        return self.length
+        return [
+            self.func(audioStreams[0].leftValue(), audioStreams[1].rightValue()),
+            self.func(audioStreams[0].leftValue(), audioStreams[1].rightValue())
+        ]
 
     @staticmethod
-    def Instanciate(soundCreation, speakerGroup, modelEffectInfo, projectInfo):
-        subEffect = soundCreation.createEffectFromName(speakerGroup, modelEffectInfo["subModel"], projectInfo)
-        return EffectAffect(speakerGroup, subEffect)
+    def Instanciate():
+        return Effect2Merge()
 
     @staticmethod
     def GetEffectName():
-        return "affect"
+        return "2merge"

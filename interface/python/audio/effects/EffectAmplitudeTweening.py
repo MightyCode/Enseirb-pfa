@@ -4,9 +4,11 @@ from interface.python.Tweenings.ETweeningType import ETweeningType as ETT
 
 from interface.python.audio.ModelAudioEffect import ModelAudioEffect
 
+import copy
+
 class EffectAmplitudeTweening(ModelAudioEffect):
-    def __init__(self, speakerGroup):
-        super().__init__(speakerGroup)
+    def __init__(self):
+        super().__init__()
 
         self.tweeningType = -1
         self.tweeningBehaviour = -1
@@ -22,8 +24,11 @@ class EffectAmplitudeTweening(ModelAudioEffect):
 
         self.length = 0
 
+        self.result: list = []
+
     def preprocess(self):
-        self.samplerate = int(self.info["sampleRate"])
+        super().preprocess()
+
         self.tweeningType = ETT.from_str(self.info["tweeningType"])
         self.tweeningBehaviour = ETB.from_str(self.info["tweeningBehaviour"])
 
@@ -38,23 +43,30 @@ class EffectAmplitudeTweening(ModelAudioEffect):
         if "arg2" in self.info.keys():
            self.arg2 = float(self.info["arg2"])
 
-        self.numberSeconds = int(self.info["length"])
-        self.length = int(self.numberSeconds * self.samplerate)
+        self.numberSeconds = float(self.info["length"])
+        self.length = round(self.numberSeconds * self.sampleRate)
 
-    def computeValue(self, startTime, tick, value, speakerId, isLeft):
+    def setAudioStreamId(self, streamsInId, streamOutId):
+        assert len(streamsInId) == len(streamOutId) and len(streamOutId) != 0
+
+        for i in range(len(streamOutId)):
+            self.result.append([0, 0])
+
+    def computeValue(self, startTime, tick, audioStreams):
         now: int = tick - startTime
 
-        if now < 0 or now > self.getLength():
-            return value
+        assert now >= 0 or now < self.getLength()
 
-        return value * Tweening.evaluate(self.tweeningType, self.tweeningBehaviour, now, self.startValue, self.delta, self.length, self.arg1, self.arg2)
-
-    def getLength(self):
-        return self.length
+        for audioStream, i in zip(audioStreams, range(len(audioStreams))):
+            amplitude = Tweening.evaluate(self.tweeningType, self.tweeningBehaviour, now, self.startValue, self.delta, self.length, self.arg1, self.arg2)
+            self.result[i][0] = audioStream.leftValue() * amplitude 
+            self.result[i][1] = audioStream.rightValue() * amplitude 
+    
+        return copy.deepcopy(self.result) 
 
     @staticmethod
-    def Instanciate(soundCreation, speakerGroup, modelEffectInfo, projectInfo):
-        return EffectAmplitudeTweening(speakerGroup)
+    def Instanciate():
+        return EffectAmplitudeTweening()
 
     @staticmethod
     def GetEffectName():

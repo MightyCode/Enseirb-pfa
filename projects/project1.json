@@ -14,7 +14,7 @@
             "name" : "meuh11",
             "start" : 0,
             "priority" : 0,
-            "speakersGroup" : 0,
+            "audioStreamOut" : 0,
             "modelEffect" : {
                 "name" : "play",
                 "file" : "interface/python/audio/sound/retro.wav",
