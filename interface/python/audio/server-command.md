@@ -5,6 +5,10 @@ https://doc.ubuntu-fr.org/jackd
 ## List all sound cards on your computer 
 
 ```bash
+qjackctl
+```
+
+```bash
 aplay -l
 ```
 

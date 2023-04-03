@@ -82,8 +82,10 @@ try:
     import soundfile as sf
 
     client = jack.Client(args.clientname)
+    print(client)
+    print(client.outports)
     print(len(client.outports))
-
+    exit()
 
     blocksize = client.blocksize
     samplerate = client.samplerate
