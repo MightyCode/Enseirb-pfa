@@ -2,34 +2,35 @@ from interface.python.audio.ModelAudioEffect import ModelAudioEffect
 from interface.python.ResourceManager import ResourceConstants
 
 class EffectPlay(ModelAudioEffect):
-    def __init__(self, speakerGroup):
-        super().__init__(speakerGroup)
+    def __init__(self):
+        super().__init__()
 
-        self.samplerate = 0
         self.soundFile = None
         self.amplitude = 1
 
     def preprocess(self):
-        self.soundData = self.resourceManager.getAudio(self.info["file"])[ResourceConstants.AUDIO_DATA] 
-        self.samplerate = self.resourceManager.getAudio(self.info["file"])[ResourceConstants.AUDIO_SAMPLE_RATE] 
+        super().preprocess()
+
+        self.loopTime = self.info["loopTime"] if "loopTime" in self.info.keys() else 1
+        self.soundData = self.resourceManager.getAudio(self.info["file"], self.sampleRate)[ResourceConstants.AUDIO_DATA] 
+        self.length = len(self.soundData) * self.loopTime
         self.amplitude = self.info["amplitude"] if "amplitude" in self.info.keys() else 1
+
+    def setAudioStreamId(self, streamsInId, streamOutId):
+        assert streamOutId != None and len(streamOutId) != 0
+        assert streamsInId == None or len(streamsInId) == 0
+
     
-    def computeValue(self, startTime, tick, value, speakerId, isLeft):
+    def computeValue(self, startTime, tick, audioStreams):
         now = tick - startTime
 
-        channel = 0 if isLeft else 1
+        assert now >= 0 or now < self.getLength()
 
-        if now < 0 or now > self.getLength():
-            return value
-
-        return self.soundData[now][channel] * self.amplitude
-
-    def getLength(self):
-        return len(self.soundData)
+        return self.soundData[now % len(self.soundData)] * self.amplitude
 
     @staticmethod
-    def Instanciate(soundCreation, speakerGroup, modelEffectInfo, projectInfo):
-        return EffectPlay(speakerGroup)
+    def Instanciate():
+        return EffectPlay()
 
     @staticmethod
     def GetEffectName():

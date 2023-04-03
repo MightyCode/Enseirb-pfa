@@ -1,13 +1,28 @@
 from interface.python.ModelEffect import ModelEffect, EEffectType
 
 class ModelAudioEffect(ModelEffect):
-    def __init__(self, speakerGroup: list):
+    def __init__(self):
         super().__init__(EEffectType.SOUND)
-        self.speakerGroup = speakerGroup
+
+        self.sampleRate: int = 0
+        self.audioStreamOut: list = [] 
+        self.length: int = 0
+
+    def preprocess(self):
+        self.sampleRate = int(self.info["sampleRate"])
+
+    def setAudioStreamId(self, streamsInId, streamOutId):
+        pass
+
+    def computeValue(self, startTime, tick, speakerId):
+        pass
+
+    def getLength(self):
+        return self.length
 
     @staticmethod
-    def Instanciate(soundCreation, speakerGroup, modelEffectInfo, projectInfo):
-        return ModelAudioEffect(speakerGroup)
+    def Instanciate():
+        return ModelAudioEffect()
 
     @staticmethod
     def GetEffectName():

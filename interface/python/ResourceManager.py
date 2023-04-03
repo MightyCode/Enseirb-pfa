@@ -1,6 +1,8 @@
 import soundfile as sf
 import numpy as np
 import json
+import scipy.signal as signal
+
 
 def singleton(class_):
     instances = {}
@@ -21,12 +23,17 @@ class ResourceManager:
         self.audios: dict = {}
         self.jsons: dict = {}
 
-    def getAudio(self, path):
+    def getAudio(self, path, sampleRate=44100):
         if path in self.audios.keys():
             return self.audios[path]
 
         file = sf.read(path)
 
+        if file[ResourceConstants.AUDIO_SAMPLE_RATE] != sampleRate:
+            file = [signal.resample(file[ResourceConstants.AUDIO_DATA], 
+                    int(len(file[ResourceConstants.AUDIO_DATA]) * float(sampleRate) / file[ResourceConstants.AUDIO_SAMPLE_RATE])),
+                    sampleRate]
+            
         # If mono sound
         if len(file[ResourceConstants.AUDIO_DATA].shape) == 1:
             reformed = np.zeros((file[ResourceConstants.AUDIO_DATA].shape[0], 2), dtype=float)

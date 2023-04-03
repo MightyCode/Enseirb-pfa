@@ -7,14 +7,14 @@
           [0, 1]
         ],
         "mainSound" : "interface/python/audio/sound/retro.wav",
-        "sampleRate" : 44100
+        "sampleRate" : 48000
     },
     "audioTimeline" : [
         {
             "name" : "meuh11",
             "start" : 0,
             "priority" : 0,
-            "speakersGroup" : 0,
+            "audioStreamOut" : 0,
             "modelEffect" : {
                 "name" : "play",
                 "file" : "interface/python/audio/sound/retro.wav",
@@ -22,29 +22,30 @@
             }
         },
         {
-            "name" : "startMeuh",
-            "start" : 0,
-            "priority" : 1,
-            "speakersGroup" : 1,
-            "modelEffect" : {
-                "name" : "amplitudeTweening",
-                "tweeningType" : "quadratic",
-                "tweeningBehaviour" : "in_out",
-                "minValue" : 0,
-                "maxValue" : 1.6,
-                "length" : 1.66666
-            }
-        },
-        {
             "name" : "starstMeuh",
             "start" : 0,
-            "priority" : 2,
-            "speakersGroup" : 2,
+            "priority" : 0,
+            "audioStreamOut" : 1,
             "modelEffect" : {
                 "name" : "oscillator",
                 "frequency" : 440,
                 "amplitude" : 0.4,
-                "length" : 3.6
+                "length" : 1.6
+            }
+        },
+        {
+            "name" : "startMeuh",
+            "start" : 0,
+            "priority" : 1,
+            "audioStreamIn" : 1,
+            "audioStreamOut" : 1,
+            "modelEffect" : {
+                "name" : "amplitudeTweening",
+                "tweeningType" : "exponential",
+                "tweeningBehaviour" : "in",
+                "startValue" : 0,
+                "endValue" : 1.6,
+                "length" : 1.66666
             }
         }
     ]

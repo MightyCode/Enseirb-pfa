@@ -5,15 +5,16 @@
           [0, 1, 2, 3, 4, 5, 6, 7],
           [0, 1, 2, 3, 4]
         ],
+        "lightsGroups" : "????",
         "mainSound" : "interface/python/audio/sound/vache.wav",
-        "sampleRate" : 44100
+        "sampleRate" : 48000
     },
     "audioTimeline" : [
         {
             "name" : "meuh11",
             "start" : 0,
             "priority" : 0,
-            "speakersGroup" : 0,
+            "audioStreamOut" : 0,
             "modelEffect" : {
                 "name" : "play",
                 "file" : "interface/python/audio/sound/vache.wav",
@@ -21,34 +22,29 @@
             }
         },
         {
-            "name" : "meuh1",
+            "name" : "boom1",
             "start" : 0,
-            "priority" : 1,
-            "speakersGroup" : 0,
+            "priority" : 0,
+            "audioStreamOut" : 10,
             "modelEffect" : {
-                "name" : "affect",
-                "affect" : "add",
-                "subModel" : {
-                    "name" : "play",
-                    "file" : "interface/python/audio/sound/retro.wav",
-                    "amplitude" : 1
-                }
+                "name" : "play",
+                "file" : "interface/python/audio/sound/retro.wav",
+                "amplitude" : 1,
+                "loopTime" : 5
             }
         },
         {
             "name" : "meuh2",
             "start" : 1.6667,
-            "priority" : 2,
-            "speakersGroup" : 0,
+            "priority" : 1,
+            "audioStreamIn" : [0, 10],
+            "audioStreamOut" : 0,
             "modelEffect" : {
-                "name" : "affect",
-                "affect" : "max",
-                "subModel" : {
-                    "name" : "play",
-                    "file" : "interface/python/audio/sound/retro.wav",
-                    "amplitude" : 0.7
-                }
+                "name" : "merge",
+                "func" : "add",
+                "length" : 2.4
             }
         }
-    ]
+    ],
+    "lightTimeline" : "???"
 }
