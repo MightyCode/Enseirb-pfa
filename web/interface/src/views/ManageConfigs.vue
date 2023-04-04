@@ -5,7 +5,7 @@
     </div>
     <div class="wrapper">
         <div class="configs-list">
-            <h2>Liste des configurations existants</h2>
+            <h2>Liste des configurations existantes</h2>
             <div>
                 <div class="configs-item" v-for="config in configList" :key="config.id">
                     {{ config.id }}

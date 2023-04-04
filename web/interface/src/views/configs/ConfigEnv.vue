@@ -14,6 +14,8 @@
 </template>
 
 <script>
+import axiosInstance from '../../axiosInstance';
+
 export default {
     name: "ConfigEnv",
     data() {
@@ -139,6 +141,7 @@ export default {
                 return;
             }
 
+            
             this.resetEnvironment();
 
             // Remove event listeners
@@ -177,6 +180,14 @@ export default {
                 },
             };
 
+            axiosInstance.put("/projects/" + projectToSave.id, projectToSave)
+                .then(() => {
+                    console.info("[ConfigEnv.vue] Successfully saved the environment");
+                })
+                .catch((err) => {
+                    console.error("[ConfigEnv.vue] Failed to save the environment", err);
+                });
+
             this.$store.dispatch("setActiveProject", projectToSave);
         },
 
@@ -191,8 +202,6 @@ export default {
 
             // If the click is not on a Konva element, add a light at the mouse position
             if (e.target.getId() === this.stage.getId()) {
-
-                console.log("add light")
                 const mousePos = this.getMousePos();
 
                 const light = new Konva.Circle({
