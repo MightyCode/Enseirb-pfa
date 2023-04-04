@@ -81,7 +81,10 @@ try:
     import jack
     import soundfile as sf
 
+    print("Create jack client")
     client = jack.Client(args.clientname)
+    print("Jack client created")
+
     print(client)
     print(client.outports)
     print(len(client.outports))

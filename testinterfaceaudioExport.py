@@ -6,7 +6,7 @@ import os
                 
 if __name__ == "__main__":
     print("Start")
-    projectPath = "projects/testMergeAudio.json"
+    projectPath = "projects/testSplitAudio.json"
     sound_creation = SoundCreation()
     sound_creation.readProject(projectPath)
 

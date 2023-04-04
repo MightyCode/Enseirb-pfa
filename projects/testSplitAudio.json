@@ -1,0 +1,48 @@
+{
+    "project" : {
+        "name" : "la ferme au animaux",
+        "speakersGroups" : [
+          [0, 1, 2, 3, 4, 5, 6, 7],
+          [8, 9]
+        ],
+        "lightsGroups" : "????",
+        "mainSound" : "interface/python/audio/sound/vache.wav",
+        "sampleRate" : 48000
+    },
+    "audioTimeline" : [
+        {
+            "name" : "boom1",
+            "start" : 0,
+            "priority" : 0,
+            "audioStreamOut" : 0,
+            "modelEffect" : {
+                "name" : "play",
+                "file" : "interface/python/audio/sound/retro.wav",
+                "amplitude" : 1,
+                "loopTime" : 5
+            }
+        },
+        {
+            "name" : "meuh2",
+            "start" : 1.6667,
+            "priority" : 1,
+            "audioStreamIn" : 0,
+            "audioStreamOut" : [0, 1],
+            "modelEffect" : {
+                "name" : "split",
+                "length" : 2.4
+            }
+        },
+        {
+            "name" : "meuh2",
+            "start" : 1.6667,
+            "priority" : 1,
+            "audioStreamOut" : 0,
+            "modelEffect" : {
+                "name" : "mute",
+                "length" : 2.4
+            }
+        }
+    ],
+    "lightTimeline" : "???"
+}
