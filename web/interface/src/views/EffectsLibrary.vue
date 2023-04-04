@@ -8,7 +8,7 @@
             </select>
 
             <div class="effects-list">
-                <div class="effect" v-for="effect in effects" :key="effect.id">
+                <div class="effect" v-for="effect in effects" :key="effect.id" @click="selectedEffect = effect">
                     {{ effect.name }}
                 </div>
             </div>
@@ -18,44 +18,29 @@
             </div>
         </div>
 
-        <div class="selected-effect" v-if="selectedEffect">
-            <div class="row">
-                <span>Édition / Création d'un effet</span>
-            </div>
-            <div class="row">
-                <div>
-                    <label for="effect-name">Nom</label>
-                    <input type="text" name="effect-name" id="effect-name">
-                </div>
-
-                <div>
-                    <label for="effect-type">Type</label>
-                    <select name="effect-type" id="effect-type">
-                        <option>AUDIO</option>
-                        <option>LIGHT</option>
-                    </select>
-                </div>
-            </div>
-        </div>
+        <EditEffect v-if="selectedEffect !== null" :effect="selectedEffect" />
     </div>
 </template>
 
 <script>
+import EditEffect from './EditEffect.vue';
+
 export default {
     name: "EffectsLibrary",
     data() {
         return {
-            rawEffectsList: [{ id: 0, name: "test", type: "audio" }, { id: 1, name: "test2", type: "light" }],
+            rawEffectsList: [{ id: 0, name: "test", type: "AUDIO" }, { id: 1, name: "test2", type: "LIGHT" }],
             filter: "ALL",
-            selectedEffect: true
+            selectedEffect: null
         };
     },
     computed: {
         effects() {
-            if (this.filter.toLowerCase() === 'all') {
+            if (this.filter === "ALL") {
                 return this.rawEffectsList;
-            } else {
-                return this.rawEffectsList.filter(effect => effect.type === this.filter.toLowerCase());
+            }
+            else {
+                return this.rawEffectsList.filter(effect => effect.type === this.filter);
             }
         }
     },
@@ -64,13 +49,23 @@ export default {
          * TODO: Add a new effect to the list and open the edition panel
          */
         addEffect() {
-            console.log('add effect');
+            console.log("add effect");
         }
-    }
+    },
+    components: { EditEffect }
 }
 </script>
 
 <style scoped>
+#timeline {
+    width: 100%;
+    height: 5em;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 .wrapper {
     width: 100%;
     height: 100%;
@@ -134,65 +129,5 @@ export default {
 .wrapper>.list-wrapper>.effects-list>.effect:hover {
     background-color: blue;
     cursor: pointer;
-}
-
-.wrapper>.selected-effect {
-    width: 80%;
-    height: 100%;
-
-    display: flex;
-    flex-direction: column;
-
-    padding: 1em 2em;
-}
-
-.wrapper>.selected-effect>.row {
-    width: 100%;
-
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
-.wrapper>.selected-effect>.row>span {
-    font-size: 1.5em;
-    font-weight: bold;
-}
-
-
-.wrapper>.selected-effect>.row>div {
-    height: 100%;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-
-    margin: 0 1em;
-}
-
-.wrapper>.selected-effect>.row>div:first-of-type {
-    margin-left: 0;
-}
-
-.wrapper>.selected-effect>.row>div:last-of-type {
-    margin-right: 0;
-}
-
-.wrapper>.selected-effect>.row>div>input,
-.wrapper>.selected-effect>.row>div>select {
-    width: 30em;
-    height: 3em;
-
-    padding: 0 1em;
-    border-radius: 7px;
-
-    border: 0;
-}
-
-.wrapper>.selected-effect>.row>div>input:focus,
-.wrapper>.selected-effect>.row>div>select:focus {
-    outline: none;
-    border: 0;
 }
 </style>
