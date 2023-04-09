@@ -14,7 +14,9 @@
 
         <div class="timelines-wrapper">
             <div id="lights-timeline" class="timeline">
-                Lights timeline here
+                <div v-for="effect in visualEffects" :key="effect.id" :style="getStyle(effect)" class="visual effect">
+                    {{ effect.id }}
+                </div>
             </div>
 
             <div id="speakers-timeline" class="timeline">
@@ -35,6 +37,8 @@ export default {
         }
     },
     mounted() {
+        const wrapper = document.getElementById('lights-timeline');
+
         var ctx = document.createElement('canvas').getContext('2d');
         var linGrad = ctx.createLinearGradient(0, 64, 0, 200);
         linGrad.addColorStop(0.5, 'rgba(255, 255, 255, 1.000)');
@@ -52,8 +56,6 @@ export default {
             barWidth: 3
         });
 
-        console.log(this.activeProject)
-
         // Load current project's audio
         axiosInstance.get(`/static/audios/${this.activeProject.audio}`, {
             responseType: 'blob'
@@ -69,6 +71,13 @@ export default {
         wavesurfer.on('ready', () => {
             this.loading = false;
             waveform.style.opacity = 1;
+
+            // Set the parent size as a CSS variable
+            console.log(wrapper);
+            wrapper.style.setProperty('--parent-size', wrapper.offsetWidth);
+
+            // Set duration as a CSS variable
+            wrapper.style.setProperty('--duration', wavesurfer.getDuration());
         });
 
         // Handle region creation on click and drag
@@ -93,9 +102,36 @@ export default {
         // Delete region on click anywhere
         wavesurfer.on('interaction', deleteRegion);
     },
+    methods: {
+        getStyle(effect) {
+            return {
+                '--start': effect.start,
+                '--end': effect.end,
+            }
+        }
+    },
     computed: {
         activeProject() {
             return this.$store.state.activeProject;
+        },
+        visualEffects() {
+            return [
+                {
+                    id: 1,
+                    start: 0.,
+                    end: 100.,
+                },
+                {
+                    id: 2,
+                    start: 200.,
+                    end: 300.,
+                },
+                {
+                    id: 3,
+                    start: 50.,
+                    end: 150.,
+                }
+            ]
         }
     }
 }
@@ -168,5 +204,20 @@ export default {
     align-items: center;
 
     position: absolute;
+}
+
+.effect {
+    height: 1em;
+    width: calc((var(--end) - var(--start) * 100 / var(--parent-size)) * 1%);
+    background-color: blue;
+    border: 1px solid black;
+}
+
+#lights-timeline {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: unset;
+    flex-wrap: wrap;
 }
 </style>

@@ -1,16 +1,25 @@
 <template>
-    <div id="wrapper">
-        <div id="viewer" />
-    </div>
-    <footer>
-        <div @click="resetEnvironment" class="button">
-            <p>Reset</p>
+    <div class="row">
+        <div class="informations">
+            <div class="body">
+                <h2>{{ activeProject.id }}</h2>
+            </div>
+
+            <footer>
+                <div @click="resetEnvironment" class="button">
+                    <p>Reset</p>
+                </div>
+
+                <div @click="saveEnvironment" class="button">
+                    <p>Save</p>
+                </div>
+            </footer>
         </div>
 
-        <div @click="saveEnvironment" class="button">
-            <p>Save</p>
+        <div id="wrapper">
+            <div id="viewer" />
         </div>
-    </footer>
+    </div>
 </template>
 
 <script>
@@ -51,12 +60,9 @@ export default {
             const containerWidth = wrapper.offsetWidth;
             const containerHeight = wrapper.offsetHeight;
 
-            // To do this we need to scale the stage
-            const scale = containerWidth / sceneWidth;
-
+            // Get first layer
             this.stage.width(containerWidth);
             this.stage.height(containerHeight);
-            this.stage.scale({ x: scale, y: scale });
             this.stage.draw();
         }
 
@@ -141,7 +147,7 @@ export default {
                 return;
             }
 
-            
+
             this.resetEnvironment();
 
             // Remove event listeners
@@ -324,9 +330,31 @@ export default {
 </script>
 
 <style scoped>
+.row {
+    display: flex;
+    flex-direction: row;
+
+    height: 100%;
+    padding: 1em;
+}
+
+.informations {
+    height: 100%;
+    width: 20%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.body > h2 {
+    margin-top: 0;
+}
+
 #wrapper {
-    height: 90%;
-    width: 100%;
+    height: 100%;
+    width: 80%;
 }
 
 #viewer {
@@ -336,16 +364,16 @@ export default {
 }
 
 footer {
-    height: 10%;
     width: 100%;
 
     display: flex;
-    justify-content: flex-end;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
 
 .button {
-    margin: 0 1em 0 0;
+    width: 80%;
     background-color: #5b5b5b;
     padding: 0.75em 3em;
 
@@ -358,6 +386,11 @@ footer {
     border-radius: 7px;
 
     transition-duration: 0.4s;
+    margin-top: 1em;
+}
+
+.button:first-of-type {
+    margin-top: 0;
 }
 
 .button:hover {
