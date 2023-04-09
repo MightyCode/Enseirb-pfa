@@ -1,8 +1,4 @@
 <template>
-    <div class="active-project">
-        <span v-if="activeProject === null">Pas de projet actif</span>
-        <span v-else>Projet actif: {{ activeProject.id }}</span>
-    </div>
     <div class="wrapper">
         <div class="projects-list">
             <h2>Liste des projets existants</h2>
@@ -10,8 +6,8 @@
                 <div class="projects-item" v-for="project in projectList" :key="project.id">
                     {{ project.id }}
 
-                    <div class="item-menu" @click="this.$store.commit('setActiveProject', project);">
-                        <div class="icon-wrapper green">
+                    <div class="item-menu">
+                        <div class="icon-wrapper" :class="getActiveProjectButtonClass(project)" @click="onSetActiveProjectButtonClick(project)">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
@@ -97,34 +93,39 @@ export default {
                 .catch((error) => {
                     console.error(error);
                 });
+        },
+        onSetActiveProjectButtonClick(project) {
+            if ((!this.activeConfig) || this.activeConfig.id !== project.config) {
+                return;
+            }
+
+            this.$store.commit('setActiveProject', project);
+        },
+        getActiveProjectButtonClass(project) {
+            if (this.activeConfig && this.activeConfig.id === project.config) {
+                return 'green';
+            }
+
+            return 'green-disabled';
         }
     },
     computed: {
         activeProject() {
             return this.$store.state.activeProject;
+        },
+        activeConfig() {
+            return this.$store.state.activeConfig;
         }
     }
 }
 </script>
 
 <style scoped>
-.active-project {
-    height: 5%;
-    min-height: 2em;
-    width: 100%;
-    padding: 0 0.5em;
-
-    display: flex;
-    align-items: center;
-
-    color: black;
-}
-
 .wrapper {
     display: flex;
     flex-direction: row;
 
-    height: 95%;
+    height: 100%;
     color: black;   
 }
 
@@ -252,7 +253,12 @@ export default {
     color: white;
 }
 
-.icon-wrapper:hover {
+.red:hover {
+    cursor: pointer;
+    filter: brightness(0.8);
+}
+
+.green:hover {
     cursor: pointer;
     filter: brightness(0.8);
 }
@@ -263,6 +269,10 @@ export default {
 
 .green {
     background-color: green;
+}
+
+.green-disabled {
+    background-color: #226600;
 }
 
 .red {
