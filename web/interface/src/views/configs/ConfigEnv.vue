@@ -2,15 +2,24 @@
     <div class="row">
         <div class="informations">
             <div class="body">
-                <h2>{{ activeProject.id }}</h2>
+                <h2>{{ activeConfig.id }}</h2>
+
+                <p><span class="bold">{{ speakersCounter - deletedSpeakersIds.length }} / {{ activeConfig.nbSpeakers
+                }}</span> enceintes placées</p>
+                <p><span class="bold">{{ lightsCounter - deletedLightsIds.length }} / {{ activeConfig.nbLights }}</span>
+                    lumières placées</p>
             </div>
 
             <footer>
+                <p>Clic gauche: placer une lumière</p>
+                <p>Clic droit: placer une enceinte</p>
+                <p>Clic droit sur élément: supprimer l'élément</p>
+
                 <div @click="resetEnvironment" class="button">
                     <p>Reset</p>
                 </div>
 
-                <div @click="saveEnvironment" class="button">
+                <div @click="saveEnvironment" :class="{ 'button-disabled': !isSavePossible, 'button': isSavePossible}">
                     <p>Save</p>
                 </div>
             </footer>
@@ -147,7 +156,6 @@ export default {
                 return;
             }
 
-
             this.resetEnvironment();
 
             // Remove event listeners
@@ -200,6 +208,10 @@ export default {
         handleLeftClick(e) {
             // Check if right click
             if (e.evt.button === 2) {
+                return;
+            }
+
+            if (this.lightsCounter - this.deletedLightsIds.length >= this.activeConfig.nbLights) {
                 return;
             }
 
@@ -258,6 +270,12 @@ export default {
             const layer = this.stage.getLayers()[0];
 
             if (e.target.getId() === this.stage.getId()) {
+
+                // Prevent placing more speakers than the number of speakers in the active config
+                if (this.speakersCounter - this.deletedSpeakersIds.length >= this.activeConfig.nbSpeakers) {
+                    return;
+                }
+
                 const mousePos = this.getMousePos();
                 const id = this.getNextSpeakerId();
 
@@ -325,11 +343,22 @@ export default {
         activeProject() {
             return this.$store.state.activeProject;
         },
+        activeConfig() {
+            return this.$store.state.activeConfig;
+        },
+        isSavePossible() {
+            return (((this.speakersCounter - this.deletedSpeakersIds.length) === 0) && ((this.lightsCounter - this.deletedLightsIds.length) === 0))
+                || (((this.speakersCounter - this.deletedSpeakersIds.length) === this.activeConfig.nbSpeakers) && ((this.lightsCounter - this.deletedLightsIds.length) === this.activeConfig.nbLights))
+        }
     }
 }
 </script>
 
 <style scoped>
+.bold {
+    font-weight: bold;
+}
+
 .row {
     display: flex;
     flex-direction: row;
@@ -348,7 +377,7 @@ export default {
     justify-content: space-between;
 }
 
-.body > h2 {
+.body>h2 {
     margin-top: 0;
 }
 
@@ -372,6 +401,11 @@ footer {
     justify-content: center;
 }
 
+footer>p {
+    margin: 0;
+    font-size: 0.8em;
+}
+
 .button {
     width: 80%;
     background-color: #5b5b5b;
@@ -389,10 +423,6 @@ footer {
     margin-top: 1em;
 }
 
-.button:first-of-type {
-    margin-top: 0;
-}
-
 .button:hover {
     background-color: #3b3b3b;
     cursor: pointer;
@@ -402,4 +432,27 @@ footer {
     color: white;
     margin: 0;
 }
+
+.button-disabled {
+    width: 80%;
+    background-color: #3b3b3b;
+    padding: 0.75em 3em;
+
+    height: fit-content;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 7px;
+
+    transition-duration: 0.4s;
+    margin-top: 1em;
+}
+
+.button-disabled > p {
+    color: white;
+    margin: 0;
+}
+
 </style>
