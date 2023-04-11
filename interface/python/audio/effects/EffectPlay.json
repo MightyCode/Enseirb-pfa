@@ -1,0 +1,26 @@
+{
+    "audioStreamIn" : {
+        "type" : "constraints",
+        "max" : 0
+    },
+    "audioStreamOut" : {
+        "type" : "constraints",
+        "min" : 1
+    },
+    "arguments" : [
+        {
+            "name": "file",
+            "type" : "string"
+        },
+        {
+            "name": "amplitude",
+            "type" : "float",
+            "default" : 1
+        },
+        {
+            "name": "loopTime",
+            "type" : "int",
+            "default" : 1
+        }
+    ]
+}

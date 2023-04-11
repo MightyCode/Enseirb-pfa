@@ -1,0 +1,42 @@
+{
+    "audioStreamIn" : {
+        "type" : "constraints",
+        "min" : 1,
+        "sameSize" : true
+    },
+    "audioStreamOut" : {
+        "type" : "constraints",
+        "min" : 1,
+        "sameSize" : true
+    },
+    "arguments" : [
+        {
+            "name": "tweeningType",
+            "type" : "string"
+        },
+        {
+            "name": "tweeningBehaviour",
+            "type" : "string"
+        },
+        {
+            "name": "arg1",
+            "type" : "float",
+            "default" : 0
+        },
+        {
+            "name": "arg2",
+            "type" : "float",
+            "default" : 0
+        },
+        {
+            "name": "startValue",
+            "type" : "float",
+            "default" : 0
+        },
+        {
+            "name": "startValue",
+            "type" : "float",
+            "default" : 1
+        }
+    ]
+}
