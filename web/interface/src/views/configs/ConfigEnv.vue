@@ -2,7 +2,7 @@
     <div class="row">
         <div class="informations">
             <div class="body">
-                <h2>{{ activeConfig.id }}</h2>
+                <h2>Config: {{ activeConfig.id }}</h2>
 
                 <p><span class="bold">{{ speakersCounter - deletedSpeakersIds.length }} / {{ activeConfig.nbSpeakers
                 }}</span> enceintes placées</p>
@@ -151,7 +151,7 @@ export default {
          * Load the environment from the VueX store's active project
          */
         loadFromProject() {
-            if (!this.activeProject.konvaEnv) {
+            if (!this.activeConfig.konvaEnv) {
                 console.info("[ConfigEnv.vue] No Konva environment found in the active project");
                 return;
             }
@@ -162,7 +162,7 @@ export default {
             this.stage.removeEventListener("mousedown", this.handleLeftClick);
             this.stage.removeEventListener("contextmenu", this.handleRightClick);
 
-            this.stage = Konva.Node.create(this.activeProject.konvaEnv.json, "viewer");
+            this.stage = Konva.Node.create(this.activeConfig.konvaEnv.json, "viewer");
 
             // Add event listeners
             this.stage.on("mousedown", this.handleLeftClick);
@@ -170,19 +170,19 @@ export default {
 
             this.stage.draw();
 
-            this.deletedLightsIds = JSON.parse(this.activeProject.konvaEnv.deletedLightsIds);
-            this.deletedSpeakersIds = JSON.parse(this.activeProject.konvaEnv.deletedSpeakersIds);
+            this.deletedLightsIds = JSON.parse(this.activeConfig.konvaEnv.deletedLightsIds);
+            this.deletedSpeakersIds = JSON.parse(this.activeConfig.konvaEnv.deletedSpeakersIds);
 
-            this.speakersCounter = this.activeProject.konvaEnv.speakersCounter;
-            this.lightsCounter = this.activeProject.konvaEnv.lightsCounter;
+            this.speakersCounter = this.activeConfig.konvaEnv.speakersCounter;
+            this.lightsCounter = this.activeConfig.konvaEnv.lightsCounter;
         },
 
         /**
          * Save the environment to the VueX store's active project as a JSON string
          */
         saveEnvironment() {
-            const projectToSave = {
-                ...this.activeProject,
+            const configToSave = {
+                ...this.activeConfig,
                 konvaEnv: {
                     json: this.stage.toJSON(),
 
@@ -194,7 +194,7 @@ export default {
                 },
             };
 
-            axiosInstance.put("/projects/" + projectToSave.id, projectToSave)
+            axiosInstance.put("/configs/" + configToSave.id, configToSave)
                 .then(() => {
                     console.info("[ConfigEnv.vue] Successfully saved the environment");
                 })
@@ -202,7 +202,7 @@ export default {
                     console.error("[ConfigEnv.vue] Failed to save the environment", err);
                 });
 
-            this.$store.dispatch("setActiveProject", projectToSave);
+            this.$store.dispatch("setActiveConfig", configToSave);
         },
 
         handleLeftClick(e) {

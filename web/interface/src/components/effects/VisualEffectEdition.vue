@@ -94,18 +94,18 @@ export default {
             }
         },
         loadFromProject() {
-            if (!this.activeProject.konvaEnv) {
-                console.info("[VisualEffectEdition.vue] No Konva environment found in the active project");
+            if (!this.activeConfig.konvaEnv) {
+                console.info("[VisualEffectEdition.vue] No Konva environment found in the active config");
                 return;
             }
 
-            this.stage = Konva.Node.create(this.activeProject.konvaEnv.json, "viewer");
+            this.stage = Konva.Node.create(this.activeConfig.konvaEnv.json, "viewer");
 
-            this.deletedLightsIds = JSON.parse(this.activeProject.konvaEnv.deletedLightsIds);
-            this.deletedSpeakersIds = JSON.parse(this.activeProject.konvaEnv.deletedSpeakersIds);
+            this.deletedLightsIds = JSON.parse(this.activeConfig.konvaEnv.deletedLightsIds);
+            this.deletedSpeakersIds = JSON.parse(this.activeConfig.konvaEnv.deletedSpeakersIds);
 
-            this.speakersCounter = this.activeProject.konvaEnv.speakersCounter;
-            this.lightsCounter = this.activeProject.konvaEnv.lightsCounter;
+            this.speakersCounter = this.activeConfig.konvaEnv.speakersCounter;
+            this.lightsCounter = this.activeConfig.konvaEnv.lightsCounter;
 
             this.fitStageIntoParentContainer();
 
@@ -190,6 +190,9 @@ export default {
             return {
                 '--timeline-element-width': size + "%",
             };
+        },
+        activeConfig() {
+            return this.$store.state.activeConfig;
         }
     }
 }
