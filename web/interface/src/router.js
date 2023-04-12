@@ -3,11 +3,6 @@ import store from "./store";
 
 const routes = [
     {
-        path: "/",
-        name: "Home",
-        component: () => import("./views/Home.vue"),
-    },
-    {
         path: "/new-project",
         name: "NewProject",
         component: () => import("./views/NewProject.vue"),
@@ -93,9 +88,6 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    console.log("router.beforeEach", to, from);
-    console.log("activeConfig", store.state.activeConfig);
-
     // If no active config, and /configs is not in the path, redirect to /configs
     if (store.state.activeConfig === null && to.meta.doesNotRequireConfig !== true) {
         next({ path: "/configs/" });
