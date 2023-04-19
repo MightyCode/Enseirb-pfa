@@ -3,11 +3,6 @@ import store from "./store";
 
 const routes = [
     {
-        path: "/new-project",
-        name: "NewProject",
-        component: () => import("./views/NewProject.vue"),
-    },
-    {
         path: "/edit-project",
         name: "EditProject",
         component: () => import("./views/EditProject.vue"),
