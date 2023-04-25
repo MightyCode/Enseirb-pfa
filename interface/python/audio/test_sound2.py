@@ -72,7 +72,7 @@ def process(frames):
 
     side = 0
     for i in range(len(client.outports)):
-        print(data.T, len(data.T[0]), data.T[0])
+        #print(data.T, len(data.T[0]), data.T[0])
 
         client.outports[i].get_array()[:] = data.T[side] 
         side = (len(data.T) - 1) - side
@@ -85,7 +85,8 @@ try:
     print(client)
     print(client.outports)
     print(len(client.outports))
-    exit()
+
+    print(f'buff:{args.buffersize}')
 
     blocksize = client.blocksize
     samplerate = client.samplerate
@@ -106,15 +107,15 @@ try:
             if not args.manual:
                 target_ports = client.get_ports(
                     is_physical=True, is_input=True, is_audio=True)
-                     
+                print(target_ports)
                 for i in range(len(target_ports)):
                     client.outports.register(f'out_{i}')
                     client.outports[i].connect(target_ports[i])
 
             print("Target connected to source")
             timeout = blocksize * args.buffersize / samplerate
-            for data in block_generator:
-                q.put(data, timeout=timeout)
+            #for data in block_generator:
+                #q.put(data, timeout=timeout)
                 
             q.put(None, timeout=timeout)  # Signal end of file
             event.wait()  # Wait until playback is finished
