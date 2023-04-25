@@ -8,12 +8,13 @@
         </div>
 
         <div class="column">
+            <h2>Audio</h2>
             <div class="fileupload-wrapper">
                 <FileSelection accept="audio/*" />
             </div>
 
             <div class="validation-wrapper">
-                <span class="validation-button" @click="createProject">Validate</span>
+                <span :class="(name !== '' && filename !== '') ? 'validation-button' : 'validation-button-disabled'" @click="createProject">Validate</span>
             </div>
         </div>
     </div>
@@ -32,10 +33,13 @@ export default {
     data() {
         return {
             name: '',
-            filename: ''
+            filename: '',
+            config: null
         }
     },
     mounted() {
+        this.config = this.activeConfig.id;
+        
         emitter.on('fileImported', (file) => {
             const formData = new FormData();
             formData.append('file', file);
@@ -56,7 +60,8 @@ export default {
         createProject() {
             axiosInstance.post('/projects', {
                 id: this.name,
-                audio: this.filename
+                audio: this.filename,
+                config: this.config
             }).then((response) => {
                 // Set active project
                 this.$store.commit('setActiveProject', response.data);
@@ -77,11 +82,21 @@ export default {
             emitter.emit('clearFileSelection');
             emitter.emit('error', '');
         }
+    },
+    computed: {
+        activeConfig() {
+            return this.$store.state.activeConfig;
+        }
     }
 }
 </script>
 
 <style scoped>
+label {
+    font-size: 1em;
+    font-weight: bolder;
+    margin-bottom: 0.2em;
+}
 .wrapper {
     width: 100%;
     height: 100%;
@@ -113,6 +128,10 @@ export default {
     height: 100%;
 }
 
+.column > h2 {
+    margin: 0;
+}
+
 .column:last-of-type {
     display: flex;
     justify-content: space-between;
@@ -121,8 +140,8 @@ export default {
 }
 
 .fileupload-wrapper {
-    width: 25vw;
-    height: 25vw;
+    width: 20vw;
+    height: 20vw;
 }
 
 .validation-wrapper {
@@ -141,6 +160,15 @@ export default {
 
     transition-duration: 0.4s;
     background-color: #5b5b5b;
+}
+
+.validation-button-disabled {
+    width: fit-content;
+    padding: 1em 4em;
+    border-radius: 7px;
+
+    transition-duration: 0.4s;
+    background-color: #3b3b3b;
 }
 
 .validation-button:hover {

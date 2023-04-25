@@ -1,19 +1,39 @@
 <template>
-    <div id="wrapper">
-        <div id="viewer" />
-    </div>
-    <footer>
-        <div @click="resetEnvironment" class="button">
-            <p>Reset</p>
+    <div class="row">
+        <div class="informations">
+            <div class="body">
+                <h2>Config: {{ activeConfig.id }}</h2>
+
+                <p><span class="bold">{{ speakersCounter - deletedSpeakersIds.length }} / {{ activeConfig.nbSpeakers
+                }}</span> enceintes placées</p>
+                <p><span class="bold">{{ lightsCounter - deletedLightsIds.length }} / {{ activeConfig.nbLights }}</span>
+                    lumières placées</p>
+            </div>
+
+            <footer>
+                <p>Clic gauche: placer une lumière</p>
+                <p>Clic droit: placer une enceinte</p>
+                <p>Clic droit sur élément: supprimer l'élément</p>
+
+                <div @click="resetEnvironment" class="button">
+                    <p>Reset</p>
+                </div>
+
+                <div @click="saveEnvironment" :class="{ 'button-disabled': !isSavePossible, 'button': isSavePossible}">
+                    <p>Save</p>
+                </div>
+            </footer>
         </div>
 
-        <div @click="saveEnvironment" class="button">
-            <p>Save</p>
+        <div id="wrapper">
+            <div id="viewer" />
         </div>
-    </footer>
+    </div>
 </template>
 
 <script>
+import axiosInstance from '../../axiosInstance';
+
 export default {
     name: "ConfigEnv",
     data() {
@@ -49,12 +69,9 @@ export default {
             const containerWidth = wrapper.offsetWidth;
             const containerHeight = wrapper.offsetHeight;
 
-            // To do this we need to scale the stage
-            const scale = containerWidth / sceneWidth;
-
+            // Get first layer
             this.stage.width(containerWidth);
             this.stage.height(containerHeight);
-            this.stage.scale({ x: scale, y: scale });
             this.stage.draw();
         }
 
@@ -134,7 +151,7 @@ export default {
          * Load the environment from the VueX store's active project
          */
         loadFromProject() {
-            if (!this.activeProject.konvaEnv) {
+            if (!this.activeConfig.konvaEnv) {
                 console.info("[ConfigEnv.vue] No Konva environment found in the active project");
                 return;
             }
@@ -145,7 +162,7 @@ export default {
             this.stage.removeEventListener("mousedown", this.handleLeftClick);
             this.stage.removeEventListener("contextmenu", this.handleRightClick);
 
-            this.stage = Konva.Node.create(this.activeProject.konvaEnv.json, "viewer");
+            this.stage = Konva.Node.create(this.activeConfig.konvaEnv.json, "viewer");
 
             // Add event listeners
             this.stage.on("mousedown", this.handleLeftClick);
@@ -153,19 +170,19 @@ export default {
 
             this.stage.draw();
 
-            this.deletedLightsIds = JSON.parse(this.activeProject.konvaEnv.deletedLightsIds);
-            this.deletedSpeakersIds = JSON.parse(this.activeProject.konvaEnv.deletedSpeakersIds);
+            this.deletedLightsIds = JSON.parse(this.activeConfig.konvaEnv.deletedLightsIds);
+            this.deletedSpeakersIds = JSON.parse(this.activeConfig.konvaEnv.deletedSpeakersIds);
 
-            this.speakersCounter = this.activeProject.konvaEnv.speakersCounter;
-            this.lightsCounter = this.activeProject.konvaEnv.lightsCounter;
+            this.speakersCounter = this.activeConfig.konvaEnv.speakersCounter;
+            this.lightsCounter = this.activeConfig.konvaEnv.lightsCounter;
         },
 
         /**
          * Save the environment to the VueX store's active project as a JSON string
          */
         saveEnvironment() {
-            const projectToSave = {
-                ...this.activeProject,
+            const configToSave = {
+                ...this.activeConfig,
                 konvaEnv: {
                     json: this.stage.toJSON(),
 
@@ -177,7 +194,15 @@ export default {
                 },
             };
 
-            this.$store.dispatch("setActiveProject", projectToSave);
+            axiosInstance.put("/configs/" + configToSave.id, configToSave)
+                .then(() => {
+                    console.info("[ConfigEnv.vue] Successfully saved the environment");
+                })
+                .catch((err) => {
+                    console.error("[ConfigEnv.vue] Failed to save the environment", err);
+                });
+
+            this.$store.dispatch("setActiveConfig", configToSave);
         },
 
         handleLeftClick(e) {
@@ -186,13 +211,15 @@ export default {
                 return;
             }
 
+            if (this.lightsCounter - this.deletedLightsIds.length >= this.activeConfig.nbLights) {
+                return;
+            }
+
             // Get first layer
             const layer = this.stage.getLayers()[0];
 
             // If the click is not on a Konva element, add a light at the mouse position
             if (e.target.getId() === this.stage.getId()) {
-
-                console.log("add light")
                 const mousePos = this.getMousePos();
 
                 const light = new Konva.Circle({
@@ -243,6 +270,12 @@ export default {
             const layer = this.stage.getLayers()[0];
 
             if (e.target.getId() === this.stage.getId()) {
+
+                // Prevent placing more speakers than the number of speakers in the active config
+                if (this.speakersCounter - this.deletedSpeakersIds.length >= this.activeConfig.nbSpeakers) {
+                    return;
+                }
+
                 const mousePos = this.getMousePos();
                 const id = this.getNextSpeakerId();
 
@@ -310,14 +343,47 @@ export default {
         activeProject() {
             return this.$store.state.activeProject;
         },
+        activeConfig() {
+            return this.$store.state.activeConfig;
+        },
+        isSavePossible() {
+            return (((this.speakersCounter - this.deletedSpeakersIds.length) === 0) && ((this.lightsCounter - this.deletedLightsIds.length) === 0))
+                || (((this.speakersCounter - this.deletedSpeakersIds.length) === this.activeConfig.nbSpeakers) && ((this.lightsCounter - this.deletedLightsIds.length) === this.activeConfig.nbLights))
+        }
     }
 }
 </script>
 
 <style scoped>
+.bold {
+    font-weight: bold;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+
+    height: 100%;
+    padding: 1em;
+}
+
+.informations {
+    height: 100%;
+    width: 20%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.body>h2 {
+    margin-top: 0;
+}
+
 #wrapper {
-    height: 90%;
-    width: 100%;
+    height: 100%;
+    width: 80%;
 }
 
 #viewer {
@@ -327,16 +393,21 @@ export default {
 }
 
 footer {
-    height: 10%;
     width: 100%;
 
     display: flex;
-    justify-content: flex-end;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
+}
+
+footer>p {
+    margin: 0;
+    font-size: 0.8em;
 }
 
 .button {
-    margin: 0 1em 0 0;
+    width: 80%;
     background-color: #5b5b5b;
     padding: 0.75em 3em;
 
@@ -349,6 +420,7 @@ footer {
     border-radius: 7px;
 
     transition-duration: 0.4s;
+    margin-top: 1em;
 }
 
 .button:hover {
@@ -360,4 +432,27 @@ footer {
     color: white;
     margin: 0;
 }
+
+.button-disabled {
+    width: 80%;
+    background-color: #3b3b3b;
+    padding: 0.75em 3em;
+
+    height: fit-content;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 7px;
+
+    transition-duration: 0.4s;
+    margin-top: 1em;
+}
+
+.button-disabled > p {
+    color: white;
+    margin: 0;
+}
+
 </style>

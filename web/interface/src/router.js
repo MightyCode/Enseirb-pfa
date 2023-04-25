@@ -3,16 +3,6 @@ import store from "./store";
 
 const routes = [
     {
-        path: "/",
-        name: "Home",
-        component: () => import("./views/Home.vue"),
-    },
-    {
-        path: "/new-project",
-        name: "NewProject",
-        component: () => import("./views/NewProject.vue"),
-    },
-    {
         path: "/edit-project",
         name: "EditProject",
         component: () => import("./views/EditProject.vue"),
@@ -31,13 +21,22 @@ const routes = [
                 path: "",
                 name: "NewProject",
                 component: () => import("./views/projects/NewProject.vue"),
+                meta: {
+                    doesNotRequireProject: true
+                }
             },
             {
                 path: "import",
                 name: "ImportProject",
                 component: () => import("./views/projects/ImportProject.vue"),
+                meta: {
+                    doesNotRequireProject: true
+                }
             }
-        ]
+        ],
+        meta: {
+            doesNotRequireProject: true
+        }
     },
     {
         path: "/configs",
@@ -48,20 +47,32 @@ const routes = [
                 path: "",
                 name: "NewConfig",
                 component: () => import("./views/configs/NewConfig.vue"),
+                meta: {
+                    doesNotRequireConfig: true,
+                    doesNotRequireProject: true
+                }
             },
             {
                 path: "import",
                 name: "ImportConfig",
                 component: () => import("./views/configs/ImportConfig.vue"),
+                meta: {
+                    doesNotRequireConfig: true,
+                    doesNotRequireProject: true
+                }
             }
-        ]
+        ],
+        meta: {
+            doesNotRequireConfig: true,
+            doesNotRequireProject: true
+        }
     },
     {
         path: "/configs/env",
         name: "ConfigEnv",
         component: () => import("./views/configs/ConfigEnv.vue"),
         meta: {
-            needsConfig: true
+            doesNotRequireProject: true
         }
     }
 ];
@@ -72,8 +83,11 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    if (to.meta.needsConfig && !store.state.activeConfig) {
-        next({ name: "Configs" });
+    // If no active config, and /configs is not in the path, redirect to /configs
+    if (store.state.activeConfig === null && to.meta.doesNotRequireConfig !== true) {
+        next({ path: "/configs/" });
+    } else if (store.state.activeConfig !== null && store.state.activeProject === null && to.meta.doesNotRequireProject !== true) {
+        next({ path: "/projects/" });
     } else {
         next();
     }

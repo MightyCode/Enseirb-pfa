@@ -4,8 +4,6 @@ from interface.python.Tweenings.ETweeningType import ETweeningType as ETT
 
 from interface.python.audio.ModelAudioEffect import ModelAudioEffect
 
-import copy
-
 class EffectAmplitudeTweening(ModelAudioEffect):
     def __init__(self):
         super().__init__()
@@ -49,6 +47,7 @@ class EffectAmplitudeTweening(ModelAudioEffect):
     def setAudioStreamId(self, streamsInId, streamOutId):
         assert len(streamsInId) == len(streamOutId) and len(streamOutId) != 0
 
+        self.result = []
         for i in range(len(streamOutId)):
             self.result.append([0, 0])
 
@@ -62,7 +61,7 @@ class EffectAmplitudeTweening(ModelAudioEffect):
             self.result[i][0] = audioStream.leftValue() * amplitude 
             self.result[i][1] = audioStream.rightValue() * amplitude 
     
-        return copy.deepcopy(self.result) 
+        return self.result
 
     @staticmethod
     def Instanciate():

@@ -1,0 +1,20 @@
+{
+    "audioStreamIn" : {
+        "type" : "constraints",
+        "number" : 2
+    },
+    "audioStreamOut" : {
+        "type" : "constraints",
+        "min" : 1
+    },
+    "arguments" : [
+        {
+            "name": "func",
+            "type" : "string"
+        },
+        {
+            "name": "length",
+            "type" : "float"
+        }
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "audioStreamIn" : {
+        "type" : "constraints",
+        "max" : 0
+    },
+    "audioStreamOut" : {
+        "type" : "constraints",
+        "min" : 1
+    },
+    "arguments" : [
+        {
+            "name": "length",
+            "type" : "float"
+        }
+    ]
+}

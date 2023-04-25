@@ -5,13 +5,13 @@
     </div>
     <div class="wrapper">
         <div class="configs-list">
-            <h2>Liste des configurations existants</h2>
+            <h2>Liste des configurations existantes</h2>
             <div>
                 <div class="configs-item" v-for="config in configList" :key="config.id">
                     {{ config.id }}
 
-                    <div class="item-menu" @click="this.$store.commit('setActiveConfig', config);">
-                        <div class="icon-wrapper green">
+                    <div class="item-menu">
+                        <div class="icon-wrapper green" @click="onSetActiveConfigButtonClick(config)">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
@@ -96,6 +96,12 @@ export default {
                 .catch((error) => {
                     console.error(error);
                 });
+        },
+        onSetActiveConfigButtonClick(config) {
+            this.$store.commit('setActiveConfig', config);
+            
+            // Reset active project
+            this.$store.commit('setActiveProject', null);
         }
     },
     computed: {
