@@ -20,24 +20,27 @@ def pulse_in_rythm(beat, universe, interface, color):
     sleep(beat)
     lights_transition(universe, interface, BLACK.serialise(), 1)
 
-def pulse_rainbow_effect(universe, interface, interpolation_rate):
+def pulse_rainbow_effect(universe, interface, interpolation_rate, number_of_pulses):
     """Pulses a rainbow effect on the lights in the universe.
 
     Args:
         universe (DMXUniverse): lights to transition
         interface (DMXInterface): interface to send the updates
         interpolation_rate (int): number of frames appearing during the transition
+        time_length (int): time length of the effect in seconds
     """
     rainbow_colors = [Color(255, 0, 0), Color(255, 127, 0), Color(255, 255, 0),
                       Color(0, 255, 0), Color(0, 0, 255), Color(75, 0, 130),
                       Color(143, 0, 255), Color(255, 0, 255), Color(255, 0, 127)]
 
-    while True:
+
+    for _ in range(number_of_pulses):
         for color in rainbow_colors:
             lights_transition(universe, interface, color.serialise(), interpolation_rate)
             lights_transition(universe, interface, BLACK.serialise(), interpolation_rate)
+        
 
-def fading_rainbow_effect(universe, interface, fade_speed):
+def fading_rainbow_effect(universe, interface, fade_speed, number_of_fades):
     """Creates a fading rainbow effect on the lights in the universe.
 
     Args:
@@ -51,7 +54,7 @@ def fading_rainbow_effect(universe, interface, fade_speed):
 
     fade_interval = int(fade_speed * 10)
 
-    while True:
+    for _ in range(number_of_fades):
         for color in rainbow_colors:
             lights_transition(universe, interface, color.serialise(), fade_interval)
 
@@ -61,7 +64,7 @@ def fading_rainbow_effect(universe, interface, fade_speed):
 
 import random
 
-def color_flicker_effect(universe, interface, flicker_speed, flicker_intensity):
+def color_flicker_effect(universe, interface, flicker_speed, flicker_intensity, number_of_flickers):
     """Creates a color flicker effect on the lights in the universe.
 
     Args:
@@ -72,7 +75,7 @@ def color_flicker_effect(universe, interface, flicker_speed, flicker_intensity):
     """
     fade_interval = int(flicker_speed * 10)
 
-    while True:
+    for _ in range(number_of_flickers):
         random_color = Color(
             random.randint(0, 255),
             random.randint(0, 255),
@@ -85,9 +88,9 @@ def color_flicker_effect(universe, interface, flicker_speed, flicker_intensity):
         lights_transition(universe, interface, flicker_color.serialise(), fade_interval)
 
 
-def strobe_effect(universe, interface):
+def strobe_effect(universe, interface, number_of_strobes):
     i = 0
-    while True:
+    while i < number_of_strobes:
         i += 1
         if i % 2 == 0:
             set_universe_color(universe, WHITE)
@@ -119,7 +122,7 @@ def light_test(universe, interface):
     interface.send_update()
     
 
-def random_color_change_effect(universe, interface, change_interval):
+def random_color_change_effect(universe, interface, change_interval, number_of_changes):
     """Applies random color changes to each individual light in the universe.
 
     Args:
@@ -127,7 +130,7 @@ def random_color_change_effect(universe, interface, change_interval):
         interface (DMXInterface): interface to send the updates
         change_interval (float): interval between color changes (in seconds)
     """
-    while True:
+    for _ in range(number_of_changes):
         for light in universe.lights:
             random_color = Color(
                 random.randint(0, 255),
@@ -144,7 +147,7 @@ def random_color_change_effect(universe, interface, change_interval):
 
 
 
-def rainbow_wave_effect(universe, interface):
+def rainbow_wave_effect(universe, interface, number_of_waves):
     lights = []
     rainbow_9_colors = [Color(255, 0, 0), Color(255, 127, 0), Color(255, 255, 0), Color(0, 255, 0),
                         Color(0, 0, 255), Color(75, 0, 130), Color(143, 0, 255), Color(255, 0, 255),
@@ -169,13 +172,13 @@ def rainbow_wave_effect(universe, interface):
     new_states = interpolate(states, 20)
 
     # print(new_states)
-    while True:
+    for _ in range(number_of_waves):
         for s in new_states:
             interface.set_frame(s)
             interface.send_update()
 
 
-def fireball_circle_effect(universe, interface):
+def fireball_circle_effect(universe, interface, number_of_fades):
     path = [
         (0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 5),
         (1, 5), (2, 5), (3, 5), (4, 5), (5, 5), (6, 5), (7, 5), (8, 5),
@@ -197,7 +200,7 @@ def fireball_circle_effect(universe, interface):
     interface.set_frame(universe.serialise())
     interface.send_update()
 
-    while True:
+    for _ in range(number_of_fades):
         # For each light, make one of them red at a time
         for i in range(len(lights)):
             if i == current_light:
