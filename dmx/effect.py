@@ -1,5 +1,7 @@
+from time import sleep
 from dmx.interact import *
 from light import distance_between_lights, light_id
+import random
 
 def pulse_effect(universe, interface, color, interpolation_rate):
     """Pulses the lights in the universe once to the given color and interpolation rate.
@@ -12,6 +14,75 @@ def pulse_effect(universe, interface, color, interpolation_rate):
     """
     lights_transition(universe, interface, color.serialise(), interpolation_rate)
     lights_transition(universe, interface, BLACK.serialise(), interpolation_rate)
+    
+def pulse_in_rythm(beat, universe, interface, color):
+    lights_transition(universe, interface, color.serialise(), 1)
+    sleep(beat)
+    lights_transition(universe, interface, BLACK.serialise(), 1)
+
+def pulse_rainbow_effect(universe, interface, interpolation_rate):
+    """Pulses a rainbow effect on the lights in the universe.
+
+    Args:
+        universe (DMXUniverse): lights to transition
+        interface (DMXInterface): interface to send the updates
+        interpolation_rate (int): number of frames appearing during the transition
+    """
+    rainbow_colors = [Color(255, 0, 0), Color(255, 127, 0), Color(255, 255, 0),
+                      Color(0, 255, 0), Color(0, 0, 255), Color(75, 0, 130),
+                      Color(143, 0, 255), Color(255, 0, 255), Color(255, 0, 127)]
+
+    while True:
+        for color in rainbow_colors:
+            lights_transition(universe, interface, color.serialise(), interpolation_rate)
+            lights_transition(universe, interface, BLACK.serialise(), interpolation_rate)
+
+def fading_rainbow_effect(universe, interface, fade_speed):
+    """Creates a fading rainbow effect on the lights in the universe.
+
+    Args:
+        universe (DMXUniverse): lights to transition
+        interface (DMXInterface): interface to send the updates
+        fade_speed (float): speed of the fading effect (higher values for faster fading)
+    """
+    rainbow_colors = [Color(255, 0, 0), Color(255, 127, 0), Color(255, 255, 0),
+                      Color(0, 255, 0), Color(0, 0, 255), Color(75, 0, 130),
+                      Color(143, 0, 255), Color(255, 0, 255), Color(255, 0, 127)]
+
+    fade_interval = int(fade_speed * 10)
+
+    while True:
+        for color in rainbow_colors:
+            lights_transition(universe, interface, color.serialise(), fade_interval)
+
+        for color in reversed(rainbow_colors):
+            lights_transition(universe, interface, color.serialise(), fade_interval)
+
+
+import random
+
+def color_flicker_effect(universe, interface, flicker_speed, flicker_intensity):
+    """Creates a color flicker effect on the lights in the universe.
+
+    Args:
+        universe (DMXUniverse): lights to transition
+        interface (DMXInterface): interface to send the updates
+        flicker_speed (float): speed of the flickering effect (higher values for faster flickering)
+        flicker_intensity (float): intensity of the flickering effect (values between 0 and 1)
+    """
+    fade_interval = int(flicker_speed * 10)
+
+    while True:
+        random_color = Color(
+            random.randint(0, 255),
+            random.randint(0, 255),
+            random.randint(0, 255),
+            random.randint(0, 255)
+        )
+
+        flicker_color = random_color * flicker_intensity
+
+        lights_transition(universe, interface, flicker_color.serialise(), fade_interval)
 
 
 def strobe_effect(universe, interface):
@@ -46,6 +117,31 @@ def light_test(universe, interface):
 
     # Send an update to the DMX network
     interface.send_update()
+    
+
+def random_color_change_effect(universe, interface, change_interval):
+    """Applies random color changes to each individual light in the universe.
+
+    Args:
+        universe (DMXUniverse): lights to transition
+        interface (DMXInterface): interface to send the updates
+        change_interval (float): interval between color changes (in seconds)
+    """
+    while True:
+        for light in universe.lights:
+            random_color = Color(
+                random.randint(0, 255),
+                random.randint(0, 255),
+                random.randint(0, 255),
+                random.randint(0, 255)
+            )
+            light.set_colour(random_color)
+        
+        interface.set_frame(universe.serialise())
+        interface.send_update()
+        
+        time.sleep(change_interval)
+
 
 
 def rainbow_wave_effect(universe, interface):
@@ -125,33 +221,3 @@ def fireball_circle_effect(universe, interface):
         current_light %= len(lights)
         
         
-# def virus_spreading_wave_effect(universe, random, interface):
-#     # Create a list of lights
-#     lights = [DMXLight4Slot(address=light_id(i)) for i in range(NUMBER_OF_LIGHTS)]
-
-#     # Add the lights to the universe
-#     for l in lights:
-#         universe.add_light(l)
-
-#     # Turn off all lights
-#     for l in lights:
-#         l.set_colour(Color(0, 0, 0, 0))
-#     interface.set_frame(universe.serialise())
-#     interface.send_update()
-
-#     # Pick a random light to start with
-#     current_light = random.randint(0, NUMBER_OF_LIGHTS - 1)
-
-#     while True:
-#        #spread the virus around current light
-        
-       
-
-#         interface.set_frame(universe.serialise())
-#         interface.send_update()
-#         time.sleep(.05)
-
-#         current_light += 1
-#         current_light %= len(lights)
-    
-
