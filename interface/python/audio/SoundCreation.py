@@ -3,17 +3,18 @@ from interface.python.ResourceManager import ResourceManager, ResourceConstants
 from interface.python.audio.AudioSteam import AudioStream
 from interface.python.audio.SpeakerGroup import SpeakerGroup
 from interface.python.audio.AudioResult import AudioResult
-
 from interface.python.audio.TimelineSoundEffect import TimelineSoundEffect
+
+from interface.python.Interface import Interface
 
 import importlib.util
 import os, math
 
-class SoundCreation:
+class SoundCreation (Interface):
     SEGMENT_SIZE = 2
 
     def __init__(self):
-        self.referenceEffects: list = []
+        super().__init__()
 
         self.timelineEffects: list = []
         self.segmentEffects: list = [] # Optimization purpose
@@ -25,7 +26,6 @@ class SoundCreation:
         self.audioStreamIdMapping: dict = {}
 
         self.audio_result: AudioResult = None
-        self.length: int = 0
 
 
     def readProject(self, path):
@@ -38,10 +38,10 @@ class SoundCreation:
 
         # Load Effects
         self.referenceEffects = []
-        self.load_custom_effects("interface/python/audio/effects")
+        self.loadCustomEffects("interface/python/audio/effects")
         
         if ("externScripts" in project["project"].keys()):
-            self.load_custom_effects(project["project"]["externScripts"])
+            self.loadCustomEffects(project["project"]["externScripts"])
 
         self.audio_result = AudioResult(10, self.samplerate, len(mainSoundData))
 
@@ -93,7 +93,7 @@ class SoundCreation:
         for i in self.audioStreamIdMapping.keys():
             self.audioStreams[self.audioStreamIdMapping[i]] = AudioStream(i)
 
-    def load_custom_effects(self, path):
+    def loadCustomEffects(self, path):
         if not os.path.exists(path):
             return 
 
@@ -185,7 +185,7 @@ class SoundCreation:
 
                 self.computeResultForAudio(effect.priority, result, audioStreamsOut)
 
-    def create(self):
+    def preCompute(self):
         display_pourcent = 0.1
 
         for tick in range(self.audio_result.getNumberTick()):

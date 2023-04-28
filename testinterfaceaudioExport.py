@@ -10,7 +10,7 @@ if __name__ == "__main__":
     sound_creation = SoundCreation()
     sound_creation.readProject(projectPath)
 
-    sound_creation.create()
+    sound_creation.preCompute()
 
     for i in range(10):
         export_path = "out"
