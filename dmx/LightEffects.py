@@ -22,9 +22,6 @@ class LightEffects:
         with open(filename, 'w') as file:
             json.dump(self.light_effects, file)
         
-    def load_light_effects(self, filename):
-        with open(filename, 'r') as file:
-            self.light_effects = json.load(file)
 
     def set_lights_color(self, lights, color):
         for l in lights:
