@@ -32,9 +32,9 @@
 
 from dmx.color import Color
 from dmx.drivers import DMXDriver, get_drivers
-from dmx.interface import DMXInterface
+from dmx.DMXInterface import DMXInterface
 from dmx.light import DMXLight, DMXLight4Slot
-from dmx.universe import DMXUniverse
+from dmx.DMXUniverse import DMXUniverse
 
 __all__ = [
     "Color", "DMXDriver", "get_drivers", "DMXInterface", "DMXLight", "DMXUniverse", "DMXLight4Slot"

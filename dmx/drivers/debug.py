@@ -35,7 +35,7 @@ from typing import List, Optional
 
 from dmx.drivers import DMXDriver
 from dmx.light import DMXLight
-from dmx.universe import DMXUniverse
+from dmx.DMXUniverse import DMXUniverse
 
 
 class Debug(DMXDriver):
