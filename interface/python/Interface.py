@@ -1,17 +1,17 @@
 class Interface:
     def __init__(self) -> None:
-        self._initialize = False
+        self._initialized = False
 
         self.referenceEffects: list = []
         self.length = 0
 
-    def isInitialized(self) -> bool:
-        return self._initialize
+    def initialized(self) -> bool:
+        return self._initialized
 
-    def readProject(self, path) -> None:
+    def read_project(self, path) -> None:
         print("readProject() : To override")
 
-    def loadCustomEffects(self, path) -> None:
+    def load_effect_from(self, path) -> None:
         print("loadCustomEffects() : To override")
 
     """
@@ -21,20 +21,21 @@ class Interface:
     def length(self) :
         return self.length
 
-    def computeTick(self, tick) -> None:
-        print("computeTick() : To override")
-
     """
-        (Should do before )
+        (Should do before do_scenarii)
         Compute eventual things before doing scenarii
     """
-    def preCompute(self):
+    def pre_compute(self):
         print("preCompute() : To override")
+
+    
+    def compute_tick(self, tick) -> None:
+        print("computeTick() : To override")
 
     """
         Run a scenarii using all needed hardware
         
         That function should be call using thread
     """
-    def doScenarii(self):
+    def do_scenarii(self):
         print("doScenarii() : To override")

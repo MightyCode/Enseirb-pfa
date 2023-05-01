@@ -8,6 +8,7 @@ from interface.python.audio.TimelineSoundEffect import TimelineSoundEffect
 from interface.python.Interface import Interface
 
 import importlib.util
+import hashlib
 import os, math
 
 class SoundCreation (Interface):
@@ -28,7 +29,7 @@ class SoundCreation (Interface):
         self.audio_result: AudioResult = None
 
 
-    def readProject(self, path):
+    def read_project(self, path):
         project = ResourceManager().getJson(path)
         audioTimeline = project["audioTimeline"]
 
@@ -38,10 +39,10 @@ class SoundCreation (Interface):
 
         # Load Effects
         self.referenceEffects = []
-        self.loadCustomEffects("interface/python/audio/effects")
+        self.load_effect_from("interface/python/audio/effects")
         
         if ("externScripts" in project["project"].keys()):
-            self.loadCustomEffects(project["project"]["externScripts"])
+            self.load_effect_from(project["project"]["externScripts"])
 
         self.audio_result = AudioResult(10, self.samplerate, len(mainSoundData))
 
@@ -93,7 +94,7 @@ class SoundCreation (Interface):
         for i in self.audioStreamIdMapping.keys():
             self.audioStreams[self.audioStreamIdMapping[i]] = AudioStream(i)
 
-    def loadCustomEffects(self, path):
+    def load_effect_from(self, path):
         if not os.path.exists(path):
             return 
 
@@ -172,7 +173,7 @@ class SoundCreation (Interface):
 
         return result
     
-    def computeTick(self, tick):
+    def compute_tick(self, tick):
         # Alter audio stream with effects
         for effect in self.segmentEffects[tick // (SoundCreation.SEGMENT_SIZE * self.samplerate)]:
             start = effect.start * self.samplerate
@@ -185,14 +186,14 @@ class SoundCreation (Interface):
 
                 self.computeResultForAudio(effect.priority, result, audioStreamsOut)
 
-    def preCompute(self):
+    def pre_compute(self):
         display_pourcent = 0.1
 
         for tick in range(self.audio_result.getNumberTick()):
             for audioStream in self.audioStreams:
                 audioStream.reset()
 
-            self.computeTick(tick)
+            self.compute_tick(tick)
 
             # Apply audio stream to audio result
             for i in range(self.audio_result.nb_speakers):
@@ -219,3 +220,7 @@ class SoundCreation (Interface):
                     + str(self.audio_result.getNumberTick()))
 
                 display_pourcent += 0.1
+
+
+    def do_scenarii(self):
+        print("Do scenarii sound")
