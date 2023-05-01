@@ -7,40 +7,39 @@ class EffectOscillator(ModelAudioEffect):
     def __init__(self):
         super().__init__()
 
-        self.freq = 440.0  # frequency in Hz
-        self.amp = 0.5  # amplitude between 0 and 1
-
-        self._length = 0
-        self.amplitude = 0.5
+        self._freq: float = 440.0  # frequency in Hz
+        self._amplitude = 0.5 # amplitude between 0 and 1
+        self.oscillations: list = []
 
     def preprocess(self):
         super().preprocess()
 
-        self.freq = float(self.info["frequency"])
+        self._freq = float(self.info["frequency"])
 
-        self.amplitude = self.info["amplitude"] if "amplitude" in self.info.keys() else 1
-        self.numberSecond = float(self.info["length"])
-        self._length = round(self.numberSecond * self._sampleRate)
+        self._amplitude = self.info["amplitude"] if "amplitude" in self.info.keys() else 1
 
-        t = np.linspace(0, self.numberSecond, int(self._length), endpoint=False)
+        number_second = float(self.info["length"])
+        self._length = round(number_second * self._sampleRate)
+
+        t = np.linspace(0, number_second, int(self._length), endpoint=False)
 
         # create the oscillator waveform
-        self.osc = self.amplitude * np.sin(2 * np.pi * self.freq * t)
+        self.oscillations = self._amplitude * np.sin(2 * np.pi * self._freq * t)
     
-    def set_audio_stream_id(self, streamsInId, streamOutId):
-        assert streamOutId != None and len(streamOutId) != 0
+    def set_audio_stream_id(self, streams_in_id, stream_out_id):
+        assert stream_out_id != None and len(stream_out_id) != 0
 
-    def compute_value(self, startTime, tick, audioStreams):
-        now = tick - startTime
+    def compute_value(self, start_time: int, tick: int, audio_streams: list):
+        now = tick - start_time
 
-        assert now >= 0 or now < self._length()
+        assert now >= 0 or now < self.length()
 
-        return self.osc[now]
+        return self.oscillations[now]
 
     @staticmethod
     def Instanciate():
         return EffectOscillator()
 
     @staticmethod
-    def GetEffectName():
+    def Get_effect_name():
         return "oscillator"

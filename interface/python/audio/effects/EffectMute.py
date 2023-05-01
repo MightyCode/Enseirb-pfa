@@ -11,14 +11,14 @@ class EffectMute(ModelAudioEffect):
         self.numberSecond = float(self.info["length"])
         self._length = int(self.numberSecond * self._sampleRate)
     
-    def set_audio_stream_id(self, streamsInId, streamOutId):
-        assert streamsInId == None or len(streamsInId) == 0
-        assert streamOutId != None and len(streamOutId) != 0
+    def set_audio_stream_id(self, streams_in_id, stream_out_id):
+        assert streams_in_id == None or len(streams_in_id) == 0
+        assert stream_out_id != None and len(stream_out_id) != 0
 
-    def compute_value(self, startTime, tick, audioStreams):
-        now = tick - startTime
+    def compute_value(self, start_time: int, tick: int, audio_streams: list):
+        now = tick - start_time
 
-        assert now >= 0 or now < self._length()
+        assert now >= 0 or now < self.length()
 
         return 0
 
@@ -27,5 +27,5 @@ class EffectMute(ModelAudioEffect):
         return EffectMute()
 
     @staticmethod
-    def GetEffectName():
+    def Get_effect_name():
         return "mute"

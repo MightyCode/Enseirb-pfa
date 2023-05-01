@@ -47,18 +47,18 @@ class Effect2Merge(ModelAudioEffect):
         self._length = round(number_second * self._sampleRate)
         self._func =  AffectFunction.str_to_affect_function(self.info["func"])
 
-    def set_audio_stream_id(self, streamsInId, streamOutId):
-        assert len(streamsInId) == 2
-        assert streamOutId != None and len(streamOutId) != 0
+    def set_audio_stream_id(self, streams_in_id, stream_out_id):
+        assert len(streams_in_id) == 2
+        assert stream_out_id != None and len(stream_out_id) != 0
 
-    def compute_value(self, startTime, tick, audioStreams):
-        now: int = tick - startTime
+    def compute_value(self, start_time: int, tick: int, audio_streams: list):
+        now: int = tick - start_time
 
-        assert now >= 0 or now < self._length()
+        assert now >= 0 or now < self.length()
 
         return [
-            self._func(audioStreams[0].left_value(), audioStreams[1].right_value()),
-            self._func(audioStreams[0].left_value(), audioStreams[1].right_value())
+            self._func(audio_streams[0].left_value(), audio_streams[1].right_value()),
+            self._func(audio_streams[0].left_value(), audio_streams[1].right_value())
         ]
 
     @staticmethod
@@ -66,5 +66,5 @@ class Effect2Merge(ModelAudioEffect):
         return Effect2Merge()
 
     @staticmethod
-    def GetEffectName():
+    def Get_effect_name():
         return "2merge"

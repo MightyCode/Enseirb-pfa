@@ -11,10 +11,10 @@ class ModelAudioEffect(ModelEffect):
     def preprocess(self):
         self._sampleRate = int(self.info["sampleRate"])
 
-    def set_audio_stream_id(self, streams_in_id, stream_out_id: list):
+    def set_audio_stream_id(self, streams_in_id: list, stream_out_id: list):
         pass
 
-    def compute_value(self, startTime, tick, speakerId):
+    def compute_value(self, start_time: int, tick: int, audio_streams: list):
         pass
 
     def length(self):
@@ -25,5 +25,5 @@ class ModelAudioEffect(ModelEffect):
         return ModelAudioEffect()
 
     @staticmethod
-    def GetEffectName():
+    def Get_effect_name():
         return "empty"

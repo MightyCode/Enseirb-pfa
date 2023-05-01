@@ -42,19 +42,19 @@ class EffectAmplitudeTweening(ModelAudioEffect):
         numberSeconds: float = float(self.info["length"])
         self._length = round(numberSeconds * self._sampleRate)
 
-    def set_audio_stream_id(self, streamsInId, streamOutId):
-        assert len(streamsInId) == len(streamOutId) and len(streamOutId) != 0
+    def set_audio_stream_id(self, streams_in_id, stream_out_id):
+        assert len(streams_in_id) == len(stream_out_id) and len(stream_out_id) != 0
 
         self._result = []
-        for i in range(len(streamOutId)):
+        for i in range(len(stream_out_id)):
             self._result.append([0, 0])
 
-    def compute_value(self, startTime, tick, audioStreams):
-        now: int = tick - startTime
+    def compute_value(self, start_time: int, tick: int, audio_streams: list):
+        now: int = tick - start_time
 
-        assert now >= 0 or now < self._length()
+        assert now >= 0 or now < self.length()
 
-        for audioStream, i in zip(audioStreams, range(len(audioStreams))):
+        for audioStream, i in zip(audio_streams, range(len(audio_streams))):
             amplitude = Tweening.evaluate(self._tweening_type, self._tweening_behaviour, now, self._start_value, self._delta, self._length, self._optional_arg_1, self._optional_arg_2)
             self._result[i][0] = audioStream.left_value() * amplitude 
             self._result[i][1] = audioStream.right_value() * amplitude 
@@ -66,5 +66,5 @@ class EffectAmplitudeTweening(ModelAudioEffect):
         return EffectAmplitudeTweening()
 
     @staticmethod
-    def GetEffectName():
+    def Get_effect_name():
         return "amplitudeTweening"
