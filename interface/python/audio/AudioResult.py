@@ -16,20 +16,20 @@ class AudioResult:
 
         self.blockAdvancement = 0
 
-    def getNumberTick(self):
+    def get_number_tick(self):
         return int(self.length)
 
     def generate_block(self):
         for i in range(self.nb_speakers):
             self.blocks_generator[i] = 0
 
-    def getAudioValue(self, id_speaker, tick, isLeft=False):
+    def get_audio_value(self, id_speaker, tick, isLeft=False):
         index = id_speaker * 2 if isLeft else id_speaker * 2 + 1
 
         return self.data[index][tick]
 
 
-    def setAudioValue(self, id_speaker, tick, value, isLeft=False):
+    def set_audio_value(self, id_speaker, tick, value, isLeft=False):
         index = (id_speaker * 2) if isLeft else (id_speaker * 2 + 1) 
 
         self.data[index][tick] = value

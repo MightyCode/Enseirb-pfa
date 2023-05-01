@@ -47,29 +47,29 @@ class SoundCreation (Interface):
         self.audio_result = AudioResult(10, self.samplerate, len(mainSoundData))
 
         # Create as segment effects needed, number of segment is given by SEGMENT SIZE and sound result length
-        self.segmentEffects = [None] * math.ceil(self.audio_result.getNumberTick() / (SoundCreation.SEGMENT_SIZE * self.samplerate))
+        self.segmentEffects = [None] * math.ceil(self.audio_result.get_number_tick() / (SoundCreation.SEGMENT_SIZE * self.samplerate))
         for i in range(len(self.segmentEffects)):
             self.segmentEffects[i] = []
 
         # Create speakers group
         self.audioStreamIdMapping.clear()
         for speakersGroup, groupIndex in zip(project["project"]["speakersGroups"], range(len(project["project"]["speakersGroups"]))):
-            self.addGroup()
+            self.add_group()
             self.audioStreamIdMapping[groupIndex] = groupIndex
 
             for i in speakersGroup:
-                self.addToGroup(groupIndex, i)
+                self.add_to_group(groupIndex, i)
 
         # Create all effect
         for effectRawData in audioTimeline:
-            effect = self.createEffectFromName(effectRawData["modelEffect"], project["project"])
+            effect = self.create_effect_from_name(effectRawData["modelEffect"], project["project"])
             timelineEffect = TimelineSoundEffect(effect, effectRawData["priority"], effectRawData["start"], self.samplerate)
             streamInId = None
             if "audioStreamIn" in effectRawData.keys():
                 streamInId = [effectRawData["audioStreamIn"]] if isinstance(effectRawData["audioStreamIn"], int) else effectRawData["audioStreamIn"]
             streamOutId = [effectRawData["audioStreamOut"]] if isinstance(effectRawData["audioStreamOut"], int) else effectRawData["audioStreamOut"]
 
-            timelineEffect.setAudioStreamsId(streamInId, streamOutId)
+            timelineEffect.set_audio_streams_id(streamInId, streamOutId)
             self.timelineEffects.append(timelineEffect)
 
             # Append potentially new audio stream
@@ -83,8 +83,8 @@ class SoundCreation (Interface):
 
         # Append timeline effect in segment
         for effect in self.timelineEffects:
-            segmentStart: int = int(effect.start // SoundCreation.SEGMENT_SIZE)
-            segmentEnd: int = int((effect.getLength() / self.samplerate + effect.start) // SoundCreation.SEGMENT_SIZE)
+            segmentStart: int = int(effect.start() // SoundCreation.SEGMENT_SIZE)
+            segmentEnd: int = int((effect.length() / self.samplerate + effect.start()) // SoundCreation.SEGMENT_SIZE)
 
             for i in range(max(segmentStart, 0), min(segmentEnd + 1, len(self.segmentEffects))):
                 self.segmentEffects[i].append(effect)
@@ -115,7 +115,7 @@ class SoundCreation (Interface):
                     self.referenceEffects.append(attr)
 
     
-    def createEffectFromName(self, modelEffectInfo, projectInfo):
+    def create_effect_from_name(self, modelEffectInfo, projectInfo):
         effect = None
 
         for tested in self.referenceEffects:
@@ -131,12 +131,12 @@ class SoundCreation (Interface):
 
         return effect
 
-    def addGroup(self):
+    def add_group(self):
         self.speakers_groups.append(
             SpeakerGroup()
         )
 
-    def addToGroup(self, groupId, speakerId):
+    def add_to_group(self, groupId, speakerId):
         if 0 > groupId or groupId >= len(self.speakers_groups):
             return
 
@@ -146,25 +146,25 @@ class SoundCreation (Interface):
         self.speakers_groups[groupId].add(speakerId)
 
 
-    def computeResultForAudio(self, effectPriority, result, audioStreams):
+    def compute_result_for_audio(self, effectPriority, result, audioStreams):
         if isinstance(result, dict):
             pass # Todo
         elif isinstance(result, float) or isinstance(result, int):
             for audioStream in audioStreams:
-                audioStream.setValueBoth(effectPriority, result)
+                audioStream.set_value_both(effectPriority, result)
         elif isinstance(result[0], float) or isinstance(result[0], int):
             for audioStream in audioStreams:
-                audioStream.setBothValue(effectPriority, result[0], result[1])
+                audioStream.set_both_value(effectPriority, result[0], result[1])
         else:
             assert len(result) == len(audioStreams)
 
             for value, audioStream in zip(result, audioStreams):
                 if isinstance(value, float) or isinstance(value, int):
-                    audioStream.setValueBoth(effectPriority, result)
+                    audioStream.set_value_both(effectPriority, result)
                 else :
-                    audioStream.setBothValue(effectPriority, value[0], value[1])
+                    audioStream.set_both_value(effectPriority, value[0], value[1])
 
-    def getAudioStreams(self, ids):
+    def get_audio_streams(self, ids):
         if ids == None : return None
 
         result = []
@@ -176,20 +176,20 @@ class SoundCreation (Interface):
     def compute_tick(self, tick):
         # Alter audio stream with effects
         for effect in self.segmentEffects[tick // (SoundCreation.SEGMENT_SIZE * self.samplerate)]:
-            start = effect.start * self.samplerate
+            start = effect.start() * self.samplerate
 
-            if tick >= start and tick < start + effect.getLength():
-                audioStreamsIn = self.getAudioStreams(effect.audioStreamsIn)
-                audioStreamsOut = self.getAudioStreams(effect.audioStreamsOut)
+            if tick >= start and tick < start + effect.length():
+                audioStreamsIn = self.get_audio_streams(effect.get_audio_streams_in())
+                audioStreamsOut = self.get_audio_streams(effect.get_audio_streams_out())
 
-                result = effect.computeValue(tick, audioStreamsIn)
+                result = effect.compute_value(tick, audioStreamsIn)
 
-                self.computeResultForAudio(effect.priority, result, audioStreamsOut)
+                self.compute_result_for_audio(effect.priority(), result, audioStreamsOut)
 
     def pre_compute(self):
         display_pourcent = 0.1
 
-        for tick in range(self.audio_result.getNumberTick()):
+        for tick in range(self.audio_result.get_number_tick()):
             for audioStream in self.audioStreams:
                 audioStream.reset()
 
@@ -206,18 +206,18 @@ class SoundCreation (Interface):
                     
                     audioStream = self.audioStreams[group.id()]
                     if audioStream.priority() >= priority:
-                        values = audioStream.bothValue()
+                        values = audioStream.both_value()
                         priority = audioStream.priority()
 
                         if values[0] != 0: # Left
-                            self.audio_result.setAudioValue(i, tick, values[0], 0)
+                            self.audio_result.set_audio_value(i, tick, values[0], 0)
                         if values[1] != 0: # Right
-                            self.audio_result.setAudioValue(i , tick, values[1], 1)
+                            self.audio_result.set_audio_value(i , tick, values[1], 1)
 
-            if tick > display_pourcent * self.audio_result.getNumberTick():
+            if tick > display_pourcent * self.audio_result.get_number_tick():
                 print("Done " + str(round(display_pourcent * 100)), "%, "  \
-                    + str(round(display_pourcent * self.audio_result.getNumberTick())) + "/"  \
-                    + str(self.audio_result.getNumberTick()))
+                    + str(round(display_pourcent * self.audio_result.get_number_tick())) + "/"  \
+                    + str(self.audio_result.get_number_tick()))
 
                 display_pourcent += 0.1
 

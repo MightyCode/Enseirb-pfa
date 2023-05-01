@@ -13,11 +13,11 @@ class EffectSplit(ModelAudioEffect):
         super().preprocess()
 
         self.numberSecond = float(self.info["length"])
-        self.length = round(self.numberSecond * self.sampleRate)
+        self._length = round(self.numberSecond * self._sampleRate)
 
         self.amplitude = self.info["amplitude"] if "amplitude" in self.info.keys() else 1
 
-    def setAudioStreamId(self, streamsInId, streamOutId):
+    def set_audio_stream_id(self, streamsInId, streamOutId):
         assert streamsInId != None
         assert len(streamsInId) == 1
 
@@ -29,14 +29,14 @@ class EffectSplit(ModelAudioEffect):
             self.result.append([0, 0])
         
     
-    def computeValue(self, startTime, tick, audioStreams):
+    def compute_value(self, startTime, tick, audioStreams):
         now = tick - startTime
 
-        assert now >= 0 or now < self.getLength()  
+        assert now >= 0 or now < self._length()  
 
         for i in range(len(self.result)):
-            self.result[i][0] = audioStreams[0].leftValue() * self.amplitude 
-            self.result[i][1] = audioStreams[0].rightValue() * self.amplitude 
+            self.result[i][0] = audioStreams[0].left_value() * self.amplitude 
+            self.result[i][1] = audioStreams[0].right_value() * self.amplitude 
 
         return self.result
 

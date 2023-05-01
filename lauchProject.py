@@ -1,10 +1,10 @@
-from code import interact
-import threading
-import sys
+import threading, sys, time
 from interface.python.Interface import Interface
 from interface.python.audio.SoundCreation import SoundCreation
 
-initialized = []
+initialized: list = []
+ended: list = []
+joined: list = []
 
 def run_interface(id: int, interface: Interface, path: str):
     # create interface object
@@ -25,6 +25,7 @@ def run_interface(id: int, interface: Interface, path: str):
 
     # run scenario
     interface.do_scenarii()
+    ended[id] = True
 
 # main thread
 if __name__ == '__main__':
@@ -41,15 +42,26 @@ if __name__ == '__main__':
     soundInterface: Interface = SoundCreation()
     soundInterfaceThread = threading.Thread(target=run_interface, args=(0, soundInterface, path,))
     threads.append(soundInterfaceThread)
-    initialized.append(False)
 
     """
     Do the same for audio
     """
 
     for t in threads:
+        initialized.append(False)
+        ended.append(False)
+        joined.append(False)
+
+    for t in threads:
         t.start()
 
-    # join the threads
-    for t in threads:
-        t.join()
+    num_joined: int = 0
+
+    while num_joined != len(joined):
+        for i in range(len(initialized)):
+            if ended[i] and not joined[i]:
+                threads[i].join()
+                joined[i] = True
+                num_joined += 1
+
+        time.sleep(0.1)

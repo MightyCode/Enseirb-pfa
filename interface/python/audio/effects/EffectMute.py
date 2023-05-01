@@ -9,16 +9,16 @@ class EffectMute(ModelAudioEffect):
         super().preprocess()
 
         self.numberSecond = float(self.info["length"])
-        self.length = int(self.numberSecond * self.sampleRate)
+        self._length = int(self.numberSecond * self._sampleRate)
     
-    def setAudioStreamId(self, streamsInId, streamOutId):
+    def set_audio_stream_id(self, streamsInId, streamOutId):
         assert streamsInId == None or len(streamsInId) == 0
         assert streamOutId != None and len(streamOutId) != 0
 
-    def computeValue(self, startTime, tick, audioStreams):
+    def compute_value(self, startTime, tick, audioStreams):
         now = tick - startTime
 
-        assert now >= 0 or now < self.getLength()
+        assert now >= 0 or now < self._length()
 
         return 0
 

@@ -4,21 +4,21 @@ class ModelAudioEffect(ModelEffect):
     def __init__(self):
         super().__init__(EEffectType.SOUND)
 
-        self.sampleRate: int = 0
-        self.audioStreamOut: list = [] 
-        self.length: int = 0
+        self._sampleRate: int = 0
+        self._audio_stream_out: list = [] 
+        self._length: int = 0
 
     def preprocess(self):
-        self.sampleRate = int(self.info["sampleRate"])
+        self._sampleRate = int(self.info["sampleRate"])
 
-    def setAudioStreamId(self, streamsInId, streamOutId):
+    def set_audio_stream_id(self, streams_in_id, stream_out_id: list):
         pass
 
-    def computeValue(self, startTime, tick, speakerId):
+    def compute_value(self, startTime, tick, speakerId):
         pass
 
-    def getLength(self):
-        return self.length
+    def length(self):
+        return self._length
 
     @staticmethod
     def Instanciate():

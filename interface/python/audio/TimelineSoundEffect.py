@@ -2,23 +2,23 @@ from interface.python.audio.AudioSteam import AudioStream
 
 
 class TimelineSoundEffect:
-    def __init__(self, refAudioModelEffect, priority, start, sampleRate):
-        self.refAudioModelEffect = refAudioModelEffect
-        self.priority = priority
-        self.start = start
-        self.sampleRate = sampleRate
+    def __init__(self, ref_audio_model_effect, priority, start, sample_rate):
+        self._ref_audio_model_effect = ref_audio_model_effect
+        self._priority = priority
+        self._start = start
+        self._sample_rate = sample_rate
 
-        self.audioStreamsIn: list = []
-        self.audioStreamsOut: list = []
+        self._audio_streams_in: list = []
+        self._audio_streams_out: list = []
 
     def preprocess(self):
-        self.refAudioModelEffect.preprocess()
+        self._ref_audio_model_effect.preprocess()
 
-    def setAudioStreamsId(self, streamsInId, streamsOutId):
-        self.audioStreamsIn = streamsInId
-        self.audioStreamsOut = streamsOutId
+    def set_audio_streams_id(self, streams_in_id, streams_out_id):
+        self._audio_streams_in = streams_in_id
+        self._audio_streams_out = streams_out_id
 
-        self.refAudioModelEffect.setAudioStreamId(streamsInId, streamsOutId)
+        self._ref_audio_model_effect.set_audio_stream_id(streams_in_id, streams_out_id)
 
     """ 
     Mutiples return values are possible :
@@ -32,8 +32,20 @@ class TimelineSoundEffect:
 
           Note that element in values can be single or double element to assign to both or left then right ear
     """
-    def computeValue(self, time, audioStreams):
-        return self.refAudioModelEffect.computeValue(int(self.start * self.sampleRate), time, audioStreams)
+    def compute_value(self, time, audioStreams):
+        return self._ref_audio_model_effect.compute_value(int(self._start * self._sample_rate), time, audioStreams)
 
-    def getLength(self):
-        return self.refAudioModelEffect.getLength()
+    def length(self):
+        return self._ref_audio_model_effect.length()
+
+    def start(self):
+        return self._start
+
+    def priority(self):
+        return self._priority
+
+    def get_audio_streams_in(self):
+        return self._audio_streams_in
+
+    def get_audio_streams_out(self):
+        return self._audio_streams_out

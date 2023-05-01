@@ -24,7 +24,7 @@ class ModelEffect:
     def id(self):
         return self._id
 
-    def getLength(self):
+    def length(self):
         return 0
 
     def preprocess(self):

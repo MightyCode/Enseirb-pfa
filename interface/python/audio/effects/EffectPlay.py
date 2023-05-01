@@ -5,28 +5,29 @@ class EffectPlay(ModelAudioEffect):
     def __init__(self):
         super().__init__()
 
-        self.soundFile = None
-        self.amplitude = 1
+        self._soundData = None
+        self._amplitude = 1
+        self._loop_time = 1 
 
     def preprocess(self):
         super().preprocess()
 
-        self.loopTime = self.info["loopTime"] if "loopTime" in self.info.keys() else 1
-        self.soundData = self.resourceManager.getAudio(self.info["file"], self.sampleRate)[ResourceConstants.AUDIO_DATA] 
-        self.length = len(self.soundData) * self.loopTime
-        self.amplitude = self.info["amplitude"] if "amplitude" in self.info.keys() else 1
+        self._loop_time = self.info["loopTime"] if "loopTime" in self.info.keys() else 1
+        self._soundData = self.resourceManager.getAudio(self.info["file"], self._sampleRate)[ResourceConstants.AUDIO_DATA] 
+        self._length = len(self._soundData) * self._loop_time
+        self._amplitude = self.info["amplitude"] if "amplitude" in self.info.keys() else 1
 
-    def setAudioStreamId(self, streamsInId, streamOutId):
+    def set_audio_stream_id(self, streamsInId, streamOutId):
         assert streamOutId != None and len(streamOutId) != 0
         assert streamsInId == None or len(streamsInId) == 0
 
     
-    def computeValue(self, startTime, tick, audioStreams):
+    def compute_value(self, startTime, tick, audioStreams):
         now = tick - startTime
 
-        assert now >= 0 or now < self.getLength()
+        assert now >= 0 or now < self._length()
 
-        return self.soundData[now % len(self.soundData)] * self.amplitude
+        return self._soundData[now % len(self._soundData)] * self._amplitude
 
     @staticmethod
     def Instanciate():

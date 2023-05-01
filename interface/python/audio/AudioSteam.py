@@ -12,23 +12,23 @@ class AudioStream:
     def value(self, left: bool):
         return self._leftValue if left else self._rightValue
     
-    def leftValue(self):
+    def left_value(self):
         return self._leftValue
     
-    def rightValue(self):
+    def right_value(self):
         return self._rightValue
 
-    def bothValue(self):
+    def both_value(self):
         return [self._leftValue, self._rightValue]
 
-    def setValueBoth(self, priority, value):
+    def set_value_both(self, priority, value):
         if self._priority <= priority:
             self._priority = priority
 
             self._leftValue = value
             self._rightValue = value
 
-    def setBothValue(self, priority, valueL, valueR):
+    def set_both_value(self, priority, valueL, valueR):
         if self._priority <= priority:
             self._priority = priority
 
@@ -46,6 +46,6 @@ class AudioStream:
 
     def copy(self):
         copy: AudioStream = AudioStream(self._id)
-        copy.setBothValue(self._leftValue, self._rightValue)
+        copy.set_both_value(self._leftValue, self._rightValue)
 
         return copy
