@@ -13,6 +13,11 @@ const routes = [
         component: () => import("./views/EffectsLibrary.vue"),
     },
     {
+        path: "/vis-project",
+        name: "VisualizeProject",
+        component: () => import("./views/VisualizeProject.vue"),
+    },
+    {
         path: "/projects",
         name: "Projects",
         component: () => import("./views/ManageProjects.vue"),

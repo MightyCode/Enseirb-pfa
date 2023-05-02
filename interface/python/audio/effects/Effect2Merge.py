@@ -28,37 +28,37 @@ class AffectFunction:
     @staticmethod
     def dist(a, b) : return math.sqrt(a * a + b * b)
 
-    def str_to_affect_function(funcName: str):
-        if hasattr(AffectFunction, funcName):
-            return getattr(AffectFunction, funcName)
+    def str_to_affect_function(func_name: str):
+        if hasattr(AffectFunction, func_name):
+            return getattr(AffectFunction, func_name)
         else:
-            raise ValueError(f"Function {funcName} not found in AffectFunction")
+            raise ValueError(f"Function {func_name} not found in AffectFunction")
 
 class Effect2Merge(ModelAudioEffect):
     def __init__(self):
         super().__init__()
 
-        self.func: function = AffectFunction.add
+        self._func: function = AffectFunction.add
 
     def preprocess(self):
         super().preprocess()
 
-        self.numberSecond = float(self.info["length"])
-        self.length = round(self.numberSecond * self.sampleRate)
-        self.func =  AffectFunction.str_to_affect_function(self.info["func"])
+        number_second = float(self.info["length"])
+        self._length = round(number_second * self._sampleRate)
+        self._func =  AffectFunction.str_to_affect_function(self.info["func"])
 
-    def setAudioStreamId(self, streamsInId, streamOutId):
-        assert len(streamsInId) == 2
-        assert streamOutId != None and len(streamOutId) != 0
+    def set_audio_stream_id(self, streams_in_id, stream_out_id):
+        assert len(streams_in_id) == 2
+        assert stream_out_id != None and len(stream_out_id) != 0
 
-    def computeValue(self, startTime, tick, audioStreams):
-        now: int = tick - startTime
+    def compute_value(self, start_time: int, tick: int, audio_streams: list):
+        now: int = tick - start_time
 
-        assert now >= 0 or now < self.getLength()
+        assert now >= 0 or now < self.length()
 
         return [
-            self.func(audioStreams[0].leftValue(), audioStreams[1].rightValue()),
-            self.func(audioStreams[0].leftValue(), audioStreams[1].rightValue())
+            self._func(audio_streams[0].left_value(), audio_streams[1].right_value()),
+            self._func(audio_streams[0].left_value(), audio_streams[1].right_value())
         ]
 
     @staticmethod
@@ -66,5 +66,5 @@ class Effect2Merge(ModelAudioEffect):
         return Effect2Merge()
 
     @staticmethod
-    def GetEffectName():
+    def Get_effect_name():
         return "2merge"

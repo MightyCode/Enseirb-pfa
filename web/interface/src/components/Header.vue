@@ -14,7 +14,7 @@
               </div>
 
             <div class="column">
-                <a class="tab-link" onclick="opentab('vis')">Visualiser</a>
+                <router-link class="tab-link" to="/vis-project">Visualiser</router-link>
                 <a class="tab-link" onclick="opentab('save')">Sauvegarder</a>
             </div>
 

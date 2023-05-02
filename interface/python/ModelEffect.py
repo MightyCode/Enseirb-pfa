@@ -10,21 +10,21 @@ class EEffectType(Enum):
 class ModelEffect:
     _id = 0
 
-    def __init__(self, effectType):
+    def __init__(self, effect_type):
         self._id = ModelEffect._id
         ModelEffect._id += 1
 
-        self.type = effectType
+        self.type = effect_type
         self.resourceManager = ResourceManager()
         self.info = {}
 
-    def setInfo(self, key, value):
+    def set_info(self, key, value):
         self.info[key] = value
 
     def id(self):
         return self._id
 
-    def getLength(self):
+    def length(self):
         return 0
 
     def preprocess(self):
