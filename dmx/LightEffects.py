@@ -1,6 +1,6 @@
 from time import sleep
 import random
-from dmx.color import *
+from dmx.Color import *
 from dmx.light import *
 from dmx.DMXUniverse import *
 from dmx.DMXInterface import *

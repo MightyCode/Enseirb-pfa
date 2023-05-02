@@ -33,7 +33,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from dmx.color import BLACK, Color
+from dmx.Color import BLACK, Color
 import config
 
 DMX_MAX_ADDRESS = 512
