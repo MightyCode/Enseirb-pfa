@@ -42,6 +42,14 @@ DMX_MIN_ADDRESS = 1
 light_map = config.light_map
 
 def light_id(adress):
+    """ Get the light id from the config file.
+
+    Args:
+        adress (int): adress of the light
+
+    Returns:
+        int: id of the light in the config file
+    """
     return light_map[adress]
     
 def light_coord_to_id(x, y):
@@ -93,13 +101,21 @@ class DMXLight(ABC):
         """Serialise the DMX light to a sequence of bytes."""
 
     @property
-    def start_address(self) -> int:
-        """Start address (inclusive) of the light."""
+    def start_address(self):
+        """Start address (inclusive) of the light.
+        
+        Returns:
+            int: start address of the light
+        """
         return self._address
 
     @property
-    def end_address(self) -> int:
-        """End address (inclusive) of the light."""
+    def end_address(self):
+        """End address (inclusive) of the light.
+
+        Returns:
+            int: end address of the light
+        """
         end_address = self._address + self.slot_count - 1
         if end_address > DMX_MAX_ADDRESS or end_address < DMX_MIN_ADDRESS:
             return (end_address % DMX_MAX_ADDRESS) + DMX_MIN_ADDRESS
@@ -107,7 +123,7 @@ class DMXLight(ABC):
 
     @property
     def slot_count(self) -> int:
-        """Get the number of slots used by this light."""
+        """Gets the number of slots used by this light."""
         return 0
 
 
@@ -120,18 +136,18 @@ class DMXLight4Slot(DMXLight):
         self._colour = BLACK
 
     @property
-    def slot_count(self) -> int:
-        """Get the number of slots used by this light."""
+    def slot_count(self):
+        """Gets the number of slots used by this light."""
         return 4
 
     def set_colour(self, color: Color):
-        """Set the color for the light."""
+        """Sets the color for the light."""
         self._colour = color
 
     def get_colour(self) -> Color:
-        """Get the color for the light."""
+        """Gets the color for the light."""
         return self._colour
     
     def serialise(self) -> List[int]:
-        """Serialise the DMX light to a sequence of bytes."""
+        """Serialises the DMX light to a sequence of bytes."""
         return self._colour.serialise()
