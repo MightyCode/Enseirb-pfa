@@ -1,46 +1,32 @@
 <template>
-    <header>
-        <div>
-            <div>
-                <router-link class="tab-link" to="/configs">Gérer configs</router-link>
-                <router-link class="tab-link" to="/projects">Gérer projets</router-link>
-            </div>
-        </div>
+  <header>
+    <div>
+      <div>
+        <router-link class="tab-link" to="/configs">Gérer configs</router-link>
+        <router-link class="tab-link" to="/projects">Gérer projets</router-link>
+      </div>
+    </div>
 
-        <div>
-            <div class="column">
-                <router-link class="tab-link" to="/configs/env">Environnement</router-link>
-                <router-link class="tab-link" to="/edit-project">Editer projet</router-link>
-              </div>
+    <div>
+      <div>
+        <router-link class="tab-link" to="/configs/env">Environnement</router-link>
+        <router-link class="tab-link" to="/edit-project">Editer projet</router-link>
+      </div>
+    </div>
 
-            <div class="column">
-                <router-link class="tab-link" to="/vis-project">Visualiser</router-link>
-                <a class="tab-link" onclick="opentab('save')">Sauvegarder</a>
-            </div>
+    <div>
+      <div>
+        <router-link class="tab-link" to="/effects-library">Effets</router-link>
+        <router-link class="tab-link" to="/vis-project">Visualiser</router-link>
+      </div>
+    </div>
 
-            <div class="column">
-                <a class="tab-link" onclick="opentab('editen')">Enceintes</a>
-                <a class="tab-link" onclick="opentab('editlight')">Lumières</a>
-            </div>
-
-            <div class="column">
-                <a class="tab-link" onclick="opentab('importer')">Importer</a>
-                <a class="tab-link" onclick="opentab('export')">Exporter</a>
-            </div>
-        </div>
-
-        <div>
-            <div>
-                <router-link class="tab-link" to="/effects-library">Effets</router-link>
-            </div>
-        </div>
-
-    </header>
+  </header>
 </template>
 
 <script>
 export default {
-    name: 'Header',
+  name: 'Header',
 }
 </script>
 
@@ -58,7 +44,7 @@ header {
 }
 
 header>div {
-  width: 20%;
+  width: 33%;
   height: 100%;
 
   display: flex;
@@ -84,7 +70,7 @@ header>div>div {
 }
 
 header>div>.column {
-  width: 25%;
+  width: 50%;
   height: 100%;
 
   display: flex;
@@ -102,11 +88,6 @@ header>div>div>a {
   text-align: center;
 }
 
-header>div:nth-of-type(2) {
-  width: 60%;
-  flex-direction: row;
-}
-
 .tab-link {
   cursor: pointer;
 
@@ -115,6 +96,12 @@ header>div:nth-of-type(2) {
   border-radius: 4px;
 
   transition-duration: 0.3s;
+  text-decoration: none;
+  color: white;
+}
+
+.tab-link:visited {
+  color: white;
 }
 
 .tab-link:hover {
