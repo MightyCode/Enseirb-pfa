@@ -79,6 +79,11 @@ const routes = [
         meta: {
             doesNotRequireProject: true
         }
+    },
+    {
+        // Redirect to /projects
+        path: "/",
+        redirect: "/edit-project",
     }
 ];
 

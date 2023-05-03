@@ -1,8 +1,4 @@
 <template>
-    <div class="active-config">
-        <span v-if="activeConfig === null">Pas de configuration active</span>
-        <span v-else>Configuration active: {{ activeConfig.id }}</span>
-    </div>
     <div class="wrapper">
         <div class="configs-list">
             <h2>Liste des configurations existantes</h2>
@@ -129,7 +125,7 @@ export default {
     display: flex;
     flex-direction: row;
 
-    height: 95%;
+    height: 100%;
     color: black;   
 }
 
