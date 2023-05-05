@@ -6,7 +6,7 @@
         <div class="row">
             <div>
                 <label for="effect-name">Nom</label>
-                <input type="text" name="effect-name" id="effect-name">
+                <input type="text" name="effect-name" id="effect-name" v-model="effect.name">
             </div>
 
             <div>
@@ -19,8 +19,8 @@
         </div>
 
         <div class="row">
-            <AudioEffectEdition v-if="effect.type === 'AUDIO'" />
-            <VisualEffectEdition v-if="effect.type === 'LIGHT'" />
+            <AudioEffectEdition v-if="effect.type === 'AUDIO'" :effect="effect" />
+            <VisualEffectEdition v-if="effect.type === 'LIGHT'" :effect="effect" />
         </div>
     </div>
 </template>
@@ -28,6 +28,7 @@
 <script>
 import AudioEffectEdition from '../components/effects/AudioEffectEdition.vue';
 import VisualEffectEdition from '../components/effects/VisualEffectEdition.vue';
+import axiosInstance from '../axiosInstance';
 
 export default {
     name: "EditEffect",
@@ -42,6 +43,21 @@ export default {
     components: {
         AudioEffectEdition,
         VisualEffectEdition
+    },
+    mounted() {
+        console.log("EditEffect mounted");
+        console.log(this.effect);
+    },
+    unmounted() {
+        console.log("Unmounted");
+        // PUT at /effects/<id>
+        axiosInstance.put('/effects/' + this.effect.id, this.effect)
+            .then(response => {
+                console.log(response);
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }
 }
 </script>
