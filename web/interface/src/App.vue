@@ -4,11 +4,11 @@
 
       <div class="infobar">
         <div class="infobar-item">
-          <span>Config: {{ activeConfig ? `${activeConfig.id} (${activeConfig.nbLights} lights, ${activeConfig.nbSpeakers} speakers)` : 'None' }}</span>
+          <span>Config: {{ activeConfig ? `${activeConfig.id} (${activeConfig.nbLights} lumières, ${activeConfig.nbSpeakers} enceintes)` : 'Aucun' }}</span>
         </div>
 
         <div class="infobar-item">
-          <span>Project: {{ activeProject ? activeProject.id : 'None' }}</span>
+          <span>Projet: {{ activeProject ? activeProject.id : 'Aucun' }}</span>
         </div>
       </div>
 

@@ -1,7 +1,7 @@
 <template>
     <div id="file-selector" @dragenter="dragAndDropHandler" @dragover="dragAndDropHandler" @drop="dragAndDropHandler"
         @dragleave="dragAndDropHandler" @click="clickHandler">
-        <p v-if="!file">Drag a file or click to upload</p>
+        <p v-if="!file">Déposez un fichier ou cliquez pour sélectionner</p>
         <p v-else>{{ file.name }}</p>
     </div>
 </template>
@@ -82,6 +82,7 @@ export default {
     border-radius: 15px;
 
     transition-duration: 0.4s;
+    text-align: center;
 }
 
 #file-selector>p {
