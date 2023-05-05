@@ -111,7 +111,7 @@ try:
 
                     for i in range(len(target_ports) // 2):
                         client.outports[0].connect(target_ports[i])
-                        client.outports[0].connect(target_ports[i + 1])
+                        client.outports[1].connect(target_ports[i + 1])
                 else:
                     for source, target in zip(client.outports, target_ports):
                         print(target)

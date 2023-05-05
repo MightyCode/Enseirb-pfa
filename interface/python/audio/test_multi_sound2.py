@@ -85,8 +85,8 @@ queues = []
 for filename in filenames:
     f = sf.SoundFile('out/'+filename)
     block_generators.append(f.blocks(blocksize=blocksize, dtype='float32', always_2d=True, fill_value=0))
-    queues.append(queue.Queue(maxsize=buffersize))
-    for _, data in zip(range(buffersize), block_generators[-1]):
+    queues.append(queue.Queue(maxsize=blocksize))
+    for data in block_generators[-1]:
         queues[-1].put_nowait(data)  # Pre-fill queue
 
 print("All generators created and queues prefilled")
@@ -94,41 +94,13 @@ print("All generators created and queues prefilled")
 with client:
     target_ports = client.get_ports(
         is_physical=True, is_input=True, is_audio=True)
-    print(target_ports)
     for i in range(len(target_ports)):
         client.outports.register(f'out_{i}')
         client.outports[i].connect(target_ports[i])
 
     print("Target connected to source")
-
-    timeout = blocksize * buffersize / samplerate
-
-    """for block_generator,q in zip(block_generators, queues):
-        for data in block_generator:
-            q.put(data)#, timeout=timeout)
-        q.put(None)#,timeout=timeout)
-        event.wait()"""
     
-    for d0,d1,d2,d3,d4,d5,d6,d7,d8,d9 in zip(block_generators[0],
-                                             block_generators[1],
-                                             block_generators[2],
-                                             block_generators[3],
-                                             block_generators[4],
-                                             block_generators[5],
-                                             block_generators[6],
-                                             block_generators[7],
-                                             block_generators[8],
-                                             block_generators[9],
-                                             ):
-        queues[0].put(d0, timeout=timeout)
-        queues[1].put(d1, timeout=timeout)    
-        queues[2].put(d2, timeout=timeout)    
-        queues[3].put(d3, timeout=timeout)    
-        queues[4].put(d4, timeout=timeout)    
-        queues[5].put(d5, timeout=timeout)    
-        queues[6].put(d6, timeout=timeout)    
-        queues[7].put(d7, timeout=timeout)    
-        queues[8].put(d8, timeout=timeout)    
-        queues[9].put(d9, timeout=timeout)
+    for q in queues:
+        q.put_nowait(None)
         
 
