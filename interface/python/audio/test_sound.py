@@ -70,6 +70,7 @@ def process(frames):
         stop_callback()  # Playback is finished
     for channel, port in zip(data.T, client.outports):
         #print(channel)
+        print(q.qsize())
         port.get_array()[:] = channel
 
 

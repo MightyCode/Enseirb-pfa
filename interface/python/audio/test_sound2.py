@@ -118,7 +118,6 @@ try:
                         source.connect(target)
 
             print("Target connected to source")
-            timeout = blocksize * args.buffersize / samplerate
             q.put_nowait(None)  # Signal end of file
             event.wait()  # Wait until playback is finished
 except KeyboardInterrupt:
@@ -126,5 +125,3 @@ except KeyboardInterrupt:
 except (queue.Full):
     # A timeout occured, i.e. there was an error in the callback
     parser.exit(1)
-except Exception as e:
-    parser.exit(type(e).__name__ + ': ' + str(e))
