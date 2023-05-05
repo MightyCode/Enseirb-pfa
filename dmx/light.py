@@ -33,8 +33,16 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from dmx.Color import BLACK, Color
+from Color import BLACK, Color
+
+import sys
+import os
+
+
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(parent_dir)
 import config
+
 
 DMX_MAX_ADDRESS = 512
 DMX_MIN_ADDRESS = 1

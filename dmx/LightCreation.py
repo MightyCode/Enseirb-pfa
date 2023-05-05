@@ -1,8 +1,8 @@
-from dmx.DMXInterface import DMXInterface
-from dmx.DMXUniverse import DMXUniverse
+from DMXInterface import DMXInterface
+from DMXUniverse import DMXUniverse
 from interface.python.Interface import Interface
 import json
-from dmx.LightEffects import LightEffects, NUMBER_OF_LIGHTS, NUMBER_OF_ROWS, NUMBER_OF_COLUMNS
+from LightEffects import LightEffects, NUMBER_OF_LIGHTS, NUMBER_OF_ROWS, NUMBER_OF_COLUMNS
 from time import sleep
 
 class LightCreation(Interface):
@@ -48,3 +48,13 @@ class LightCreation(Interface):
         for tick in range(self.length):
             self.compute_tick(tick)
             sleep(0.1)
+
+
+#testing purposes
+
+if __name__ == "__main__":
+    
+    lc = LightCreation()
+    lc.read_project("test.json")
+    lc.pre_compute()
+    lc.do_scenarii()

@@ -1,9 +1,9 @@
 from time import sleep
 import random
-from dmx.Color import *
-from dmx.light import *
-from dmx.DMXUniverse import *
-from dmx.DMXInterface import *
+from Color import *
+from light import *
+from DMXUniverse import *
+from DMXInterface import *
 import time
 import numpy as np
 import json
@@ -13,9 +13,8 @@ NUMBER_OF_ROWS = 9
 NUMBER_OF_COLUMNS = 6
 
 class LightEffects:
-    def __init__(self, universe: DMXUniverse, interface: DMXInterface):
+    def __init__(self, universe: DMXUniverse):
         self.universe = universe
-        self.interface = interface
         self.light_effects = []
 
     def save_light_effects(self, filename):
@@ -71,7 +70,7 @@ class LightEffects:
             interpolation_rate (int): The number of times to interpolate between each frame
         """
         lights = self.universe.get_lights()
-        current_color = (lights[0].get_colour()).serialise()
+        current_color = (list(lights)[0].get_colour()).serialise()
         frames = self.interpolate([current_color, target_color], interpolation_rate)
         for frame in frames:
             self.set_universe_color(Color(*frame))
@@ -276,31 +275,42 @@ class LightEffects:
             self.light_effects.append(self.universe.serialise())
             time.sleep(0.5)
 
-    def main(self):
-        """ The main function of the program. This makes sure that the lights are down to begin with.
-        """
-        self.set_universe_color(BLACK)
-        self.interface.set_frame(self.universe.serialise())
-        self.interface.send_update()
+    # def main(self):
+    #     """ The main function of the program. This makes sure that the lights are down to begin with.
+    #     """
+    #     self.set_universe_color(BLACK)
+    #     self.interface.set_frame(self.universe.serialise())
+    #     self.interface.send_update()
 
-    def execute_light_effect(self, duration=None):
-        """ Executes immediately the light effect
+    # def execute_light_effect(self, duration=None):
+    #     """ Executes immediately the light effect
 
-        Args:
-            duration (float, optional): duration of the effect, depending on the choosen effect. Defaults to None.
-        """
-        if duration is not None:
-            start_time = time.time()
-            end_time = start_time + duration
-            while time.time() < end_time:
-                for snapshot in self.light_effects:
-                    self.interface.set_frame(snapshot)
-                    self.interface.send_update()
-        else:
-            for snapshot in self.light_effects:
-                self.interface.set_frame(snapshot)
-                self.interface.send_update()
+    #     Args:
+    #         duration (float, optional): duration of the effect, depending on the choosen effect. Defaults to None.
+    #     """
+    #     if duration is not None:
+    #         start_time = time.time()
+    #         end_time = start_time + duration
+    #         while time.time() < end_time:
+    #             for snapshot in self.light_effects:
+    #                 self.interface.set_frame(snapshot)
+    #                 self.interface.send_update()
+    #     else:
+    #         for snapshot in self.light_effects:
+    #             self.interface.set_frame(snapshot)
+    #             self.interface.send_update()
 
 
 
        
+#testing purposes
+
+# if __name__ == "__main__":
+#     light = DMXLight4Slot(address=1)
+#     universe = DMXUniverse()
+#     universe.add_light(light)
+#     project = LightEffects(universe)
+#     project.pulse_in_rhythm(1, RED)
+#     project.fireball_circle_effect(1)
+#     project.save_light_effects("test.json")
+    

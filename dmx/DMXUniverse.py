@@ -32,8 +32,8 @@
 
 from typing import List, Set
 
-from dmx.constants import DMX_MAX_ADDRESS, DMX_EMPTY_BYTE
-from dmx.light import DMXLight
+from constants import DMX_MAX_ADDRESS, DMX_EMPTY_BYTE
+from light import DMXLight
 
 universe_map = []
 
@@ -88,6 +88,7 @@ class DMXUniverse:
             for light in u._lights:
                 serialised_light = light.serialise()
                 for address in range(light.start_address, light.end_address + 1): # TODO: Check this
-                    frame[address] |= serialised_light[address - light.start_address]
+                    frame[address] |= int(serialised_light[address - light.start_address])
+
 
         return frame

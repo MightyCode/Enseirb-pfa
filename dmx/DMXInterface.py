@@ -32,8 +32,8 @@
 
 from typing import List, Optional
 
-from dmx.constants import DMX_MAX_ADDRESS
-from dmx.drivers import DMXDriver, get_drivers
+from constants import DMX_MAX_ADDRESS
+from drivers import DMXDriver, get_drivers
 
 
 class DMXInterface:
