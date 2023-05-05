@@ -3,10 +3,17 @@ from interface.python.audio.SoundCreation import SoundCreation
 from interface.python.ResourceManager import ResourceManager
 
 import os
+import sys
                 
 if __name__ == "__main__":
+    if(len(sys.argv)==1):
+        print("Expected a json project, abroted")
+        exit()
+    if(sys.argv[1][-5:]!=".json"):
+        print("Expected a json project, abroted")
+        exit()
+    projectPath = sys.argv[1]
     print("Start")
-    projectPath = "projects/testMovingSound.json"
     sound_creation = SoundCreation()
     sound_creation.read_project(projectPath)
 

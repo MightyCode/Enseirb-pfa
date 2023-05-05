@@ -32,7 +32,7 @@
         },
         {
             "name" : "2",
-            "start" : 1.666,
+            "start" : 1,
             "priority" : 0,
             "audioStreamOut" : 1,
             "modelEffect" : {
@@ -44,7 +44,7 @@
         },
         {
             "name" : "3",
-            "start" : 3.32,
+            "start" : 2,
             "priority" : 0,
             "audioStreamOut" : 2,
             "modelEffect" : {
@@ -56,7 +56,7 @@
         },
         {
             "name" : "4",
-            "start" : 4.98,
+            "start" : 3,
             "priority" : 0,
             "audioStreamOut" : 3,
             "modelEffect" : {
@@ -68,7 +68,7 @@
         },
         {
             "name" : "5",
-            "start" : 6.64,
+            "start" : 4,
             "priority" : 0,
             "audioStreamOut" : 4,
             "modelEffect" : {
@@ -80,7 +80,7 @@
         },
         {
             "name" : "6",
-            "start" : 8.30,
+            "start" : 5,
             "priority" : 0,
             "audioStreamOut" : 5,
             "modelEffect" : {
@@ -92,7 +92,7 @@
         },
         {
             "name" : "7",
-            "start" : 9.96,
+            "start" : 6,
             "priority" : 0,
             "audioStreamOut" : 6,
             "modelEffect" : {
@@ -104,7 +104,7 @@
         },
         {
             "name" : "8",
-            "start" : 11.62,
+            "start" : 7,
             "priority" : 0,
             "audioStreamOut" : 7,
             "modelEffect" : {
@@ -116,7 +116,7 @@
         },
         {
             "name" : "9",
-            "start" : 13.28,
+            "start" : 8,
             "priority" : 0,
             "audioStreamOut" : 8,
             "modelEffect" : {
@@ -128,7 +128,7 @@
         },
         {
             "name" : "10",
-            "start" : 14.94,
+            "start" : 9,
             "priority" : 0,
             "audioStreamOut" : 9,
             "modelEffect" : {
