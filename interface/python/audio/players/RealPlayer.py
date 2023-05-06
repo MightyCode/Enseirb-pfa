@@ -19,12 +19,11 @@ class RealPlayer(PlayerInterface):
 
     def callback(self, frames):
         side = 0
-        for i in range(20):#len(self.client.outports)):
+        for i in range(len(self.client.outports)):
             if frames != self.client.blocksize:
                 self.stop_callback('blocksize must not be changed, I quit!')
             data = self.queues[i%10].get_nowait()
-            #self.client.outports[i].get_array()[:] = data.T[side] 
-            print(data.T[side])
+            self.client.outports[i].get_array()[:] = data.T[side] 
             side = (len(data.T) - 1) - side
     def stop_callback(self, msg=''):
         if msg:
@@ -45,7 +44,6 @@ class RealPlayer(PlayerInterface):
         self.print_error('reason:', reason)
 
     def play(self, audio_results: list, start_time: float, sample_rate: int):
-        #To do
         start_tick: int = int(start_time * sample_rate)
 
         client = self.client
@@ -77,13 +75,13 @@ class RealPlayer(PlayerInterface):
             i+=1
 
         with client:
-            """
+            
             target_ports = client.get_ports(
                 is_physical=True, is_input=True, is_audio=True)
             print(target_ports)
             for i in range(len(target_ports)):
                 client.outports.register(f'out_{i+1}')
-                client.outports[i].connect(target_ports[i])"""
+                client.outports[i].connect(target_ports[i])
 
             timeout = blocksize * buffersize / samplerate
             
