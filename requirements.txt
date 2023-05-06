@@ -10,3 +10,4 @@ python-socketio[client]==5.5.0
 eventlet==0.33.2
 pygame
 pylibftdi
+soundfile

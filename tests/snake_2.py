@@ -1,3 +1,10 @@
+import sys
+import os
+
+# Add the root folder to the module search path
+root_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(root_folder)
+
 import numpy as np
 from flask import Flask, jsonify, request, render_template, make_response
 from flask_cors import CORS
