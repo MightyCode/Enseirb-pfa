@@ -47,12 +47,6 @@ def process(frames):
     for i in range(len(client.outports)):
         if frames != blocksize:
             stop_callback('blocksize must not be changed, I quit!')
-        """
-        try:
-            if(i%2 == 0):
-                data = queues[int(i//2)].get_nowait()
-        except queue.Empty:
-            stop_callback('Buffer is empty: increase buffersize?')"""
         data = queues[i%10].get_nowait()
         client.outports[i].get_array()[:] = data.T[side] 
         side = (len(data.T) - 1) - side
@@ -82,6 +76,7 @@ for i in range(10):
 i=0
 for filename in filenames:
     f = sf.SoundFile('out/'+filename)
+    print(f)
     block_generators.append(f.blocks(blocksize=blocksize, dtype='float32', always_2d=True, fill_value=0))
     for _, data in zip(range(buffersize), block_generators[-1]):
         queues[i].put_nowait(data)
