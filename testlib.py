@@ -128,7 +128,7 @@ class SoundSource:
 
 
 def main():
-    config = ResourceManager().getJson("configs/eirlab.json")
+    config = ResourceManager().get_json("configs/eirlab.json")
     
     listener = Listener()
 

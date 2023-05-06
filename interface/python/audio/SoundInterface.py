@@ -11,16 +11,27 @@ import importlib.util
 import hashlib
 import os, math
 
-class SoundCreation (Interface):
+import hashlib
+import json
+
+"""
+Interface to load projet and create audios source (several .wav) to play it
+"""
+class SoundInterface (Interface):
+    # Size (in second) of segments to play timeline effects
     SEGMENT_SIZE = 2
+    
+    PATH_AUDIO_FILE = "out/"
+    PATH_SAVED_HASH = PATH_AUDIO_FILE + "hash.text"
 
     def __init__(self):
         super().__init__()
 
         self._timeline_effects: list = []
         self._segment_effects: list = [] # Optimization purpose
-
         self._speakers_groups: list = []
+
+        self._projectHash = None
 
         # Can have number of audioStreams > nb of groups of speaker, but at the end audioStreams[i] => groupSpeaker[i]
         self._audio_streams: list = []
@@ -28,30 +39,60 @@ class SoundCreation (Interface):
 
         self._audio_result: AudioResult = None
 
-        self.reference_effects: list = []
+        self._reference_effects: list = []
 
-        self.sample_rate: int = 0
+        self._sample_rate: int = 0
+
+        self._player = None
+
+        self._resource_manager: ResourceManager = ResourceManager()
+
+        self._should_play: bool = True
 
 
-    def read_project(self, path):
-        project = ResourceManager().getJson(path)
-        audio_timeline = project["audioTimeline"]
+    def attach_player(self, player) -> None:
+        self._player = player
 
-        self.sample_rate = project["project"]["sampleRate"]
 
-        main_sound_data = ResourceManager().getAudio(project["project"]["mainSound"], self.sample_rate)[ResourceConstants.AUDIO_DATA]
+    def compute_hash(dictionnary: dict) -> str:
+        json_string = json.dumps(dictionnary, sort_key=True)
+
+        hash_object = hashlib.sha1(json_string.encode())
+
+        unique_hash: str = hash_object.hexdigest()
+
+        return unique_hash
+
+    """
+    Will read a projet given a path, if the audio source has already been computed, it will load it
+    If not if will load all components need to create the audio source and save it
+    """
+    def read_project(self, path: str) -> str:
+        project: dict = self._resource_manager.get_json(path)
+
+        # Compute the hash from project to kno
+        self._projectHash = SoundInterface.compute_hash(project)
+
+        if self._resource_manager.is_file_existing(SoundInterface.PATH_SAVED_HASH):
+            self._saved_hash = self._resource_manager
+
+        audio_timeline: list = project["audioTimeline"]
+
+        self._sample_rate: int = project["project"]["sampleRate"]
+
+        main_sound_data = self._resource_manager.get_audio(project["project"]["mainSound"], self._sample_rate)[ResourceConstants.AUDIO_DATA]
 
         # Load Effects
-        self.reference_effects = []
+        self._reference_effects = []
         self.load_effect_from("interface/python/audio/effects")
         
         if ("externScripts" in project["project"].keys()):
             self.load_effect_from(project["project"]["externScripts"])
 
-        self._audio_result = AudioResult(10, self.sample_rate, len(main_sound_data))
+        self._audio_result = AudioResult(10, self._sample_rate, len(main_sound_data))
 
         # Create as segment effects needed, number of segment is given by SEGMENT SIZE and sound result length
-        self._segment_effects = [None] * math.ceil(self._audio_result.get_number_tick() / (SoundCreation.SEGMENT_SIZE * self.sample_rate))
+        self._segment_effects = [None] * math.ceil(self._audio_result.get_number_tick() / (SoundInterface.SEGMENT_SIZE * self._sample_rate))
         for i in range(len(self._segment_effects)):
             self._segment_effects[i] = []
 
@@ -67,7 +108,7 @@ class SoundCreation (Interface):
         # Create all effect
         for effect_raw_data in audio_timeline:
             effect = self.create_effect_from_name(effect_raw_data["modelEffect"], project["project"])
-            timeline_effect = TimelineSoundEffect(effect, effect_raw_data["priority"], effect_raw_data["start"], self.sample_rate)
+            timeline_effect = TimelineSoundEffect(effect, effect_raw_data["priority"], effect_raw_data["start"], self._sample_rate)
 
             stream_in_id = None
 
@@ -89,8 +130,8 @@ class SoundCreation (Interface):
 
         # Append timeline effect in segment
         for effect in self._timeline_effects:
-            segment_start: int = int(effect.start() // SoundCreation.SEGMENT_SIZE)
-            segment_end: int = int((effect.length() / self.sample_rate + effect.start()) // SoundCreation.SEGMENT_SIZE)
+            segment_start: int = int(effect.start() // SoundInterface.SEGMENT_SIZE)
+            segment_end: int = int((effect.length() / self._sample_rate + effect.start()) // SoundInterface.SEGMENT_SIZE)
 
             for i in range(max(segment_start, 0), min(segment_end + 1, len(self._segment_effects))):
                 self._segment_effects[i].append(effect)
@@ -118,13 +159,13 @@ class SoundCreation (Interface):
             for attr_name in dir(effect_module):
                 attr = getattr(effect_module, attr_name)
                 if hasattr(attr, "Get_effect_name") and hasattr(attr, "Instanciate"):
-                    self.reference_effects.append(attr)
+                    self._reference_effects.append(attr)
 
     
     def create_effect_from_name(self, model_effect_info, project_info):
         effect = None
 
-        for tested in self.reference_effects:
+        for tested in self._reference_effects:
             if model_effect_info["name"] in tested.Get_effect_name():
                 effect = tested.Instanciate()
 
@@ -132,8 +173,8 @@ class SoundCreation (Interface):
             if key != "name":
                 effect.set_info(key, model_effect_info[key])
 
-        effect.set_info("sampleRate", self.sample_rate)
-        effect.set_info("audio", self.sample_rate)
+        effect.set_info("sampleRate", self._sample_rate)
+        effect.set_info("audio", self._sample_rate)
 
         return effect
 
@@ -181,8 +222,8 @@ class SoundCreation (Interface):
     
     def compute_tick(self, tick):
         # Alter audio stream with effects
-        for effect in self._segment_effects[tick // (SoundCreation.SEGMENT_SIZE * self.sample_rate)]:
-            start = effect.start() * self.sample_rate
+        for effect in self._segment_effects[tick // (SoundInterface.SEGMENT_SIZE * self._sample_rate)]:
+            start = effect.start() * self._sample_rate
 
             if tick >= start and tick < start + effect.length():
                 audioStreamsIn = self.get_audio_streams(effect.get_audio_streams_in())
@@ -230,3 +271,6 @@ class SoundCreation (Interface):
 
     def do_scenarii(self):
         print("Do scenarii sound")
+
+    def stop_scenarii(self):
+        self._should_play = False

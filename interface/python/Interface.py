@@ -15,15 +15,15 @@ class Interface:
         print("loadCustomEffects() : To override")
 
     """
-        (Should have done readProject before)
-        Return the length of the scenarii in tick
+    (Should have done readProject before)
+    Return the length of the scenarii in tick
     """
     def length(self) :
         return self.length
 
     """
-        (Should do before do_scenarii)
-        Compute eventual things before doing scenarii
+    (Should do before do_scenarii)
+    Compute eventual things before doing scenarii
     """
     def pre_compute(self):
         print("preCompute() : To override")
@@ -33,9 +33,16 @@ class Interface:
         print("computeTick() : To override")
 
     """
-        Run a scenarii using all needed hardware
-        
-        That function should be call using thread
+    Run a scenarii using all needed hardware
+    That function should be call using thread
+    The user can also precise the tick start 
     """
-    def do_scenarii(self):
+    def do_scenarii(self, start_tick: int=0):
+        print("doScenarii() : To override")
+
+
+    """
+    Stop the play of a scenarii
+    """
+    def stop_scenarii(self):
         print("doScenarii() : To override")

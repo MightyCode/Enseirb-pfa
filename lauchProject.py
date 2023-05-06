@@ -1,6 +1,6 @@
 import threading, sys, time
 from interface.python.Interface import Interface
-from interface.python.audio.SoundCreation import SoundCreation
+from interface.python.audio.SoundInterface import SoundInterface
 
 initialized: list = []
 ended: list = []
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     # create two threads for the workers
     threads = []
 
-    soundInterface: Interface = SoundCreation()
+    soundInterface: Interface = SoundInterface()
     soundInterfaceThread = threading.Thread(target=run_interface, args=(0, soundInterface, path,))
     threads.append(soundInterfaceThread)
 

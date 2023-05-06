@@ -1,6 +1,3 @@
-from interface.python.audio.AudioSteam import AudioStream
-
-
 class TimelineSoundEffect:
     def __init__(self, ref_audio_model_effect, priority, start, sample_rate):
         self._ref_audio_model_effect = ref_audio_model_effect
