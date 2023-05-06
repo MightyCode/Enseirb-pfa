@@ -19,11 +19,12 @@ class RealPlayer(PlayerInterface):
 
     def callback(self, frames):
         side = 0
-        for i in range(len(self.client.outports)):
+        for i in range(20):#len(self.client.outports)):
             if frames != self.client.blocksize:
                 self.stop_callback('blocksize must not be changed, I quit!')
             data = self.queues[i%10].get_nowait()
-            self.client.outports[i].get_array()[:] = data.T[side]
+            #self.client.outports[i].get_array()[:] = data.T[side] 
+            print(data.T[side])
             side = (len(data.T) - 1) - side
     def stop_callback(self, msg=''):
         if msg:
@@ -69,19 +70,20 @@ class RealPlayer(PlayerInterface):
         i=0
         for filename in filenames:
             f = sf.SoundFile('out/'+filename)
+            f.seek(start_tick)
             block_generators.append(f.blocks(blocksize=blocksize, dtype='float32', always_2d=True, fill_value=0))
             for _, data in zip(range(buffersize), block_generators[-1]):
                 self.queues[i].put_nowait(data)
             i+=1
 
         with client:
-            
+            """
             target_ports = client.get_ports(
                 is_physical=True, is_input=True, is_audio=True)
             print(target_ports)
             for i in range(len(target_ports)):
                 client.outports.register(f'out_{i+1}')
-                client.outports[i].connect(target_ports[i])
+                client.outports[i].connect(target_ports[i])"""
 
             timeout = blocksize * buffersize / samplerate
             
