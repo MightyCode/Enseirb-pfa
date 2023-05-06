@@ -31,7 +31,6 @@ args = parser.parse_args()
 if args.buffersize < 1:
     parser.error('buffersize must be at least 1')
 
-q = queue.Queue(maxsize=args.buffersize)
 event = threading.Event()
 
 
@@ -60,6 +59,7 @@ def stop_callback(msg=''):
 
 
 def process(frames):
+    side = 0
     if frames != blocksize:
         stop_callback('blocksize must not be changed, I quit!')
     try:
@@ -68,27 +68,17 @@ def process(frames):
         stop_callback('Buffer is empty: increase buffersize?')
     if data is None:
         stop_callback()  # Playback is finished
-    
-
-    side = 0
+    print(q.qsize())
     for i in range(len(client.outports)):
-        print(data.T, len(data.T[0]), data.T[0])
-
         client.outports[i].get_array()[:] = data.T[side] 
         side = (len(data.T) - 1) - side
-        
+
+
 try:
     import jack
     import soundfile as sf
 
-    print("Create jack client")
     client = jack.Client(args.clientname)
-    print("Jack client created")
-
-    print(client)
-    print(client.outports)
-    print(len(client.outports))
-    exit()
 
     blocksize = client.blocksize
     samplerate = client.samplerate
@@ -96,35 +86,42 @@ try:
     client.set_shutdown_callback(shutdown)
     client.set_process_callback(process)
 
-    print(blocksize, samplerate)
+    q = queue.Queue(maxsize=blocksize)
+
+    print(f'blocksize : {blocksize}, samplerate : {samplerate}')
 
     with sf.SoundFile(args.filename) as f:
+        
+        for ch in range(2):
+            client.outports.register(f'out_{ch + 1}')
         block_generator = f.blocks(blocksize=blocksize, dtype='float32', always_2d=True, fill_value=0)
         print("generator created")
-        for _, data in zip(range(args.buffersize), block_generator):
-            q.put_nowait(data)  # Pre-fill queue
+        for data in block_generator:
+            q.put_nowait(data)
         print("Pre-filled queue")
 
         with client:
             if not args.manual:
                 target_ports = client.get_ports(
                     is_physical=True, is_input=True, is_audio=True)
-                     
-                for i in range(len(target_ports)):
-                    client.outports.register(f'out_{i}')
-                    client.outports[i].connect(target_ports[i])
+
+                print("Preparation to connect :", len(client.outports), len(target_ports))
+                
+                if len(client.outports) == 1 and len(target_ports) > 1:
+
+                    for i in range(len(target_ports) // 2):
+                        client.outports[0].connect(target_ports[i])
+                        client.outports[1].connect(target_ports[i + 1])
+                else:
+                    for source, target in zip(client.outports, target_ports):
+                        print(target)
+                        source.connect(target)
 
             print("Target connected to source")
-            timeout = blocksize * args.buffersize / samplerate
-            for data in block_generator:
-                q.put(data, timeout=timeout)
-                
-            q.put(None, timeout=timeout)  # Signal end of file
+            q.put_nowait(None)  # Signal end of file
             event.wait()  # Wait until playback is finished
 except KeyboardInterrupt:
     parser.exit('\nInterrupted by user')
 except (queue.Full):
     # A timeout occured, i.e. there was an error in the callback
     parser.exit(1)
-except Exception as e:
-    parser.exit(type(e).__name__ + ': ' + str(e))

@@ -1,0 +1,142 @@
+{
+    "project" : {
+        "name" : "testMovingSound",
+        "speakersGroups" : [
+          [0],
+          [1],
+          [2],
+          [3],
+          [4],
+          [5],
+          [6],
+          [7],
+          [8],
+          [9]
+        ],
+        "mainSound" : "interface/python/audio/sound/vache.wav",
+        "sampleRate" : 48000,
+        "externScripts" : ""
+    },
+    "audioTimeline" : [
+        {
+            "name" : "1",
+            "start" : 0,
+            "priority" : 0,
+            "audioStreamOut" : 0,
+            "modelEffect" : {
+                "name" : "play",
+                "file" : "interface/python/audio/sound/retro.wav",
+                "amplitude" : 1,
+                "loopTime" : 1
+            }
+        },
+        {
+            "name" : "2",
+            "start" : 1,
+            "priority" : 0,
+            "audioStreamOut" : 1,
+            "modelEffect" : {
+                "name" : "play",
+                "file" : "interface/python/audio/sound/retro.wav",
+                "amplitude" : 1,
+                "loopTime" : 1
+            }
+        },
+        {
+            "name" : "3",
+            "start" : 2,
+            "priority" : 0,
+            "audioStreamOut" : 2,
+            "modelEffect" : {
+                "name" : "play",
+                "file" : "interface/python/audio/sound/retro.wav",
+                "amplitude" : 1,
+                "loopTime" : 1
+            }
+        },
+        {
+            "name" : "4",
+            "start" : 3,
+            "priority" : 0,
+            "audioStreamOut" : 3,
+            "modelEffect" : {
+                "name" : "play",
+                "file" : "interface/python/audio/sound/retro.wav",
+                "amplitude" : 1,
+                "loopTime" : 1
+            }
+        },
+        {
+            "name" : "5",
+            "start" : 4,
+            "priority" : 0,
+            "audioStreamOut" : 4,
+            "modelEffect" : {
+                "name" : "play",
+                "file" : "interface/python/audio/sound/retro.wav",
+                "amplitude" : 1,
+                "loopTime" : 1
+            }
+        },
+        {
+            "name" : "6",
+            "start" : 5,
+            "priority" : 0,
+            "audioStreamOut" : 5,
+            "modelEffect" : {
+                "name" : "play",
+                "file" : "interface/python/audio/sound/retro.wav",
+                "amplitude" : 1,
+                "loopTime" : 1
+            }
+        },
+        {
+            "name" : "7",
+            "start" : 6,
+            "priority" : 0,
+            "audioStreamOut" : 6,
+            "modelEffect" : {
+                "name" : "play",
+                "file" : "interface/python/audio/sound/retro.wav",
+                "amplitude" : 1,
+                "loopTime" : 1
+            }
+        },
+        {
+            "name" : "8",
+            "start" : 7,
+            "priority" : 0,
+            "audioStreamOut" : 7,
+            "modelEffect" : {
+                "name" : "play",
+                "file" : "interface/python/audio/sound/retro.wav",
+                "amplitude" : 1,
+                "loopTime" : 1
+            }
+        },
+        {
+            "name" : "9",
+            "start" : 8,
+            "priority" : 0,
+            "audioStreamOut" : 8,
+            "modelEffect" : {
+                "name" : "play",
+                "file" : "interface/python/audio/sound/retro.wav",
+                "amplitude" : 1,
+                "loopTime" : 1
+            }
+        },
+        {
+            "name" : "10",
+            "start" : 9,
+            "priority" : 0,
+            "audioStreamOut" : 9,
+            "modelEffect" : {
+                "name" : "play",
+                "file" : "interface/python/audio/sound/retro.wav",
+                "amplitude" : 1,
+                "loopTime" : 1
+            }
+        }
+    ]
+}

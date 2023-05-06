@@ -24,15 +24,26 @@
 
 <script>
 import EditEffect from './EditEffect.vue';
+import axiosInstance from '../axiosInstance';
 
 export default {
     name: "EffectsLibrary",
     data() {
         return {
-            rawEffectsList: [{ id: 0, name: "test", type: "AUDIO" }, { id: 1, name: "test2", type: "LIGHT" }],
+            rawEffectsList: [],
             filter: "ALL",
             selectedEffect: null
         };
+    },
+    mounted() {
+        // GET at /effects
+        axiosInstance.get('/effects')
+            .then(response => {
+                this.rawEffectsList = response.data;
+            })
+            .catch(error => {
+                console.log(error);
+            });
     },
     computed: {
         effects() {

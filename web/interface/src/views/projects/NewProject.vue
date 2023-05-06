@@ -2,7 +2,7 @@
     <div class="wrapper">
         <div class="column">
             <div class="field-wrapper">
-                <label for="name">Name</label>
+                <label for="name">Nom</label>
                 <input type="text" id="name" v-model="name">
             </div>
         </div>
@@ -14,7 +14,7 @@
             </div>
 
             <div class="validation-wrapper">
-                <span :class="(name !== '' && filename !== '') ? 'validation-button' : 'validation-button-disabled'" @click="createProject">Validate</span>
+                <span :class="(name !== '' && filename !== '') ? 'validation-button' : 'validation-button-disabled'" @click="createProject">Valider</span>
             </div>
         </div>
     </div>

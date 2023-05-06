@@ -30,7 +30,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from typing import List, Union
+from typing import Union
 
 
 class Color:
@@ -43,8 +43,12 @@ class Color:
         self._blue = blue
         self._white = white
 
-    def serialise(self) -> List[int]:
-        """Serialise the color in RGB order to a sequence of bytes."""
+    def serialise(self):
+        """Serialise the color into a list of 4 integers corresponding to the RGBW values.
+
+        Returns:
+            List[int]: The serialised color.
+        """
         return [self._red, self._green, self._blue, self._white]
 
     @property
@@ -88,7 +92,11 @@ class Color:
         self._white = int(max(0, min(value, 255)))
 
     def __add__(self, other: Union['Color', int, float]):
-        """Handle add."""
+        """Handle addition of colors.
+
+        Args:
+            other (Union[Color, int, float]): The color to add to this one.
+        """
         if isinstance(other, Color):
             self.red += other.red
             self.green += other.green
@@ -101,7 +109,11 @@ class Color:
             self.white = int(self.white + other)
 
     def __sub__(self, other: Union['Color', int, float]):
-        """Handle subtract."""
+        """Handle subtraction of colors.
+
+        Args:
+            other (Union[Color, int, float]): The color to subtract by
+        """
         if isinstance(other, Color):
             self.red -= other.red
             self.green -= other.green
@@ -114,7 +126,11 @@ class Color:
             self.white = int(self.white - other)
 
     def __mul__(self, other: Union['Color', int, float]):
-        """Handle multiply."""
+        """Handle multiplication of colors.
+
+        Args:
+            other (Union[Color, int, float]): The color to multiply by.
+        """
         if isinstance(other, Color):
             self.red *= other.red
             self.green *= other.green
@@ -127,7 +143,11 @@ class Color:
             self.white = int(self.white * other)
 
     def __truediv__(self, other: Union['Color', int, float]):
-        """Handle division."""
+        """Handle true division of colors.
+
+        Args:
+            other (Union[Color, int, float]): The color to divide by.
+        """
         if isinstance(other, Color):
             self.red = int(self.red / other.red)
             self.green = int(self.green / other.green)
@@ -140,7 +160,11 @@ class Color:
             self.white = int(self.white / other)
 
     def __floordiv__(self, other: Union['Color', int, float]):
-        """Handle floor division."""
+        """ Handle floor division of colors.
+
+        Args:
+            other (Union[Color, int, float]): The color to divide by.
+        """
         if isinstance(other, Color):
             self.red //= other.red
             self.green //= other.green

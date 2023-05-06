@@ -1,5 +1,5 @@
 from dmx import Color, DMXInterface, DMXUniverse, DMXLight4Slot
-from dmx.color import *
+from dmx.Color import *
 from dmx.light import *
 
 import time

@@ -3,10 +3,17 @@ from interface.python.audio.SoundInterface import SoundInterface
 from interface.python.ResourceManager import ResourceManager
 
 import os
+import sys
                 
 if __name__ == "__main__":
+    if(len(sys.argv)==1):
+        print("Expected a json project, abroted")
+        exit()
+    if(sys.argv[1][-5:]!=".json"):
+        print("Expected a json project, abroted")
+        exit()
+    projectPath = sys.argv[1]
     print("Start")
-    projectPath = "projects/testSplitAudio.json"
     sound_creation = SoundInterface()
     sound_creation.read_project(projectPath)
 

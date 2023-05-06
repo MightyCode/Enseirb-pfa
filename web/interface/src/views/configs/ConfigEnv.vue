@@ -16,11 +16,11 @@
                 <p>Clic droit sur élément: supprimer l'élément</p>
 
                 <div @click="resetEnvironment" class="button">
-                    <p>Reset</p>
+                    <p>Réinitialiser</p>
                 </div>
 
                 <div @click="saveEnvironment" :class="{ 'button-disabled': !isSavePossible, 'button': isSavePossible}">
-                    <p>Save</p>
+                    <p>Sauvegarder</p>
                 </div>
             </footer>
         </div>
