@@ -1,3 +1,10 @@
+import sys
+import os
+
+# Add the root folder to the module search path
+root_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(root_folder)
+
 from random import sample
 import time
 class FallingBlocks:

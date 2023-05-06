@@ -50,6 +50,7 @@ class SoundInterface (Interface):
 
         self._resource_manager: ResourceManager = ResourceManager()
 
+
     def attach_player(self, player) -> None:
         self._player = player
 
@@ -142,6 +143,7 @@ class SoundInterface (Interface):
         for i in self._audio_stream_id_mapping.keys():
             self._audio_streams[self._audio_stream_id_mapping[i]] = AudioStream(i)
 
+    # Append model effects to 
     def load_effect_from(self, path):
         if not os.path.exists(path):
             return 
