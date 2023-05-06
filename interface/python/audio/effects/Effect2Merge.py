@@ -2,7 +2,7 @@ from interface.python.Tweenings.Tweening import Tweening
 from interface.python.Tweenings.ETweeningBehaviour import ETweeningBehaviour as ETB
 from interface.python.Tweenings.ETweeningType import ETweeningType as ETT
 
-from interface.python.audio.ModelAudioEffect import ModelAudioEffect
+from interface.python.audio.effects.ModelAudioEffect import ModelAudioEffect
 
 import math
 

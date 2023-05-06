@@ -1,4 +1,4 @@
-from interface.python.audio.ModelAudioEffect import ModelAudioEffect
+from interface.python.audio.effects.ModelAudioEffect import ModelAudioEffect
 from interface.python.ResourceManager import ResourceConstants
 
 class EffectPlay(ModelAudioEffect):

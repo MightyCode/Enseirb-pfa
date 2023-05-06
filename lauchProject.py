@@ -1,5 +1,7 @@
 from interface.python.Interface import Interface
 from interface.python.audio.SoundInterface import SoundInterface
+from interface.python.audio.players.PlayerInterface import PlayerInterface
+from interface.python.audio.players.RealPlayer import RealPlayer
 
 import threading, sys, time
 import argparse
@@ -48,8 +50,11 @@ if __name__ == '__main__':
 
     start: float = args.start if args.start else 0
 
-    soundInterface: Interface = SoundInterface(stop_flag, verbose=args.verbose)
-    soundInterfaceThread = threading.Thread(target=run_interface, args=(0, soundInterface, path, start, ))
+    sound_interface: Interface = SoundInterface(stop_flag, verbose=args.verbose)
+    real_player: PlayerInterface = RealPlayer(stop_flag)
+    sound_interface.attach_player(real_player)
+
+    soundInterfaceThread = threading.Thread(target=run_interface, args=(0, sound_interface, path, start, ))
     threads.append(soundInterfaceThread)
 
     """

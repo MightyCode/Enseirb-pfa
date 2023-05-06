@@ -1,4 +1,4 @@
-from interface.python.audio.ModelAudioEffect import ModelAudioEffect
+from interface.python.audio.effects.ModelAudioEffect import ModelAudioEffect
 
 class EffectSplit(ModelAudioEffect):
     def __init__(self):

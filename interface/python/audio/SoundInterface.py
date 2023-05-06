@@ -3,7 +3,7 @@ from interface.python.ResourceManager import ResourceManager, ResourceConstants
 from interface.python.audio.AudioSteam import AudioStream
 from interface.python.audio.SpeakerGroup import SpeakerGroup
 from interface.python.audio.AudioResult import AudioResult
-from interface.python.audio.TimelineSoundEffect import TimelineSoundEffect
+from interface.python.audio.effects.TimelineSoundEffect import TimelineSoundEffect
 
 from interface.python.Interface import Interface
 
@@ -232,6 +232,10 @@ class SoundInterface (Interface):
 
                 self.compute_result_for_audio(effect.priority(), result, audioStreamsOut)
 
+    """
+    If hash is corresponding _should_compute be false, so only load sound from files
+    If other case, will compute each tick of the sound
+    """
     def pre_compute(self):
         if not self._should_compute:
             for i in range(len(self._audio_streams)):
@@ -243,15 +247,17 @@ class SoundInterface (Interface):
         display_pourcent = 0.1
 
         for tick in range(self._audio_result.get_number_tick()):
+            # Threading purpose, should stop the computing
             if self._stop_flag.is_set():
                 break
-
+            
+            # Set all value to zero
             for audio_stream in self._audio_streams:
                 audio_stream.reset()
 
             self.compute_tick(tick)
 
-            # Apply audio stream to audio result
+            # Apply audio stream to audio result using group of speakers
             for i in range(self._audio_result._nb_speakers):
                 priority: int = -1
                 values = [0, 0]
@@ -280,6 +286,10 @@ class SoundInterface (Interface):
         self._resource_manager.write_text_content(SoundInterface.PATH_SAVED_HASH, self._project_hash)
 
     def do_scenarii(self, start_time):
+        if (self._player == None):
+            print("Please attach player to sound interface")
+
+        self._player.play(self._audio_result, start_time, self._sample_rate)
         print("Do scenarii sound")
 
     def stop(self):
