@@ -21,8 +21,10 @@ class SoundInterface (Interface):
     # Size (in second) of segments to play timeline effects
     SEGMENT_SIZE = 2
     
-    PATH_AUDIO_FILE = "out/"
-    PATH_SAVED_HASH = PATH_AUDIO_FILE + "hash.text"
+    PATH_AUDIO_OUT = "out/"
+    PATH_SAVED_HASH = PATH_AUDIO_OUT + "hash.text"
+
+    PATH_AUDIO_SPEAKER = PATH_AUDIO_OUT + "speaker"
 
     def __init__(self, stop_flag, verbose: bool = False):
         super().__init__(stop_flag, verbose)
@@ -249,7 +251,7 @@ class SoundInterface (Interface):
         for tick in range(self._audio_result.get_number_tick()):
             # Threading purpose, should stop the computing
             if self._stop_flag.is_set():
-                break
+                return
             
             # Set all value to zero
             for audio_stream in self._audio_streams:
@@ -283,7 +285,18 @@ class SoundInterface (Interface):
 
                 display_pourcent += 0.1
 
+        if not os.path.exists(SoundInterface.PATH_AUDIO_OUT):
+            os.makedirs(SoundInterface.PATH_AUDIO_OUT)
+
+        for i in range(10): 
+            if self._verbose:
+                print("Export sound file for speaker " + str(i))
+            ResourceManager().export_wav_from_channels("out/speaker" + str(i) + ".wav", 
+                                                    self._audio_result.data[i * 2], 
+                                                    self._audio_result.data[i * 2 + 1], 
+                                                    self._sample_rate)
         self._resource_manager.write_text_content(SoundInterface.PATH_SAVED_HASH, self._project_hash)
+
 
     def do_scenarii(self, start_time):
         if (self._player == None):
