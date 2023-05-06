@@ -1,9 +1,12 @@
 class Interface:
-    def __init__(self) -> None:
+    def __init__(self, stop_flag, verbose: bool = False) -> None:
         self._initialized = False
+        self._verbose: bool = verbose
 
-        self.referenceEffects: list = []
-        self.length = 0
+        self._referenceEffects: list = []
+        self._length = 0
+        
+        self._stop_flag = stop_flag
 
     def initialized(self) -> bool:
         return self._initialized
@@ -37,12 +40,5 @@ class Interface:
     That function should be call using thread
     The user can also precise the tick start 
     """
-    def do_scenarii(self, start_tick: int=0):
-        print("doScenarii() : To override")
-
-
-    """
-    Stop the play of a scenarii
-    """
-    def stop_scenarii(self):
+    def do_scenarii(self, start_time: int=0):
         print("doScenarii() : To override")

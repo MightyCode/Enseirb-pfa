@@ -24,14 +24,15 @@ class SoundInterface (Interface):
     PATH_AUDIO_FILE = "out/"
     PATH_SAVED_HASH = PATH_AUDIO_FILE + "hash.text"
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, stop_flag, verbose: bool = False):
+        super().__init__(stop_flag, verbose)
 
         self._timeline_effects: list = []
         self._segment_effects: list = [] # Optimization purpose
         self._speakers_groups: list = []
 
-        self._projectHash = None
+        self._project_hash = None
+        self._should_compute = False
 
         # Can have number of audioStreams > nb of groups of speaker, but at the end audioStreams[i] => groupSpeaker[i]
         self._audio_streams: list = []
@@ -47,21 +48,16 @@ class SoundInterface (Interface):
 
         self._resource_manager: ResourceManager = ResourceManager()
 
-        self._should_play: bool = True
-
-
     def attach_player(self, player) -> None:
         self._player = player
 
 
     def compute_hash(dictionnary: dict) -> str:
-        json_string = json.dumps(dictionnary, sort_key=True)
+        json_string = json.dumps(dictionnary, sort_keys=True)
 
-        hash_object = hashlib.sha1(json_string.encode())
+        sha256_hash = hashlib.sha256(json_string.encode()).hexdigest()
 
-        unique_hash: str = hash_object.hexdigest()
-
-        return unique_hash
+        return sha256_hash
 
     """
     Will read a projet given a path, if the audio source has already been computed, it will load it
@@ -71,15 +67,18 @@ class SoundInterface (Interface):
         project: dict = self._resource_manager.get_json(path)
 
         # Compute the hash from project to kno
-        self._projectHash = SoundInterface.compute_hash(project)
+        self._project_hash = SoundInterface.compute_hash(project)
 
-        if self._resource_manager.is_file_existing(SoundInterface.PATH_SAVED_HASH):
-            self._saved_hash = self._resource_manager
+        if self._resource_manager.is_file_existing(SoundInterface.PATH_SAVED_HASH) \
+            and self._resource_manager.get_file_content(SoundInterface.PATH_SAVED_HASH) == self._project_hash:
+            return
 
-        audio_timeline: list = project["audioTimeline"]
+        print("Not corresponding hash, create audio sources")
 
+        self._should_compute = True
         self._sample_rate: int = project["project"]["sampleRate"]
 
+        audio_timeline: list = project["audioTimeline"]
         main_sound_data = self._resource_manager.get_audio(project["project"]["mainSound"], self._sample_rate)[ResourceConstants.AUDIO_DATA]
 
         # Load Effects
@@ -234,16 +233,26 @@ class SoundInterface (Interface):
                 self.compute_result_for_audio(effect.priority(), result, audioStreamsOut)
 
     def pre_compute(self):
+        if not self._should_compute:
+            for i in range(len(self._audio_streams)):
+                audio_stream.load_data_from_resources(i)
+
+            return
+
+
         display_pourcent = 0.1
 
         for tick in range(self._audio_result.get_number_tick()):
+            if self._stop_flag.is_set():
+                break
+
             for audio_stream in self._audio_streams:
                 audio_stream.reset()
 
             self.compute_tick(tick)
 
             # Apply audio stream to audio result
-            for i in range(self._audio_result.nb_speakers):
+            for i in range(self._audio_result._nb_speakers):
                 priority: int = -1
                 values = [0, 0]
 
@@ -261,16 +270,17 @@ class SoundInterface (Interface):
                         if values[1] != 0: # Right
                             self._audio_result.set_audio_value(i , tick, values[1], 1)
 
-            if tick > display_pourcent * self._audio_result.get_number_tick():
+            if tick > display_pourcent * self._audio_result.get_number_tick() and self._verbose:
                 print("Done " + str(round(display_pourcent * 100)), "%, "  \
                     + str(round(display_pourcent * self._audio_result.get_number_tick())) + "/"  \
                     + str(self._audio_result.get_number_tick()))
 
                 display_pourcent += 0.1
 
+        self._resource_manager.write_text_content(SoundInterface.PATH_SAVED_HASH, self._project_hash)
 
-    def do_scenarii(self):
+    def do_scenarii(self, start_time):
         print("Do scenarii sound")
 
-    def stop_scenarii(self):
+    def stop(self):
         self._should_play = False

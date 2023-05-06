@@ -77,13 +77,13 @@ class ResourceManager:
 
 
     def get_json(self, path: str) -> dict:
-        if path in self.jsons.keys():
-            return self.jsons[path]
+        if path in self._jsons.keys():
+            return self._jsons[path]
         
         with open(path, encoding="utf8") as json_file:
-            self.jsons[path] = json.load(json_file)
+            self._jsons[path] = json.load(json_file)
 
-        return self.jsons[path]
+        return self._jsons[path]
 
 
     def is_file_existing(self, path: str) -> bool:
