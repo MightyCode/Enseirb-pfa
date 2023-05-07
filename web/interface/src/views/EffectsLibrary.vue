@@ -26,6 +26,7 @@
 <script>
 import EditEffect from './EditEffect.vue';
 import axiosInstance from '../axiosInstance';
+import emitter from '../emitter';
 
 export default {
     name: "EffectsLibrary",
@@ -40,6 +41,12 @@ export default {
     },
     mounted() {
         this.refreshEffectList();
+        emitter.on('effect-deleted', () => {
+            this.refreshEffectList();
+            this.selectedEffect = {
+                id: -1
+            };
+        });
     },
     computed: {
         effects() {

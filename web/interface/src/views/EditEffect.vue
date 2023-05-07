@@ -16,6 +16,10 @@
                     <option>LIGHT</option>
                 </select>
             </div>
+
+            <div class="delete-button" @click="onDeleteButtonClick">
+                <span>Supprimer</span>
+            </div>
         </div>
 
         <div class="row">
@@ -29,6 +33,7 @@
 import AudioEffectEdition from '../components/effects/AudioEffectEdition.vue';
 import VisualEffectEdition from '../components/effects/VisualEffectEdition.vue';
 import axiosInstance from '../axiosInstance';
+import emitter from '../emitter';
 
 export default {
     name: "EditEffect",
@@ -37,19 +42,20 @@ export default {
     },
     data() {
         return {
-            effectType: "AUDIO"
+            effectType: "AUDIO",
+            isEffectDeleted: false
         }
     },
     components: {
         AudioEffectEdition,
         VisualEffectEdition
     },
-    mounted() {
-        console.log("EditEffect mounted");
-        console.log(this.effect);
-    },
     unmounted() {
-        console.log("Unmounted");
+        // Avoid effect being saved just after being deleted
+        if (this.isEffectDeleted) {
+            return;
+        }
+
         // PUT at /effects/<id>
         axiosInstance.put('/effects/' + this.effect.id, this.effect)
             .then(response => {
@@ -58,6 +64,24 @@ export default {
             .catch(error => {
                 console.log(error);
             });
+    },
+    mounted() {
+        // Avoid effect being saved just after being deleted
+        emitter.on('effect-deleted', () => {
+            this.isEffectDeleted = true;
+        });
+    },
+    methods: {
+        onDeleteButtonClick() {
+            // DELETE at /effects/<id>
+            axiosInstance.delete('/effects/' + this.effect.id)
+                .then(response => {
+                    emitter.emit('effect-deleted', this.effect.id);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        }
     }
 }
 </script>
@@ -79,7 +103,7 @@ div.edition-wrapper {
 
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: end;
 
     margin-bottom: 1%;
 }
@@ -131,15 +155,21 @@ div.edition-wrapper {
     border: 0;
 }
 
-.red {
+.edition-wrapper>.row>.delete-button {
+    width: 10em;
+    height: 2.5em;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     background-color: red;
+    border-radius: 7px;
+    transition-duration: 0.4s;
 }
 
-.blue {
-    background-color: blue;
-}
-
-.green {
-    background-color: green;
+.edition-wrapper>.row>.delete-button:hover {
+    background-color: #cc0000;
+    cursor: pointer;
 }
 </style>
