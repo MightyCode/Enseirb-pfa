@@ -27,10 +27,16 @@ export default {
     Header
   },
   computed: {
+    /**
+     * VueX 'activeProject' getter
+     */
     activeProject() {
       return this.$store.state.activeProject;
     },
 
+    /**
+     * VueX 'activeConfig' getter
+     */
     activeConfig() {
       return this.$store.state.activeConfig;
     }

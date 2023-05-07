@@ -59,17 +59,26 @@ export default {
         };
     },
     mounted() {
+        // Fetch config list
         this.fetchConfigs();
 
+        // Display error if there is one
         emitter.on('error', (error) => {
             this.error = error;
         });
 
+        // Refresh config list when a children wants to
         emitter.on('fetchConfigs', () => {
             this.fetchConfigs();
         });
     },
     methods: {
+
+        /**
+         * Fetches the list of configurations from the server using axiosInstance.get('/configs'). 
+         * The result is stored in configList. 
+         * If there is an error, it is logged to the console.
+         */
         fetchConfigs() {
             axiosInstance.get('/configs')
                 .then((response) => {
@@ -79,6 +88,15 @@ export default {
                     console.error(error);
                 });
         },
+
+        /**
+         * Deletes a configuration using axiosInstance.delete(/configs/${config.id}). 
+         * If successful, it fetches the updated list of configurations and updates configList. 
+         * If the deleted configuration was the active configuration, the active configuration is set to null. 
+         * If there is an error, it is logged to the console.
+         * 
+         * @param {Object} config The configuration object to delete
+         */
         deleteConfig(config) {
             axiosInstance.delete(`/configs/${config.id}`)
                 .then(() => {
@@ -93,6 +111,13 @@ export default {
                     console.error(error);
                 });
         },
+
+        /**
+         * Sets the active configuration to the specified configuration using this.$store.commit('setActiveConfig', config). 
+         * It also resets the active project to null.
+         * 
+         * @param {Object} config The configuration object to set as the active configuration
+         */
         onSetActiveConfigButtonClick(config) {
             this.$store.commit('setActiveConfig', config);
             
@@ -101,6 +126,9 @@ export default {
         }
     },
     computed: {
+        /**
+         * VueX activeConfig getter
+         */
         activeConfig() {
             return this.$store.state.activeConfig;
         }

@@ -62,15 +62,20 @@ export default {
     mounted() {
         this.fetchProjects();
 
+        // Display error message if there is one
         emitter.on('error', (error) => {
             this.error = error;
         });
 
+        // Listen when children wants to refresh the project list
         emitter.on('fetchProjects', () => {
             this.fetchProjects();
         });
     },
     methods: {
+        /**
+         * Fetches projects from the backend
+         */
         fetchProjects() {
             axiosInstance.get('/projects')
                 .then((response) => {
@@ -80,6 +85,11 @@ export default {
                     console.error(error);
                 });
         },
+
+        /**
+         * Deletes a project from the backend
+         * @param {Object} project The project to delete 
+         */
         deleteProject(project) {
             axiosInstance.delete(`/projects/${project.id}`)
                 .then(() => {
@@ -94,6 +104,11 @@ export default {
                     console.error(error);
                 });
         },
+
+        /**
+         * Sets the active project when the user clicks on a project button
+         * @param {Object} project The project to set as active
+         */
         onSetActiveProjectButtonClick(project) {
             if ((!this.activeConfig) || this.activeConfig.id !== project.config) {
                 return;
@@ -101,6 +116,11 @@ export default {
 
             this.$store.commit('setActiveProject', project);
         },
+
+        /**
+         * Gets the CSS class for the active project button
+         * @param {Object} project The project to get the class for
+         */
         getActiveProjectButtonClass(project) {
             if (this.activeConfig && this.activeConfig.id === project.config) {
                 return 'green';
