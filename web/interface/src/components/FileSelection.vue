@@ -23,11 +23,15 @@ export default {
         }
     },
     mounted() {
+        // Resets the file selection on event
         emitter.on('clearFileSelection', () => {
             this.file = null;
         });
     },
     methods: {
+        /**
+         * Handles the drag-and-drop event and prevents the default behavior.
+         */
         dragAndDropHandler(event) {
             event.preventDefault();
             event.stopPropagation();
@@ -51,6 +55,9 @@ export default {
             }
         },
 
+        /**
+         * Handles the click event and prevents the default behavior.
+         */
         clickHandler(event) {
             event.preventDefault();
             event.stopPropagation();

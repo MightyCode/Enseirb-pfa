@@ -39,13 +39,8 @@ export default {
         };
     },
     mounted() {
-        axiosInstance.get('/configs')
-            .then((response) => {
-                this.configsList = response.data;
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        // Fetch the list of configs
+        this.fetchConfigs();
 
         emitter.on('fileImported', (file) => {
             const fileReader = new FileReader();
@@ -82,6 +77,10 @@ export default {
         });
     },
     methods: {
+
+        /**
+         * Fetches the list of configs from the backend
+         */
         fetchConfigs() {
             axiosInstance.get('/configs')
                 .then((response) => {

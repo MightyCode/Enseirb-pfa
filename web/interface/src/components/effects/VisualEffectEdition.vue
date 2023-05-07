@@ -69,6 +69,9 @@ export default {
         };
     },
     methods: {
+
+        // === Required for frame drag and drop ===
+
         dragStart(index) {
             this.dragIndex = index;
         },
@@ -81,6 +84,12 @@ export default {
             this.dragIndex = null;
             this.dropIndex = null;
         },
+
+        // === End of drag and drop ===
+
+        /**
+         * Creates a new frame and adds it to the frames array
+         */
         createFrame() {
             this.frames.push({
                 key: this.frameCounter++,
@@ -91,6 +100,10 @@ export default {
 
             this.selectedFrame = this.frames.length - 1;
         },
+
+        /**
+         * Removes the selected frame
+         */
         removeFrame() {
             if (this.selectedFrame > -1) {
                 this.frames.splice(this.selectedFrame, 1);
@@ -102,7 +115,8 @@ export default {
             }
         },
     },
-    mounted() {        
+    mounted() {       
+        // Load existing frames and set the frame counter 
         if (this.effect.frames) {
             this.frames = this.effect.frames;
             this.frameCounter = this.frames.length;
@@ -111,12 +125,20 @@ export default {
         }
     },
     unmounted() {
+        // Store frames
         this.effect.frames = this.frames;
     },
     computed: {
+        /**
+         * VueX activeProject getter
+         */
         activeProject() {
             return this.$store.state.activeProject;
         },
+
+        /**
+         * Compute the frame width
+         */
         timelineStyle() {
             const size = 100 / this.frames.length;
 
@@ -124,6 +146,10 @@ export default {
                 '--timeline-element-width': size + "%",
             };
         },
+
+        /**
+         * VueX activeConfig getter
+         */
         activeConfig() {
             return this.$store.state.activeConfig;
         }

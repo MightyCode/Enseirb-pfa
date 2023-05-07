@@ -57,6 +57,10 @@ export default {
         });
     },
     methods: {
+
+        /**
+         * Creates a new project using the given name and filename.
+         */
         createProject() {
             axiosInstance.post('/projects', {
                 id: this.name,
@@ -76,14 +80,21 @@ export default {
             });
         },
 
+        /**
+         * Clears the UI (name and filename)
+         */
         clearUI() {
             this.name = '';
             this.filename = '';
+
             emitter.emit('clearFileSelection');
             emitter.emit('error', '');
         }
     },
     computed: {
+        /**
+         * VueX getter for the active config
+         */
         activeConfig() {
             return this.$store.state.activeConfig;
         }

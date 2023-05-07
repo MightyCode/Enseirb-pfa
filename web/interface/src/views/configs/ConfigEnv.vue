@@ -205,6 +205,9 @@ export default {
             this.$store.dispatch("setActiveConfig", configToSave);
         },
 
+        /**
+         * Handles a left click on the Konva stage
+         */
         handleLeftClick(e) {
             // Check if right click
             if (e.evt.button === 2) {
@@ -263,6 +266,9 @@ export default {
             this.stage.draw();
         },
 
+        /**
+         * Handles a right click on the Konva stage
+         */
         handleRightClick(e) {
             e.evt.preventDefault();
 
@@ -340,12 +346,23 @@ export default {
         }
     },
     computed: {
+        /**
+         * VueX activeProject getter
+         */
         activeProject() {
             return this.$store.state.activeProject;
         },
+
+        /**
+         * VueX activeConfig getter
+         */
         activeConfig() {
             return this.$store.state.activeConfig;
         },
+
+        /**
+         * Checks if saving conditions are met
+         */
         isSavePossible() {
             return (((this.speakersCounter - this.deletedSpeakersIds.length) === 0) && ((this.lightsCounter - this.deletedLightsIds.length) === 0))
                 || (((this.speakersCounter - this.deletedSpeakersIds.length) === this.activeConfig.nbSpeakers) && ((this.lightsCounter - this.deletedLightsIds.length) === this.activeConfig.nbLights))

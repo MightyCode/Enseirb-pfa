@@ -56,9 +56,9 @@ export default {
             return;
         }
 
-        // PUT at /effects/<id>
+        // Save the effect to the backend
         axiosInstance.put('/effects/' + this.effect.id, this.effect)
-            .then(response => {
+            .then(() => {
                 console.info("[EditEffect] Effect saved [id=" + this.effect.id + "]");
             })
             .catch(error => {
@@ -72,10 +72,14 @@ export default {
         });
     },
     methods: {
+        /**
+         * Deletes the effect from the backend. 
+         * Emits an event indicating that the effect has been deleted. 
+         */
         onDeleteButtonClick() {
             // DELETE at /effects/<id>
             axiosInstance.delete('/effects/' + this.effect.id)
-                .then(response => {
+                .then(() => {
                     emitter.emit('effect-deleted', this.effect.id);
                 })
                 .catch(error => {

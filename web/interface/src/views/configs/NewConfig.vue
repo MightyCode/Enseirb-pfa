@@ -43,6 +43,9 @@ export default {
         }
     },
     methods: {
+        /**
+         * Creates a new config with the inputted informations
+         */
         createConfig() {
             axiosInstance.post('/configs', {
                 id: this.name,
@@ -62,12 +65,16 @@ export default {
             });
         },
 
+        /**
+         * Clear UI fields (name, number of lights, number of speakers)
+         */
         clearUI() {
             this.name = '';
             this.nbLights = 0;
             this.nbSpeakers = 0;
-            emitter.emit('clearFileSelection');
-            emitter.emit('error', '');
+
+            emitter.emit('clearFileSelection'); // Clear file selection
+            emitter.emit('error', ''); // Clear error message
         }
     }
 }

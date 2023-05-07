@@ -40,15 +40,24 @@ export default {
         };
     },
     mounted() {
+        // Load the list of effects
         this.refreshEffectList();
+
+        // Triggered when an effect is deleted
         emitter.on('effect-deleted', () => {
+            // Take the deleted effect into account
             this.refreshEffectList();
+
+            // Reset selected effect
             this.selectedEffect = {
                 id: -1
             };
         });
     },
     computed: {
+        /**
+         * Returns the list of effects, filtered by the current filter.
+         */
         effects() {
             if (this.filter === "ALL") {
                 return this.rawEffectsList;
@@ -59,6 +68,12 @@ export default {
         }
     },
     methods: {
+        
+        /**
+         * Creates a new effect "Nouvel effet" with the type "AUDIO", and an empty array of frames. 
+         * If successful, refreshes the effect list. 
+         * If unsuccessful, logs an error to the console.
+         */
         addEffect() {
             // POST at /effects
             axiosInstance.post('/effects', {
@@ -73,6 +88,12 @@ export default {
                     console.error("[EffectsLibrary] " + error);
                 });
         },
+
+        /**
+         * Retrieves the list of effects from the backend. 
+         * If successful, updates the rawEffectsList property with the response data. 
+         * If unsuccessful, logs an error to the console.
+         */
         refreshEffectList() {
             // GET at /effects
             axiosInstance.get('/effects')

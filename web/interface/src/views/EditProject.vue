@@ -41,6 +41,7 @@ export default {
 
         var ctx = document.createElement('canvas').getContext('2d');
         var linGrad = ctx.createLinearGradient(0, 64, 0, 200);
+
         linGrad.addColorStop(0.5, 'rgba(255, 255, 255, 1.000)');
         linGrad.addColorStop(0.5, 'rgba(183, 183, 183, 1.000)');
 
@@ -56,7 +57,7 @@ export default {
             barWidth: 3
         });
 
-        // Load current project's audio
+        // Load current project's audio from the server
         axiosInstance.get(`/static/audios/${this.activeProject.audio}`, {
             responseType: 'blob'
         }).then(response => {
@@ -110,9 +111,17 @@ export default {
         }
     },
     computed: {
+        /**
+         * VueX activeProject getter
+         */
         activeProject() {
             return this.$store.state.activeProject;
         },
+
+        /**
+         * ! Temporary, for testing purposes
+         * TODO: Replace this with the actual visual effects from the project
+         */
         visualEffects() {
             return [
                 {

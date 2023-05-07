@@ -1,10 +1,12 @@
 <template>
-Audio
 </template>
 
 <script>
 export default {
-    name: "AudioEffectEdition"
+    name: "AudioEffectEdition",
+    mounted() {
+        throw new Error("Not implemented");
+    }
 }
 </script>
 
