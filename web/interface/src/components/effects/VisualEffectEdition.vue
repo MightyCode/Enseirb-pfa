@@ -70,11 +70,9 @@ export default {
     },
     methods: {
         dragStart(index) {
-            console.log("Drag at index " + index)
             this.dragIndex = index;
         },
         drop(index) {
-            console.log("Drop at index " + index)
             this.dropIndex = index;
             const item = this.frames.splice(this.dragIndex, 1)[0];
             this.frames.splice(this.dropIndex, 0, item);
@@ -104,10 +102,7 @@ export default {
             }
         },
     },
-    mounted() {
-        console.log("VisualEffectEdition mounted")
-        console.log(this.effect);
-        
+    mounted() {        
         if (this.effect.frames) {
             this.frames = this.effect.frames;
             this.frameCounter = this.frames.length;

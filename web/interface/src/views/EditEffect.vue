@@ -59,10 +59,10 @@ export default {
         // PUT at /effects/<id>
         axiosInstance.put('/effects/' + this.effect.id, this.effect)
             .then(response => {
-                console.log(response);
+                console.info("[EditEffect] Effect saved [id=" + this.effect.id + "]");
             })
             .catch(error => {
-                console.log(error);
+                console.error("[EditEffect] " + error);
             });
     },
     mounted() {
@@ -79,7 +79,7 @@ export default {
                     emitter.emit('effect-deleted', this.effect.id);
                 })
                 .catch(error => {
-                    console.log(error);
+                    console.error("[EditEffect] " + error);
                 });
         }
     }

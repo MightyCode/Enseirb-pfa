@@ -73,7 +73,6 @@ export default {
             waveform.style.opacity = 1;
 
             // Set the parent size as a CSS variable
-            console.log(wrapper);
             wrapper.style.setProperty('--parent-size', wrapper.offsetWidth);
 
             // Set duration as a CSS variable

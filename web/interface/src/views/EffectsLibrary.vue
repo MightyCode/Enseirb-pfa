@@ -70,7 +70,7 @@ export default {
                     this.refreshEffectList();
                 })
                 .catch(error => {
-                    console.log(error);
+                    console.error("[EffectsLibrary] " + error);
                 });
         },
         refreshEffectList() {
@@ -80,7 +80,7 @@ export default {
                     this.rawEffectsList = response.data;
                 })
                 .catch(error => {
-                    console.log(error);
+                    console.error("[EffectsLibrary] " + error);
                 });
         }
     },
