@@ -3,7 +3,7 @@ from interface.python.ResourceManager import ResourceManager, ResourceConstants
 from interface.python.audio.AudioSteam import AudioStream
 from interface.python.audio.SpeakerGroup import SpeakerGroup
 from interface.python.audio.AudioResult import AudioResult
-from interface.python.audio.effects.TimelineSoundEffect import TimelineSoundEffect
+from interface.python.audio.effects.TimelineAudioEffect import TimelineAudioEffect
 
 from interface.python.Interface import Interface
 
@@ -110,7 +110,7 @@ class SoundInterface (Interface):
         # Create all effect
         for effect_raw_data in audio_timeline:
             effect = self.create_effect_from_name(effect_raw_data["modelEffect"], project["project"])
-            timeline_effect = TimelineSoundEffect(effect, effect_raw_data["priority"], effect_raw_data["start"], self._sample_rate)
+            timeline_effect = TimelineAudioEffect(effect, effect_raw_data["priority"], effect_raw_data["start"], self._sample_rate)
 
             stream_in_id = None
 
@@ -202,7 +202,7 @@ class SoundInterface (Interface):
         elif isinstance(result, float) or isinstance(result, int):
             for audioStream in audio_streams:
                 audioStream.set_value_both(effect_priority, result)
-        elif isinstance(result[0], float) or isinstance(result[0], int):
+        elif isinstance(result[0], float) or isinstance(result[1], int):
             for audioStream in audio_streams:
                 audioStream.set_both_value(effect_priority, result[0], result[1])
         else:
