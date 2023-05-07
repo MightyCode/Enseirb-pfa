@@ -5,7 +5,7 @@ import json
 from LightEffects import LightEffects, NUMBER_OF_LIGHTS, NUMBER_OF_ROWS, NUMBER_OF_COLUMNS
 from time import sleep
 
-class LightCreation(Interface):
+class LightInterface(Interface):
     def __init__(self):
         super().__init__()
         self.universe = DMXUniverse(NUMBER_OF_LIGHTS)
@@ -54,7 +54,7 @@ class LightCreation(Interface):
 
 if __name__ == "__main__":
     
-    lc = LightCreation()
+    lc = LightInterface()
     lc.read_project("test.json")
     lc.pre_compute()
     lc.do_scenarii()
