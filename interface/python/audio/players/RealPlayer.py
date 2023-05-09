@@ -1,4 +1,13 @@
-import jack
+
+try:
+    import jack
+except ImportError:
+    print("No jack")
+    class jack:
+        class Client:
+            def __init__(self, name) -> None:
+                pass
+
 import soundfile as sf
 try:
     import queue  # Python 3.x
