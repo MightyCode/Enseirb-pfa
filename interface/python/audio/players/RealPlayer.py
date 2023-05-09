@@ -22,6 +22,8 @@ class RealPlayer(PlayerInterface):
         for i in range(len(self.client.outports)):
             if frames != self.client.blocksize:
                 self.stop_callback('blocksize must not be changed, I quit!')
+            if self._stop_event.is_set():
+                sys.exit()
             data = self.queues[i%10].get_nowait()
             self.client.outports[i].get_array()[:] = data.T[side] 
             side = (len(data.T) - 1) - side
@@ -45,6 +47,8 @@ class RealPlayer(PlayerInterface):
 
     def play(self, audio_results: list, start_time: float, sample_rate: int):
         start_tick: int = int(start_time * sample_rate)
+
+        assert len(audio_results[0].data) >= start_tick
 
         client = self.client
 

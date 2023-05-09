@@ -9,4 +9,5 @@ from interface.python.audio.players.RealPlayer import RealPlayer
 
 if __name__ == '__main__':
     r = RealPlayer('test', 0)
-    r.play([],0,48000)
+    start_time : int = 5
+    r.play([],start_time,48000)
