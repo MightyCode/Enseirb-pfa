@@ -64,7 +64,7 @@ client.set_process_callback(process)
 
 print(f'blocksize : {blocksize}, samplerate : {samplerate}')
 
-filenames = os.listdir('out')
+filenames = [f for f in os.listdir('out') if f.endswith('.wav')]
 filenames.sort()
 
 block_generators = []

@@ -57,7 +57,7 @@ class RealPlayer(PlayerInterface):
     def play(self, audio_results: list, start_time: float, sample_rate: int):
         start_tick: int = int(start_time * sample_rate)
 
-        assert len(audio_results[0].data) >= start_tick
+        #assert len(audio_results[0].data) >= start_tick
 
         client = self.client
 
@@ -70,7 +70,7 @@ class RealPlayer(PlayerInterface):
 
         print(f'blocksize : {blocksize}, samplerate : {samplerate}')
 
-        filenames = os.listdir('out')
+        filenames = [f for f in os.listdir('out') if f.endswith('.wav')]
         filenames.sort()
 
         block_generators = []

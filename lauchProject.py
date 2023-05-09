@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
     if args.sound or not args.light:
         sound_interface: Interface = SoundInterface(stop_flag, verbose=args.verbose)
-        real_player: PlayerInterface = RealPlayer("interface sonore", stop_flag)
+        real_player: PlayerInterface = RealPlayer('interface sonore', stop_flag)
         sound_interface.attach_player(real_player)
         soundInterfaceThread = threading.Thread(target=run_interface, args=(0, sound_interface, path, start, ))
         threads.append(soundInterfaceThread)
