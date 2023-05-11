@@ -9,7 +9,7 @@ for i in range(NUMBER_OF_LIGHTS):
 
 effect = LightEffects(universe, interface)
 
-effect.police_lights_effect(3)
-effect.execute_light_effect()
+#effect.rainbow_wave_effect(3)
+#effect.execute_light_effect()
 effect.soft_white_effect()
 effect.execute_light_effect()

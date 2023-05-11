@@ -1,19 +1,12 @@
 <template>
     <div class="wrapper">
         <div id="timeline" :style="timelineStyle">
-            <div class="frame" v-for="(frame, index) in frames" 
-                :key="index.key" 
-                @click="selectedFrame = index" 
-                :style="{ 'background-color': index == selectedFrame ? 'red': 'white'}"
-                :draggable="true"
-                @dragstart="dragStart(index)"
-                @dragend="dragEnd"
-                @drop="drop(index)"
-                @dragover.prevent
-                >
+            <div class="frame" v-for="(frame, index) in frames" :key="index.key" @click="selectedFrame = index"
+                :style="{ 'background-color': index == selectedFrame ? '#3b3b3b' : '#5b5b5b' }" :draggable="true"
+                @dragstart="dragStart(index)" @dragend="dragEnd" @drop="drop(index)" @dragover.prevent>
                 <div class="frame-content">
                     <div class="frame-content-title">
-                        Frame {{ frame.key }}
+                        {{ frame.key }}
                     </div>
                 </div>
             </div>
@@ -33,14 +26,28 @@
             </div>
 
             <div id="viewer-wrapper">
-                <div id="viewer">
+                <p>Sélection des lumières</p>
 
+                <div class="lights-wrapper" v-if="frames[selectedFrame]">
+                    <div v-for="light in activeConfig.nbLights" :key="light">
+                        <input :name="'light-' + light" type="checkbox" :value="light"
+                            v-model="frames[selectedFrame].lights">
+                        <label :for="'light-' + light">{{ light }}</label>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="toolbox">
-
+        <div class="toolbox" v-if="frames[selectedFrame]">
+            <div>
+                <p>Couleur de la frame</p>
+                <input type="color" v-model="frames[selectedFrame].color" />
+            </div>
+            <div>
+                <p>Durée de la frame</p>
+                <input type="number" v-model="frames[selectedFrame].length" />
+                <p>ms</p>
+            </div>
         </div>
     </div>
 </template>
@@ -48,10 +55,12 @@
 <script>
 export default {
     name: "VisualEffectEdition",
+    props: {
+        effect: Object
+    },
     data() {
         return {
             selectedFrame: -1,
-            stage: null,
             frames: [],
 
             dragIndex: null,
@@ -60,12 +69,13 @@ export default {
         };
     },
     methods: {
+
+        // === Required for frame drag and drop ===
+
         dragStart(index) {
-            console.log("Drag at index " + index)
             this.dragIndex = index;
         },
         drop(index) {
-            console.log("Drop at index " + index)
             this.dropIndex = index;
             const item = this.frames.splice(this.dragIndex, 1)[0];
             this.frames.splice(this.dropIndex, 0, item);
@@ -74,15 +84,26 @@ export default {
             this.dragIndex = null;
             this.dropIndex = null;
         },
+
+        // === End of drag and drop ===
+
+        /**
+         * Creates a new frame and adds it to the frames array
+         */
         createFrame() {
             this.frames.push({
                 key: this.frameCounter++,
                 lights: [],
-                color: "#000000"
+                color: "#000000",
+                length: 1,
             });
 
             this.selectedFrame = this.frames.length - 1;
         },
+
+        /**
+         * Removes the selected frame
+         */
         removeFrame() {
             if (this.selectedFrame > -1) {
                 this.frames.splice(this.selectedFrame, 1);
@@ -93,97 +114,31 @@ export default {
                 console.warn("[VisualEffectEdition.vue] No frame to remove");
             }
         },
-        loadFromProject() {
-            if (!this.activeConfig.konvaEnv) {
-                console.info("[VisualEffectEdition.vue] No Konva environment found in the active config");
-                return;
-            }
-
-            this.stage = Konva.Node.create(this.activeConfig.konvaEnv.json, "viewer");
-
-            this.deletedLightsIds = JSON.parse(this.activeConfig.konvaEnv.deletedLightsIds);
-            this.deletedSpeakersIds = JSON.parse(this.activeConfig.konvaEnv.deletedSpeakersIds);
-
-            this.speakersCounter = this.activeConfig.konvaEnv.speakersCounter;
-            this.lightsCounter = this.activeConfig.konvaEnv.lightsCounter;
-
-            this.fitStageIntoParentContainer();
-
-            // Find clicked element 
-            const layer = this.stage.getChildren()[0];
-            const clickables = layer.getChildren();
-
-            // Add event listeners
-            clickables.forEach(clickable => {
-                // Disable draggability
-                clickable.draggable(false);
-
-                if (clickable.getId().split('-')[0] !== "light") {
-                    return;
-                }
-
-                clickable.on("mousedown", () => {
-                    if (this.selectedFrame == -1) {
-                        return;
-                    }
-
-                    // TTurn children without 'textWidth' property into blue
-                    clickable.getChildren().forEach(child => {
-                        if (!child.textWidth) {
-                            this.frames[this.selectedFrame].lights.push(clickable.getId());
-                        }
-                    });
-                });
-
-                // Add hover effect
-                clickable.on("mouseover", () => {
-                    document.body.style.cursor = "pointer";
-                });
-
-                clickable.on("mouseout", () => {
-                    document.body.style.cursor = "default";
-                });
-            });
-
-
-        },
-
-        fitStageIntoParentContainer() {
-            const wrapper = document.querySelector("#viewer-wrapper");
-
-            // Get parent's width
-            const containerWidth = wrapper.offsetWidth;
-            const containerHeight = wrapper.offsetHeight;
-
-            this.stage.height(containerHeight);
-            this.stage.width(containerWidth);
-            this.stage.draw();
+    },
+    mounted() {       
+        // Load existing frames and set the frame counter 
+        if (this.effect.frames) {
+            this.frames = this.effect.frames;
+            this.frameCounter = this.frames.length;
+        } else {
+            this.effect.frames = [];
         }
     },
-    mounted() {
-        const sceneWidth = 800;
-        const sceneHeight = 400;
-
-        this.stage = new Konva.Stage({
-            container: "viewer",
-            width: sceneWidth,
-            height: sceneHeight,
-            id: "stage",
-        });
-
-        this.stage.add(new Konva.Layer({ id: "layer" }));
-
-        // Adapt the stage on resize
-        window.addEventListener("resize", this.fitStageIntoParentContainer);
-
-
-        this.loadFromProject();
-        this.stage.scale({ x: 1, y: 1 });
+    unmounted() {
+        // Store frames
+        this.effect.frames = this.frames;
     },
     computed: {
+        /**
+         * VueX activeProject getter
+         */
         activeProject() {
             return this.$store.state.activeProject;
         },
+
+        /**
+         * Compute the frame width
+         */
         timelineStyle() {
             const size = 100 / this.frames.length;
 
@@ -191,6 +146,10 @@ export default {
                 '--timeline-element-width': size + "%",
             };
         },
+
+        /**
+         * VueX activeConfig getter
+         */
         activeConfig() {
             return this.$store.state.activeConfig;
         }
@@ -200,7 +159,6 @@ export default {
 
 <style scoped>
 #timeline {
-    background-color: red;
     width: 100%;
     height: 6em;
     overflow-y: auto;
@@ -263,6 +221,7 @@ div.wrapper {
 
     background-color: #5b5b5b;
     overflow-y: auto;
+    border-radius: 7px;
 }
 
 #viewer-wrapper {
@@ -270,17 +229,36 @@ div.wrapper {
     width: 80%;
 }
 
+#viewer-wrapper>p {
+    margin: 0;
+    padding: 0 0 0.5em 0;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+}
+
 .frame {
     height: 100%;
-    width: var(--timeline-element-width); 
+    width: var(--timeline-element-width);
+    min-width: 2em;
     background-color: #5b5b5b;
-    border: 1px solid #ff0000;
     transition-duration: 0.4s;
+    margin-right: 0.5em;
+    border-radius: 7px;
+}
+
+.frame:last-of-type {
+    margin-right: 0;
 }
 
 .frame:hover {
     background-color: #3b3b3b;
     cursor: pointer;
+}
+
+.frame-content-title {
+    padding: 1%;
 }
 
 .selected-light {
@@ -290,12 +268,37 @@ div.wrapper {
     text-align: center;
     border-radius: 7px;
     margin-bottom: 0;
+    margin-top: 0.5em;
 }
 
 .toolbox {
     height: 3em;
     width: 100%;
-    background-color: red;
+    background-color: #5b5b5b;
     margin-top: 1em;
+
+    display: flex;
+    justify-content: space-evenly;
+    border-radius: 7px;
+}
+
+.toolbox>div {
+    display: flex;
+    align-items: center;
+}
+
+.toolbox>div>p {
+    margin: 0 1em;
+}
+
+.lights-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex-wrap: wrap;
+
+    max-height: 85%;
+    padding: 1em;
+    overflow-x: auto;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
     <div id="file-selector" @dragenter="dragAndDropHandler" @dragover="dragAndDropHandler" @drop="dragAndDropHandler"
         @dragleave="dragAndDropHandler" @click="clickHandler">
-        <p v-if="!file">Drag a file or click to upload</p>
+        <p v-if="!file">Déposez un fichier ou cliquez pour sélectionner</p>
         <p v-else>{{ file.name }}</p>
     </div>
 </template>
@@ -23,11 +23,15 @@ export default {
         }
     },
     mounted() {
+        // Resets the file selection on event
         emitter.on('clearFileSelection', () => {
             this.file = null;
         });
     },
     methods: {
+        /**
+         * Handles the drag-and-drop event and prevents the default behavior.
+         */
         dragAndDropHandler(event) {
             event.preventDefault();
             event.stopPropagation();
@@ -51,6 +55,9 @@ export default {
             }
         },
 
+        /**
+         * Handles the click event and prevents the default behavior.
+         */
         clickHandler(event) {
             event.preventDefault();
             event.stopPropagation();
@@ -82,6 +89,7 @@ export default {
     border-radius: 15px;
 
     transition-duration: 0.4s;
+    text-align: center;
 }
 
 #file-selector>p {

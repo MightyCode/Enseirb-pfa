@@ -2,7 +2,7 @@
     <div class="wrapper">
         <div class="column">
             <div class="field-wrapper">
-                <label for="name">Name</label>
+                <label for="name">Nom</label>
                 <input type="text" id="name" v-model="name">
             </div>
         </div>
@@ -14,7 +14,7 @@
             </div>
 
             <div class="validation-wrapper">
-                <span :class="(name !== '' && filename !== '') ? 'validation-button' : 'validation-button-disabled'" @click="createProject">Validate</span>
+                <span :class="(name !== '' && filename !== '') ? 'validation-button' : 'validation-button-disabled'" @click="createProject">Valider</span>
             </div>
         </div>
     </div>
@@ -57,6 +57,10 @@ export default {
         });
     },
     methods: {
+
+        /**
+         * Creates a new project using the given name and filename.
+         */
         createProject() {
             axiosInstance.post('/projects', {
                 id: this.name,
@@ -76,14 +80,21 @@ export default {
             });
         },
 
+        /**
+         * Clears the UI (name and filename)
+         */
         clearUI() {
             this.name = '';
             this.filename = '';
+
             emitter.emit('clearFileSelection');
             emitter.emit('error', '');
         }
     },
     computed: {
+        /**
+         * VueX getter for the active config
+         */
         activeConfig() {
             return this.$store.state.activeConfig;
         }

@@ -53,8 +53,6 @@ export default {
             barWidth: 3
         });
 
-        console.log(this.activeProject)
-
         // Load current project's audio
         axiosInstance.get(`/static/audios/${this.activeProject.audio}`, {
             responseType: 'blob'

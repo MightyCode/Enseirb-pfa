@@ -2,7 +2,7 @@ import soundfile as sf
 import numpy as np
 import json
 import scipy.signal as signal
-
+import os
 
 def singleton(class_):
     instances = {}
@@ -20,12 +20,13 @@ class ResourceConstants:
 class ResourceManager:
 
     def __init__(self):
-        self.audios: dict = {}
-        self.jsons: dict = {}
+        self._audios: dict = {}
+        self._jsons: dict = {}
+        self._file_content: dict = {} 
 
-    def getAudio(self, path, sampleRate=44100):
-        if path in self.audios.keys():
-            return self.audios[path]
+    def get_audio(self, path: str, sampleRate: int = 44100) -> list:
+        if path in self._audios.keys():
+            return self._audios[path]
 
         file = sf.read(path)
 
@@ -44,11 +45,12 @@ class ResourceManager:
 
             file = [reformed, file[ResourceConstants.AUDIO_SAMPLE_RATE]]
 
-        self.audios[path] = file
+        self._audios[path] = file
 
         return file
-    
-    def exportWavFromChannels(self, path, leftChannel, rightChannel, samplerate):
+
+
+    def export_wav_from_channels(self, path, leftChannel, rightChannel, samplerate):
         reformed = np.zeros((len(leftChannel), 2), dtype=float)
 
         for i in range(len(leftChannel)):
@@ -56,15 +58,36 @@ class ResourceManager:
             reformed[i][1] = rightChannel[i]
 
         sf.write(path, reformed, samplerate)
-    
-    def getJson(self, path):
-        if path in self.jsons.keys():
-            return self.jsons[path]
+
+
+    def get_file_content(self, path: str) -> str:
+        if path in self._file_content.keys():
+            return self._file_content[path]
+
+        file = open(path, 'r')
+        self._file_content[path] = file.read()
+        file.close()
+
+        return self._file_content[path]
+
+    def write_text_content(self, path : str, content: str) -> None:
+        file = open(path, 'w')
+        file.write(content)
+        file.close()
+
+
+    def get_json(self, path: str) -> dict:
+        if path in self._jsons.keys():
+            return self._jsons[path]
         
         with open(path, encoding="utf8") as json_file:
-            self.jsons[path] = json.load(json_file)
+            self._jsons[path] = json.load(json_file)
 
-        return self.jsons[path]
+        return self._jsons[path]
+
+
+    def is_file_existing(self, path: str) -> bool:
+        return os.path.exists(path)
 
 if __name__ == "__main__":
-    ResourceManager().getAudio("interface/python/audio/sound/vache.wav")
+    ResourceManager().get_audio("interface/python/audio/sound/vache.wav")

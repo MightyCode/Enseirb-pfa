@@ -42,25 +42,25 @@ class DMXUniverse:
     """Represents a DMX universe."""
 
     def __init__(self, universe_id: int = 1):
-        """Initialise the DMX universe."""
+        """Initialises the DMX universe."""
         self._lights = set()  # type: Set[DMXLight]
         self._id = universe_id
         universe_map.append(self)
 
     def add_light(self, light: DMXLight):
-        """Add a light to the universe."""
+        """Adds a light to the universe."""
         self._lights.add(light)
 
     def remove_light(self, light: DMXLight):
-        """Remove a light from the universe."""
+        """Removes a light from the universe."""
         self._lights.remove(light)
 
     def has_light(self, light: DMXLight) -> bool:
-        """Check if the universe has a light."""
+        """Checks if the universe has at least a light."""
         return light in self._lights
 
     def get_lights(self) -> Set[DMXLight]:
-        """Get all lights in this universe."""
+        """Gets all lights in this universe."""
         return self._lights
 
     def has_light_at_address(self, address: int) -> bool:
@@ -77,16 +77,18 @@ class DMXUniverse:
                 return l
         raise ValueError("No light at address {}".format(address))
 
-    def serialise(self) -> List[int]:
-        """Serialise all the content of the DMX universe.
+    def serialise(self):
+        """Serialises the universe into a DMX frame. This is a list of 512 bytes, each representing a DMX address.
 
-        Creates a frame which will update all lights to their current state.
+        Returns:
+            List[int]: The DMX frame.
         """
         frame = [DMX_EMPTY_BYTE] * DMX_MAX_ADDRESS
         for u in universe_map:
             for light in u._lights:
                 serialised_light = light.serialise()
                 for address in range(light.start_address, light.end_address + 1): # TODO: Check this
-                    frame[address] |= serialised_light[address - light.start_address]
+                    frame[address] |= int(serialised_light[address - light.start_address])
+
 
         return frame

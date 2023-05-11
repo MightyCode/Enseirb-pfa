@@ -1,4 +1,4 @@
-from interface.python.audio.ModelAudioEffect import ModelAudioEffect
+from interface.python.audio.effects.ModelAudioEffect import ModelAudioEffect
 from interface.python.ResourceManager import ResourceConstants
 
 class EffectPlay(ModelAudioEffect):
@@ -13,7 +13,7 @@ class EffectPlay(ModelAudioEffect):
         super().preprocess()
 
         self._loop_time = self.info["loopTime"] if "loopTime" in self.info.keys() else 1
-        self._soundData = self.resourceManager.getAudio(self.info["file"], self._sampleRate)[ResourceConstants.AUDIO_DATA] 
+        self._soundData = self.resourceManager.get_audio(self.info["file"], self._sampleRate)[ResourceConstants.AUDIO_DATA] 
         self._length = len(self._soundData) * self._loop_time
         self._amplitude = self.info["amplitude"] if "amplitude" in self.info.keys() else 1
 

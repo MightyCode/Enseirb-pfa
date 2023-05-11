@@ -2,24 +2,24 @@
     <div class="wrapper">
         <div class="column">
             <div class="field-wrapper">
-                <label for="name">Name</label>
+                <label for="name">Nom</label>
                 <input type="text" id="name" v-model="name">
             </div>
 
             <div class="field-wrapper">
-                <label for="name">Number of lights</label>
+                <label for="name">Nombre de lumières</label>
                 <input type="number" id="name" v-model="nbLights">
             </div>
 
             <div class="field-wrapper">
-                <label for="name">Number of speakers</label>
+                <label for="name">Nombre d'enceintes</label>
                 <input type="number" id="name" v-model="nbSpeakers">
             </div>
         </div>
 
         <div class="column">
             <div class="validation-wrapper">
-                <span class="validation-button" @click="createConfig">Validate</span>
+                <span class="validation-button" @click="createConfig">Valider</span>
             </div>
         </div>
     </div>
@@ -43,6 +43,9 @@ export default {
         }
     },
     methods: {
+        /**
+         * Creates a new config with the inputted informations
+         */
         createConfig() {
             axiosInstance.post('/configs', {
                 id: this.name,
@@ -62,12 +65,16 @@ export default {
             });
         },
 
+        /**
+         * Clear UI fields (name, number of lights, number of speakers)
+         */
         clearUI() {
             this.name = '';
             this.nbLights = 0;
             this.nbSpeakers = 0;
-            emitter.emit('clearFileSelection');
-            emitter.emit('error', '');
+
+            emitter.emit('clearFileSelection'); // Clear file selection
+            emitter.emit('error', ''); // Clear error message
         }
     }
 }

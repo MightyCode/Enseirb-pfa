@@ -6,7 +6,7 @@
         <div class="row">
             <div>
                 <label for="effect-name">Nom</label>
-                <input type="text" name="effect-name" id="effect-name">
+                <input type="text" name="effect-name" id="effect-name" v-model="effect.name">
             </div>
 
             <div>
@@ -16,11 +16,15 @@
                     <option>LIGHT</option>
                 </select>
             </div>
+
+            <div class="delete-button" @click="onDeleteButtonClick">
+                <span>Supprimer</span>
+            </div>
         </div>
 
         <div class="row">
-            <AudioEffectEdition v-if="effect.type === 'AUDIO'" />
-            <VisualEffectEdition v-if="effect.type === 'LIGHT'" />
+            <AudioEffectEdition v-if="effect.type === 'AUDIO'" :effect="effect" />
+            <VisualEffectEdition v-if="effect.type === 'LIGHT'" :effect="effect" />
         </div>
     </div>
 </template>
@@ -28,6 +32,8 @@
 <script>
 import AudioEffectEdition from '../components/effects/AudioEffectEdition.vue';
 import VisualEffectEdition from '../components/effects/VisualEffectEdition.vue';
+import axiosInstance from '../axiosInstance';
+import emitter from '../emitter';
 
 export default {
     name: "EditEffect",
@@ -36,12 +42,50 @@ export default {
     },
     data() {
         return {
-            effectType: "AUDIO"
+            effectType: "AUDIO",
+            isEffectDeleted: false
         }
     },
     components: {
         AudioEffectEdition,
         VisualEffectEdition
+    },
+    unmounted() {
+        // Avoid effect being saved just after being deleted
+        if (this.isEffectDeleted) {
+            return;
+        }
+
+        // Save the effect to the backend
+        axiosInstance.put('/effects/' + this.effect.id, this.effect)
+            .then(() => {
+                console.info("[EditEffect] Effect saved [id=" + this.effect.id + "]");
+            })
+            .catch(error => {
+                console.error("[EditEffect] " + error);
+            });
+    },
+    mounted() {
+        // Avoid effect being saved just after being deleted
+        emitter.on('effect-deleted', () => {
+            this.isEffectDeleted = true;
+        });
+    },
+    methods: {
+        /**
+         * Deletes the effect from the backend. 
+         * Emits an event indicating that the effect has been deleted. 
+         */
+        onDeleteButtonClick() {
+            // DELETE at /effects/<id>
+            axiosInstance.delete('/effects/' + this.effect.id)
+                .then(() => {
+                    emitter.emit('effect-deleted', this.effect.id);
+                })
+                .catch(error => {
+                    console.error("[EditEffect] " + error);
+                });
+        }
     }
 }
 </script>
@@ -63,7 +107,7 @@ div.edition-wrapper {
 
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: end;
 
     margin-bottom: 1%;
 }
@@ -115,15 +159,21 @@ div.edition-wrapper {
     border: 0;
 }
 
-.red {
+.edition-wrapper>.row>.delete-button {
+    width: 10em;
+    height: 2.5em;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     background-color: red;
+    border-radius: 7px;
+    transition-duration: 0.4s;
 }
 
-.blue {
-    background-color: blue;
-}
-
-.green {
-    background-color: green;
+.edition-wrapper>.row>.delete-button:hover {
+    background-color: #cc0000;
+    cursor: pointer;
 }
 </style>
