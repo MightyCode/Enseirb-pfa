@@ -39,7 +39,10 @@ class LightEffects:
         return new_frames
 
     def lights_transition(self, target_color, interpolation_rate):
-        lights = self.universe.get_lights()
+        lights = list(self.universe.get_lights())
+        if (len(lights) == 0):
+            print("ERROR : There is no lights in the universe, please add some !")
+            exit()
         current_color = (lights[0].get_colour()).serialise()
         frames = self.interpolate([current_color, target_color], interpolation_rate)
         for frame in frames:
@@ -194,6 +197,37 @@ class LightEffects:
             self.set_universe_color(BLUE)
             self.light_effects.append(self.universe.serialise())
             time.sleep(0.5)
+
+
+    def lights_up(self, color, times):
+    
+        lights = self.universe.get_lights()
+        updates = []
+        for i in range(2):
+            self.set_universe_color(Color(int(i*color[0]), int(i*color[1]), int(i*color[2]), int(i*color[3])))
+            updates.append(self.universe.serialise())
+        
+        updates = self.interpolate(updates, times)
+        
+        for u in updates:
+            self.interface.set_frame(u)
+            self.interface.send_update()
+
+    def lights_down(self, color, times):
+        lights = self.universe.get_lights()
+        updates = []
+        
+        for i in range(1, -1, -1):
+            self.set_universe_color(Color(int(i*color[0]), int(i*color[1]), int(i*color[2]), int(i*color[3])))
+            updates.append(self.universe.serialise())
+        
+        updates = self.interpolate(updates, times)
+        
+        for u in updates:
+            self.interface.set_frame(u)
+            self.interface.send_update()
+
+
 
     def main(self):
         self.set_universe_color(BLACK)
