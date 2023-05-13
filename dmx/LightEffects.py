@@ -69,7 +69,10 @@ class LightEffects:
             target_color (Color): The color to transition to
             interpolation_rate (int): The number of times to interpolate between each frame
         """
-        lights = self.universe.get_lights()
+        lights = list(self.universe.get_lights())
+        if (len(lights) == 0):
+            print("ERROR : There is no lights in the universe, please add some !")
+            exit()
         current_color = (list(lights)[0].get_colour()).serialise()
         frames = self.interpolate([current_color, target_color], interpolation_rate)
         for frame in frames:
@@ -274,7 +277,11 @@ class LightEffects:
             self.set_universe_color(BLUE)
             self.light_effects.append(self.universe.serialise())
             time.sleep(0.5)
+            
 
+
+    #this code is commented because it sends the light effects to the lights immediately, which is not what we want, but it could potentially be useful in the future
+    
     # def main(self):
     #     """ The main function of the program. This makes sure that the lights are down to begin with.
     #     """
