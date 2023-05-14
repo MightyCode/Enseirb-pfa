@@ -11,21 +11,28 @@ class Interface:
     def initialized(self) -> bool:
         return self._initialized
 
+    """
+    Read project from a path
+    """
     def read_project(self, path) -> None:
         print("readProject() : To override")
-
+    
+    """
+    Load effect from a path, will be not called
+    by external scripts, should be called locally when read_project.
+    """
     def load_effect_from(self, path) -> None:
         print("loadCustomEffects() : To override")
 
     """
-    (Should have done readProject before)
+    (Should have done read_project before)
     Return the length of the scenarii in tick
     """
     def length(self) :
         return self.length
 
     """
-    (Should do before do_scenarii)
+    (Should be done before do_scenarii)
     Compute eventual things before doing scenarii
     """
     def pre_compute(self):
