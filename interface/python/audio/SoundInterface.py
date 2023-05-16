@@ -143,7 +143,10 @@ class SoundInterface (Interface):
         for i in self._audio_stream_id_mapping.keys():
             self._audio_streams[self._audio_stream_id_mapping[i]] = AudioStream(i)
 
-    # Append model effects to 
+    """
+    Load effect store at path
+    Append those effects to already saved reference(model) effects.
+    """
     def load_effect_from(self, path):
         if not os.path.exists(path):
             return 
@@ -164,7 +167,9 @@ class SoundInterface (Interface):
                 if hasattr(attr, "Get_effect_name") and hasattr(attr, "Instanciate"):
                     self._reference_effects.append(attr)
 
-    
+    """
+    Create an effect class from name of effect
+    """
     def create_effect_from_name(self, model_effect_info, project_info):
         effect = None
 
@@ -181,11 +186,17 @@ class SoundInterface (Interface):
 
         return effect
 
+    """
+    Create a speaker group
+    """
     def add_group(self):
         self._speakers_groups.append(
             SpeakerGroup()
         )
 
+    """
+    Add a speaker to a group
+    """
     def add_to_group(self, group_id, speaker_id):
         if 0 > group_id or group_id >= len(self._speakers_groups):
             return
@@ -195,7 +206,9 @@ class SoundInterface (Interface):
 
         self._speakers_groups[group_id].add(speaker_id)
 
-
+    """
+    Affect the result of an effect compute value to audio_streams
+    """
     def compute_result_for_audio(self, effect_priority, result, audio_streams):
         if isinstance(result, dict):
             pass # Todo
@@ -214,6 +227,9 @@ class SoundInterface (Interface):
                 else :
                     audioStream.set_both_value(effect_priority, value[0], value[1])
 
+    """
+    Get audio streams from list of id
+    """
     def get_audio_streams(self, ids):
         if ids == None : return None
 
@@ -223,6 +239,9 @@ class SoundInterface (Interface):
 
         return result
     
+    """
+    Compute one given tick of the sound result
+    """
     def compute_tick(self, tick):
         # Alter audio stream with effects
         for effect in self._segment_effects[tick // (SoundInterface.SEGMENT_SIZE * self._sample_rate)]:
@@ -299,13 +318,12 @@ class SoundInterface (Interface):
                                                     self._sample_rate)
         self._resource_manager.write_text_content(SoundInterface.PATH_SAVED_HASH, self._project_hash)
 
-
+    """
+    Use the saved player to lauch the scenarii
+    """
     def do_scenarii(self, start_time):
         if (self._player == None):
             print("Please attach player to sound interface")
 
         self._player.play(self._audio_result, start_time, self._sample_rate)
         print("Do scenarii sound")
-
-    def stop(self):
-        self._should_play = False

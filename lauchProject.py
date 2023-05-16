@@ -22,8 +22,6 @@ args = parser.parse_args()
 stop_flag = threading.Event()
 
 def run_interface(id: int, interface: Interface, path: str, start_time: str):
-    # create interface object
-
     # read project and load custom effects
     interface.read_project(path)
 
@@ -51,16 +49,17 @@ def run_interface(id: int, interface: Interface, path: str, start_time: str):
 if __name__ == '__main__':
     # get project path
     path = sys.argv[1]
-
-    # create two threads for the workers 
+ 
     threads = []
 
+    # Time start 
     start: float = args.begin if args.begin else 0
     print("Start simulation at " + str(start))
 
     if args.sound or not args.light:
         sound_interface: Interface = SoundInterface(stop_flag, verbose=args.verbose)
         real_player: PlayerInterface = RealPlayer('interface sonore', stop_flag)
+        
         sound_interface.attach_player(real_player)
         soundInterfaceThread = threading.Thread(target=run_interface, args=(0, sound_interface, path, start, ))
         threads.append(soundInterfaceThread)
