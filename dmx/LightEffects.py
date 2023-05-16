@@ -1,4 +1,3 @@
-from time import sleep
 import random
 from Color import *
 from light import *
@@ -21,7 +20,7 @@ class LightEffects:
         """ Saves the light effects list in a json file
 
         Args:
-            filename (file): The file to save the light effects list in
+            filename (str): The file to save the light effects list in
         """
         with open(filename, 'w') as file:
             json.dump(self.light_effects, file)
@@ -34,8 +33,8 @@ class LightEffects:
             lights (list[DMXLight4Slot]): The list of lights to change the color of
             color (Color): The color to set the lights to
         """
-        for l in lights:
-            l.set_colour(color)
+        for light in lights:
+            light.set_colour(color)
 
     def set_universe_color(self, color):
         """ Sets the color of the whole universe
@@ -71,7 +70,7 @@ class LightEffects:
         """
         lights = list(self.universe.get_lights())
         if (len(lights) == 0):
-            print("ERROR : There is no lights in the universe, please add some !")
+            print("ERROR : There is no light in the universe, please add some !")
             exit()
         current_color = (list(lights)[0].get_colour()).serialise()
         frames = self.interpolate([current_color, target_color], interpolation_rate)
@@ -97,9 +96,9 @@ class LightEffects:
             color (Color): The color of the pulse
         """
         self.lights_transition(color.serialise(), 1)
-        sleep(beat)
+        time.sleep(beat)
         self.lights_transition(BLACK.serialise(), 1)
-
+        time.sleep(beat)
 
     def fading_rainbow_effect(self, fade_duration, number_of_fades):
         """ Creates a fading rainbow effect with a given fade speed and number of fades. The color changes progressively between each defined color in the rainbow_colors list
@@ -115,7 +114,7 @@ class LightEffects:
             
         fade_interval = int(fade_duration * 10)
         
-        for _ in range(number_of_fades):
+        for _ in number_of_fades:
             for color in rainbow_colors:
                 self.lights_transition(color.serialise(), fade_interval)
                 self.lights_transition(BLACK.serialise(), fade_interval)
@@ -147,11 +146,11 @@ class LightEffects:
         while (time.time() - start_time) < max_lightning_duration:
             self.set_universe_color(WHITE)
             self.light_effects.append(self.universe.serialise())
-            sleep(flash_duration)
+            time.sleep(flash_duration)
 
             self.set_universe_color(BLACK)
             self.light_effects.append(self.universe.serialise())
-            sleep(pause_duration)
+            time.sleep(pause_duration)
 
     def color_flicker_effect(self, flicker_speed, flicker_intensity, number_of_flickers):
         """ Creates a color flicker effect with a given flicker speed, flicker intensity and number of flickers. Intensity is a value between 0 and 1, where 0 is low intensity and 1 is high intensity.
@@ -191,7 +190,7 @@ class LightEffects:
             number_of_changes (int): The number of color changes to create
         """
             
-        for _ in range(number_of_changes):
+        for _ in number_of_changes:
             for light in self.universe.lights:
                 random_color = Color(
                     random.randint(0, 255),
@@ -255,8 +254,8 @@ class LightEffects:
             (5, 4), (4, 4), (3, 4), (2, 4)
         ]
 
-        for _ in range(number_of_fades):
-            for i, coords in enumerate(path):
+        for _ in number_of_fades:
+            for coords in path:
                 light = DMXLight4Slot(address=light_coord_to_id(coords[0], coords[1]))
                 light.set_colour(RED)
                 self.universe.add_light(light)
@@ -270,7 +269,7 @@ class LightEffects:
         Args:
             number_of_cycles (int): The number of cycles to create
         """
-        for _ in range(number_of_cycles):
+        for _ in number_of_cycles:
             self.set_universe_color(RED)
             self.light_effects.append(self.universe.serialise())
             time.sleep(0.5)

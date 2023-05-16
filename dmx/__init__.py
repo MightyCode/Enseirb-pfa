@@ -30,7 +30,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from dmx.color import Color
+from dmx.Color import Color
 from dmx.drivers import DMXDriver, get_drivers
 from dmx.DMXInterface import DMXInterface
 from dmx.light import DMXLight, DMXLight4Slot
